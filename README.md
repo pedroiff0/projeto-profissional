@@ -27,7 +27,7 @@ cp .env.example .env
 # gere um secret:  openssl rand -base64 48   -> cole em JWT_SECRET
 
 cd app && npm install
-npm test          # 15 testes
+npm test          # 20 testes
 npm run dev       # http://localhost:5000
 ```
 
@@ -116,7 +116,7 @@ Detalhes e processo de reporte: [SECURITY.md](SECURITY.md).
 
 ## Testes
 
-Suíte com **15 testes** (Jest + Supertest) contra um MongoDB real em memória —
+Suíte com **20 testes** (Jest + Supertest) contra um MongoDB real em memória —
 sem mock de banco.
 
 ```bash

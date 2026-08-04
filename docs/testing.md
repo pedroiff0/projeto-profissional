@@ -16,7 +16,7 @@ npm test -- -t "login"        # filtra pelo nome do teste
 npm test -- --coverage        # relatório de cobertura
 ```
 
-Estado atual: **15 testes, 2 suítes, todos aprovados** em ~10 s.
+Estado atual: **20 testes, 3 suítes, todos aprovados** em ~11 s.
 
 ## Como a suíte funciona
 
@@ -54,6 +54,7 @@ app/tests/
   helpers/db.js       setup/teardown/clear do Mongo em memória
   auth.test.js        autenticação (9 testes)
   admin.test.js       administração e registro controlado (6 testes)
+  config.test.js      guards de configuração (5 testes)
 ```
 
 ## O que está coberto
@@ -82,6 +83,19 @@ app/tests/
 | Payload inválido | 422 |
 | Admin desativa a si mesmo | 422 (invariante do último admin) |
 | Troca de senha | Tokens antigos passam a ser recusados |
+
+### `config.test.js`
+
+Invariantes de ambiente, exercitadas em subprocesso (o `config/env.js` valida
+no `require`, e o Jest cacheia módulo):
+
+| Teste | Verifica |
+|---|---|
+| `RATE_LIMIT_DISABLED=true` + produção | Boot **falha** — não se desliga força bruta por acidente |
+| Mesmo flag em staging | Aceito (é o que o teste de carga usa) |
+| Produção sem o flag | Limitador ativo por padrão |
+| `JWT_SECRET` curto em produção | Boot falha |
+| Seed de carga em banco sem "test" no nome | Recusado |
 
 ## Escrevendo um teste novo
 

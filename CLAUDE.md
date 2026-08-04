@@ -17,7 +17,7 @@ uma aplicação de domínio: é o esqueleto sobre o qual o domínio será escrit
 ```bash
 cd app
 npm install
-npm test                    # 15 testes, Mongo em memória
+npm test                    # 20 testes, Mongo em memória
 npm test -- auth.test.js    # um arquivo só
 npm run dev                 # node --watch, porta 5000
 

@@ -22,7 +22,7 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
   `sanitizeInput` (anti-injeção NoSQL), CORS por allowlist, limite de corpo.
 - Views EJS (landing, login, recuperação, primeiro acesso, painel, perfil,
   administração de usuários) sem etapa de build.
-- Suíte Jest + Supertest com Mongo em memória (15 testes).
+- Suíte Jest + Supertest com Mongo em memória (20 testes).
 - Docker Compose com app não-root, `read_only` e healthcheck; CI no GitHub
   Actions rodando testes e `npm audit`.
 
