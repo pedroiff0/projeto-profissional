@@ -22,6 +22,9 @@ function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../views'));
 
+  // Disponivel em toda view sem precisar repetir no render de cada rota.
+  app.locals.appName = env.appName;
+
   app.use(
     helmet({
       contentSecurityPolicy: {

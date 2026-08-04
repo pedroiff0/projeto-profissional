@@ -81,112 +81,150 @@ input:disabled { opacity: 0.6; }
 .table th, .table td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--border); }
 
 .footer { text-align: center; padding: 2rem 1rem; color: var(--muted); }
+/* ===== Landing page (padrao empresarial) =====================
+   Portado de sistema-academico e generalizado. Paleta propria da
+   landing (azul institucional), separada do app autenticado. */
+body.lp-page { background: #f6f8fb; color: #0f172a; }
+body.lp-light { --lp-accent: #2563eb; --lp-accent-2: #0b5f9e; }
 
-/* ===================== Landing page ===================== */
-.lp { background: var(--bg); }
-.lp main { display: block; }
+/* Escopado em .lp-page para vencer a .btn-primary generica por
+   especificidade — a landing tem identidade visual propria. */
+.lp-page .btn-primary { display: inline-block; background: var(--lp-accent); color: #fff; border: none; padding: 0.6rem 1.6rem; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: background 0.15s ease, transform 0.1s ease; }
+.lp-page .btn-primary:hover { background: #1d4ed8; }
+.btn-outline { display: inline-block; background: #fff; color: #0f172a; border: 1px solid #d7dee8; padding: 0.6rem 1.6rem; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: border-color 0.15s ease; }
+.btn-outline:hover { border-color: var(--lp-accent); color: var(--lp-accent); }
+.btn-lg { padding: 0.8rem 2rem; font-size: 1.02rem; }
+.btn-block { width: 100%; padding: 0.75rem; font-size: 1rem; }
+.lp-brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--lp-accent); color: #fff; font-size: 0.82rem; font-weight: 800; }
 
-.lp-nav {
+.lp-hero { max-width: 1160px; margin: 0 auto; padding: 4.5rem 1.5rem 3.5rem; }
+.lp-hero-inner { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 3.5rem; align-items: center; }
+.lp-brand-row { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.8rem; flex-wrap: wrap; }
+.lp-brand-name { font-weight: 800; font-size: 1.1rem; color: #0f172a; }
+.lp-badge { display: inline-block; background: #eaf1fe; color: var(--lp-accent); border: 1px solid #c7dafc; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+.lp-hero h1 { font-size: 3.1rem; line-height: 1.06; letter-spacing: -0.03em; margin: 0 0 1.1rem; font-weight: 800; color: #0f172a; }
+.lp-hero h1 strong { color: var(--lp-accent); }
+.lp-lead { font-size: 1.15rem; color: #475569; line-height: 1.6; max-width: 540px; margin: 0 0 1.8rem; }
+.lp-hero-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.lp-hero-note { margin-top: 1.2rem; font-size: 0.85rem; color: #64748b; }
+
+.lp-hero-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.6rem; box-shadow: 0 18px 45px rgba(15,23,42,0.08); }
+.lp-card-head { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; font-weight: 600; }
+.lp-dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.lp-mini-stat { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #eef2f7; }
+.lp-mini-stat span { color: #64748b; font-size: 0.9rem; }
+.lp-mini-stat strong { font-size: 1.1rem; color: #0f172a; }
+.lp-mini-bar { height: 9px; background: #e8edf3; border-radius: 999px; margin: 1rem 0 0.5rem; overflow: hidden; }
+.lp-mini-bar i { display: block; height: 100%; background: var(--lp-accent); border-radius: 999px; }
+.lp-card-foot { font-size: 0.78rem; color: #94a3b8; margin: 0; }
+
+.lp-stats { border-top: 1px solid #e6ebf2; border-bottom: 1px solid #e6ebf2; background: #fff; }
+.lp-stats-inner { max-width: 1160px; margin: 0 auto; padding: 2.2rem 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center; }
+.lp-stat strong { display: block; font-size: 2.3rem; font-weight: 800; color: var(--lp-accent); }
+.lp-stat span { color: #64748b; font-size: 0.92rem; }
+
+.lp-section { max-width: 1160px; margin: 0 auto; padding: 4.5rem 1.5rem; }
+.lp-alt { background: #eef3f9; border-radius: 26px; margin: 2rem auto; max-width: 1200px; }
+.lp-section-head { text-align: center; max-width: 640px; margin: 0 auto 2.8rem; }
+.lp-eyebrow { display: inline-block; color: var(--lp-accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.6rem; }
+.lp-section-head h2 { font-size: 2.1rem; letter-spacing: -0.02em; margin: 0 0 0.8rem; font-weight: 800; color: #0f172a; }
+.lp-section-head p { color: #475569; font-size: 1.05rem; line-height: 1.5; margin: 0; }
+.lp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+.lp-feature { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.7rem; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.lp-feature:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(15,23,42,0.1); }
+.lp-feature-ic { width: 38px; height: 38px; margin-bottom: 0.9rem; color: var(--lp-accent); }
+.lp-feature-ic svg { width: 100%; height: 100%; }
+.lp-feature h3 { margin: 0 0 0.5rem; font-size: 1.15rem; color: #0f172a; }
+.lp-feature p { color: #475569; font-size: 0.95rem; line-height: 1.5; margin: 0; }
+
+.lp-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.lp-step { text-align: center; padding: 1.5rem; }
+.lp-step-n { display: grid; place-items: center; width: 46px; height: 46px; margin: 0 auto 1rem; border-radius: 50%; background: var(--lp-accent); color: #fff; font-weight: 800; font-size: 1.1rem; }
+.lp-step h3 { margin: 0 0 0.5rem; font-size: 1.2rem; color: #0f172a; }
+.lp-step p { color: #475569; font-size: 0.95rem; line-height: 1.5; margin: 0; }
+
+.lp-curso { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: center; }
+.lp-curso-copy h2 { font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 1rem; font-weight: 800; color: #0f172a; }
+.lp-curso-copy p { color: #475569; line-height: 1.6; font-size: 1.05rem; }
+.lp-list { list-style: none; padding: 0; margin: 1.2rem 0 0; }
+.lp-list li { padding: 0.45rem 0 0.45rem 1.6rem; position: relative; color: #0f172a; }
+.lp-list li::before { content: "✓"; position: absolute; left: 0; color: var(--lp-accent); font-weight: 800; }
+.lp-curso-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.7rem; box-shadow: 0 18px 45px rgba(15,23,42,0.08); }
+.lp-curso-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #eef2f7; font-size: 0.95rem; }
+.lp-curso-row:last-child { border-bottom: none; }
+.lp-curso-row span { color: #64748b; }
+.lp-curso-row strong { font-weight: 600; color: #0f172a; }
+
+.lp-cta { max-width: 1160px; margin: 2rem auto; padding: 3.8rem 1.5rem; text-align: center; background: linear-gradient(135deg, #2563eb, #0b5f9e); border-radius: 26px; }
+.lp-cta h2 { font-size: 2.1rem; margin: 0 0 0.8rem; font-weight: 800; color: #fff; }
+.lp-cta p { color: #d7ecff; font-size: 1.05rem; margin: 0 0 1.8rem; }
+.lp-cta .btn-primary { background: #fff; color: var(--lp-accent); }
+.lp-cta .btn-primary:hover { background: #eaf1fe; }
+
+/* Rodape profissional (estilo empresa) */
+.lp-footer { background: #0f172a; color: #cbd5e1; margin-top: 2rem; }
+.lp-footer-inner { max-width: 1160px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+.lp-footer-top { display: grid; grid-template-columns: 1.2fr 2fr; gap: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid #1e293b; }
+.lp-footer-brand { display: flex; gap: 0.7rem; align-items: flex-start; }
+.lp-footer-brand .lp-brand-mark { background: var(--lp-accent); }
+.lp-footer-brand strong { color: #fff; font-size: 1.1rem; display: block; }
+.lp-footer-tag { font-size: 0.88rem; color: #94a3b8; margin: 0.25rem 0 0; }
+.lp-footer-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.lp-footer-col h4 { color: #fff; font-size: 0.92rem; margin: 0 0 0.9rem; letter-spacing: 0.02em; }
+.lp-footer-col a { display: block; color: #94a3b8; text-decoration: none; font-size: 0.9rem; padding: 0.28rem 0; transition: color 0.15s ease; }
+.lp-footer-col a:hover { color: #fff; }
+.lp-footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
+.lp-footer-bottom p { margin: 0; font-size: 0.85rem; color: #94a3b8; }
+.lp-footer-bottom a { color: #cbd5e1; text-decoration: none; font-weight: 600; }
+.lp-footer-bottom a:hover { color: #fff; text-decoration: underline; }
+/* Ancora "voltar ao topo": navegacao interna, sem JS (CSP-safe). */
+.lp-top-link { color: #94a3b8; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+.lp-top-link:hover { color: #fff; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+@media (max-width: 860px) {
+  .lp-hero-inner, .lp-curso { grid-template-columns: 1fr; gap: 2rem; }
+  .lp-stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .lp-grid, .lp-steps { grid-template-columns: 1fr; }
+  .lp-hero h1 { font-size: 2.3rem; }
+  .lp-footer-top { grid-template-columns: 1fr; }
+  .lp-footer-bottom { flex-direction: column; align-items: flex-start; }
+}
+
+/* Rodape interno (area logada) — mesmo padrao da landing */
+.app-footer {
   display: flex; justify-content: space-between; align-items: center;
-  gap: 1rem; padding: 1rem 2rem; background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 10;
+  flex-wrap: wrap; gap: 0.75rem;
+  max-width: 1160px; margin: 3rem auto 0;
+  padding: 1.5rem; border-top: 1px solid var(--border);
+  font-size: 0.88rem; color: var(--muted);
 }
-.lp-logo { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; text-decoration: none; color: var(--text); }
-.lp-mark {
-  display: grid; place-items: center; width: 32px; height: 32px;
-  border-radius: 8px; background: var(--primary); color: #fff;
-  font-size: 0.85rem; letter-spacing: 0.02em;
-}
-.lp-nav-links { display: flex; align-items: center; gap: 1.5rem; }
-.lp-nav-links a { text-decoration: none; color: var(--muted); font-size: 0.95rem; }
-.lp-nav-links a:hover { color: var(--text); }
-.lp-nav-links .btn-primary { color: #fff; }
-.btn-sm { padding: 0.4rem 0.9rem; font-size: 0.9rem; }
-.btn-ghost {
-  display: inline-block; padding: 0.6rem 1.1rem; border-radius: 8px;
-  border: 1px solid var(--border); color: var(--text);
-  text-decoration: none; background: var(--surface);
-}
-.btn-primary { display: inline-block; text-decoration: none; text-align: center; }
+.app-footer a { color: var(--text); text-decoration: none; font-weight: 600; }
+.app-footer a:hover { text-decoration: underline; }
+.app-top-link { color: var(--muted); font-weight: 500 !important; white-space: nowrap; }
+@media (max-width: 640px) { .app-footer { flex-direction: column; align-items: flex-start; } }
 
-.lp-hero { padding: 5rem 1.5rem 4rem; text-align: center; }
-.lp-hero-inner { max-width: 760px; margin: 0 auto; }
-.lp-eyebrow {
-  text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem;
-  color: var(--primary); font-weight: 600; margin: 0 0 1rem;
-}
-.lp-hero h1 { font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.15; margin: 0 0 1.25rem; letter-spacing: -0.02em; }
-.lp-lead { font-size: 1.1rem; color: var(--muted); max-width: 620px; margin: 0 auto 2rem; }
-.lp-cta { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+/* --- Refinos apos revisao visual ------------------------------------
+   1. Elevacao padronizada: os cards usavam 3 sombras diferentes, o que
+      quebrava a sensacao de sistema coeso.
+   2. Contraste: #94a3b8 sobre branco reprova em WCAG AA para texto
+      pequeno; #64748b passa.
+   3. Rodape legivel: 0.85rem era pequeno demais para o copyright. */
+.lp-feature,
+.lp-curso-card,
+.lp-hero-card { box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07); }
+.lp-feature:hover { box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12); }
 
-.lp-stats {
-  display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
-  margin: 0; padding-top: 2rem; border-top: 1px solid var(--border);
-}
-.lp-stats div { text-align: center; }
-.lp-stats dt { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.lp-stats dd { margin: 0.25rem 0 0; font-weight: 600; font-size: 1.05rem; }
+.lp-hero-note { color: #64748b; }
+.lp-card-foot { color: #64748b; }
 
-.lp-section { padding: 4.5rem 1.5rem; }
-.lp-section-alt { background: var(--surface); border-block: 1px solid var(--border); }
-.lp-section-head { max-width: 720px; margin: 0 auto 2.5rem; text-align: center; }
-.lp-section-head h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); margin: 0 0 0.75rem; letter-spacing: -0.01em; }
+.lp-footer-bottom p { font-size: 0.9rem; color: #b6c2d1; }
+.lp-top-link { font-size: 0.9rem; }
 
-.lp-grid {
-  display: grid; gap: 1.25rem; max-width: 1040px; margin: 0 auto;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-}
-.lp-grid-3 { max-width: 880px; }
-.lp-card {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 1.5rem;
-}
-.lp-section-alt .lp-card { background: var(--surface); }
-.lp-card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
-.lp-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-.lp-card code { font-size: 0.88em; background: var(--border); padding: 0.1em 0.35em; border-radius: 4px; }
+/* Aproxima o numero do texto no passo a passo (bloco parecia esparso). */
+.lp-step { padding: 1rem 1.25rem; }
+.lp-step-n { margin-bottom: 0.75rem; }
 
-.lp-metric { text-align: center; }
-.lp-metric strong { display: block; font-size: 2.2rem; color: var(--primary); line-height: 1.1; }
-.lp-metric span { display: block; margin-top: 0.5rem; color: var(--muted); font-size: 0.92rem; }
-
-.lp-checklist {
-  max-width: 760px; margin: 0 auto; padding: 0; list-style: none;
-  display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-.lp-checklist li { position: relative; padding-left: 1.75rem; color: var(--muted); font-size: 0.95rem; }
-.lp-checklist li::before {
-  content: "✓"; position: absolute; left: 0; top: 0;
-  color: var(--ok); font-weight: 700;
-}
-.lp-checklist strong { color: var(--text); }
-
-.lp-flow { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
-.lp-step {
-  padding: 0.6rem 1.2rem; border-radius: 999px;
-  border: 1px solid var(--border); background: var(--surface); font-weight: 600;
-}
-.lp-arrow { color: var(--muted); }
-.lp-flow-note { max-width: 620px; margin: 1.5rem auto 0; text-align: center; font-size: 0.95rem; }
-
-.lp-final { text-align: center; padding: 4.5rem 1.5rem; }
-.lp-final h2 { margin: 0 0 0.5rem; font-size: clamp(1.4rem, 3vw, 1.9rem); }
-.lp-final p { color: var(--muted); margin: 0 0 1.5rem; }
-
-.lp-footer {
-  text-align: center; padding: 2rem 1.5rem;
-  border-top: 1px solid var(--border); background: var(--surface);
-}
-.lp-footer p { margin: 0.35rem 0; font-size: 0.9rem; color: var(--muted); }
-/* Nao encolher abaixo de 0.85rem: o .small global (0.875rem) ficaria ilegivel
-   no rodape em tela pequena (apontado em revisao de acessibilidade). */
-.lp-footer .small { font-size: 0.85rem; }
-.lp-checklist li { line-height: 1.6; }
-
-@media (max-width: 640px) {
-  .lp-nav { padding: 0.75rem 1rem; }
-  .lp-nav-links { gap: 0.85rem; }
-  .lp-nav-links a:not(.btn-primary) { display: none; }
-  .lp-stats { gap: 1.5rem; }
-}
+/* Botao secundario estava se perdendo no fundo claro. */
+.btn-outline { border-color: #c3ccd9; }

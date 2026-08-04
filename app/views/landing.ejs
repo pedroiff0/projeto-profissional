@@ -3,150 +3,237 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projeto Profissional — Base segura para aplicações web</title>
-  <meta name="description" content="Template base de aplicação web com autenticação JWT, controle de acesso por papéis, registro controlado por administrador e segurança endurecida por padrão." />
+  <title><%= appName %> · Base segura para aplicações web</title>
+  <meta name="description" content="Template base de aplicação web: autenticação JWT, papéis de acesso, registro controlado por administrador e segurança endurecida desde o primeiro commit." />
   <link rel="stylesheet" href="/css/main.css" />
 </head>
-<body class="lp">
+<body class="lp-page lp-light" id="topo">
 
-<header class="lp-nav">
-  <a class="lp-logo" href="/">
-    <span class="lp-mark">PP</span>
-    <span>Projeto Profissional</span>
-  </a>
-  <nav class="lp-nav-links">
-    <a href="#recursos">Recursos</a>
-    <a href="#seguranca">Segurança</a>
-    <a href="#arquitetura">Arquitetura</a>
-    <a href="#desempenho">Desempenho</a>
-    <a class="btn-primary btn-sm" href="/login">Entrar</a>
-  </nav>
-</header>
-
-<main>
+  <!-- Hero -->
   <section class="lp-hero">
     <div class="lp-hero-inner">
-      <p class="lp-eyebrow">Template de aplicação · Node.js + MongoDB</p>
-      <h1>A base sólida que todo projeto<br />deveria começar tendo.</h1>
-      <p class="lp-lead">
-        Autenticação, papéis de acesso e provisionamento de contas prontos,
-        auditados e testados. Você escreve o domínio; a fundação já está de pé.
-      </p>
-      <div class="lp-cta">
-        <a class="btn-primary" href="/login">Acessar plataforma</a>
-        <a class="btn-ghost" href="#recursos">Conhecer os recursos</a>
+      <div class="lp-hero-copy">
+        <div class="lp-brand-row">
+          <span class="lp-brand-mark">PP</span>
+          <span class="lp-brand-name"><%= appName %></span>
+          <span class="lp-badge">Node.js · MongoDB · Docker</span>
+        </div>
+        <h1>A base sólida que todo projeto<br /><strong>deveria começar tendo.</strong></h1>
+        <p class="lp-lead">
+          Autenticação, papéis de acesso e provisionamento de contas prontos,
+          auditados e testados. Você escreve o domínio; a fundação já está de pé.
+        </p>
+        <div class="lp-hero-actions">
+          <a class="btn-primary btn-lg" href="/login">Acessar plataforma</a>
+          <a class="btn-outline btn-lg" href="#recursos">Ver recursos</a>
+        </div>
+        <p class="lp-hero-note">Acesso restrito · contas provisionadas pelo administrador.</p>
       </div>
-      <dl class="lp-stats">
-        <div><dt>Cobertura</dt><dd>20 testes automatizados</dd></div>
-        <div><dt>Vazão medida</dt><dd>214 req/s</dd></div>
-        <div><dt>Sessões simultâneas</dt><dd>200 sem falhas</dd></div>
-      </dl>
+      <div class="lp-hero-card">
+        <div class="lp-card-head">
+          <span class="lp-dot"></span> Estado da plataforma
+        </div>
+        <div class="lp-mini-stat"><span>Testes automatizados</span><strong>21</strong></div>
+        <div class="lp-mini-stat"><span>Vazão medida</span><strong>214 req/s</strong></div>
+        <div class="lp-mini-stat"><span>Taxa de erro</span><strong>0%</strong></div>
+        <div class="lp-mini-bar"><i style="width:100%"></i></div>
+        <p class="lp-card-foot">Números obtidos com k6 em ambiente isolado, não estimados.</p>
+      </div>
     </div>
   </section>
 
+  <!-- Stats -->
+  <section class="lp-stats">
+    <div class="lp-stats-inner">
+      <div class="lp-stat"><strong>21</strong><span>testes automatizados</span></div>
+      <div class="lp-stat"><strong>200</strong><span>sessões simultâneas</span></div>
+      <div class="lp-stat"><strong>214</strong><span>requisições por segundo</span></div>
+      <div class="lp-stat"><strong>0</strong><span>dependências de build</span></div>
+    </div>
+  </section>
+
+  <!-- Recursos -->
   <section class="lp-section" id="recursos">
     <div class="lp-section-head">
+      <span class="lp-eyebrow">Recursos</span>
       <h2>Tudo o que se repete em todo projeto, já resolvido</h2>
-      <p class="muted">Sem framework proprietário, sem mágica: Express, Mongoose e EJS puros.</p>
+      <p>Sem framework proprietário e sem mágica: Express, Mongoose e EJS puros.</p>
     </div>
     <div class="lp-grid">
-      <article class="lp-card">
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h3>Autenticação JWT</h3>
-        <p>Cookie <code>httpOnly</code> para o navegador e <code>Bearer</code> para APIs e apps, com revogação global de sessão.</p>
-      </article>
-      <article class="lp-card">
+        <p>Cookie <code>httpOnly</code> para o navegador e <code>Bearer</code> para APIs, com revogação global de sessão.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
         <h3>Papéis e permissões</h3>
         <p>Perfis <code>admin</code> e <code>user</code> com guardas separados para rotas de API e de página.</p>
-      </article>
-      <article class="lp-card">
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        </div>
         <h3>Registro controlado</h3>
-        <p>Nada de autocadastro. O administrador provisiona a conta e o sistema gera uma senha temporária de uso único.</p>
-      </article>
-      <article class="lp-card">
+        <p>Nada de autocadastro. O administrador provisiona a conta e o sistema gera senha temporária de uso único.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
+        </div>
         <h3>Trilha de auditoria</h3>
-        <p>Login, troca de senha e operações administrativas registrados com ator, alvo e origem — nunca com dados sensíveis.</p>
-      </article>
-      <article class="lp-card">
+        <p>Login, troca de senha e operações administrativas registrados com ator, alvo e origem — nunca dados sensíveis.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
         <h3>Testes de verdade</h3>
         <p>Jest e Supertest contra um MongoDB real em memória. Sem mocks de banco mascarando o comportamento.</p>
-      </article>
-      <article class="lp-card">
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+        </div>
         <h3>Pronto para produção</h3>
         <p>Docker Compose com contêiner não-root e somente leitura, health checks e integração contínua configurada.</p>
-      </article>
+      </div>
     </div>
   </section>
 
-  <section class="lp-section lp-section-alt" id="seguranca">
+  <!-- Segurança -->
+  <section class="lp-section lp-alt" id="seguranca">
+    <div class="lp-curso">
+      <div class="lp-curso-copy">
+        <span class="lp-eyebrow">Segurança</span>
+        <h2>Proteção por padrão, não como item de backlog</h2>
+        <p>
+          Cada defesa abaixo já vem ativa desde o primeiro <em>commit</em>. Não
+          há etapa de endurecimento posterior — o template nasce fechado, e é
+          preciso decisão explícita para afrouxar qualquer coisa.
+        </p>
+        <ul class="lp-list">
+          <li>Senhas com bcrypt (custo 12), hash nunca exposto</li>
+          <li>Bloqueio de conta após 3 tentativas, por 30 minutos</li>
+          <li>Defesa contra enumeração de contas por tempo de resposta</li>
+          <li>Proteção contra CSRF, XSS e injeção NoSQL</li>
+          <li>Política de segurança de conteúdo sem scripts embutidos</li>
+          <li>CORS por lista de origens explícita</li>
+        </ul>
+      </div>
+      <div class="lp-curso-card">
+        <div class="lp-curso-row"><span>Algoritmo de senha</span><strong>bcrypt 12</strong></div>
+        <div class="lp-curso-row"><span>Sessão</span><strong>JWT HS256</strong></div>
+        <div class="lp-curso-row"><span>Tentativas de login</span><strong>3 / 30 min</strong></div>
+        <div class="lp-curso-row"><span>Cadastro público</span><strong>Desabilitado</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como funciona -->
+  <section class="lp-section" id="como-funciona">
     <div class="lp-section-head">
-      <h2>Segurança como padrão, não como item de backlog</h2>
-      <p class="muted">Cada proteção abaixo está ativa desde o primeiro <em>commit</em>.</p>
+      <span class="lp-eyebrow">Arquitetura</span>
+      <h2>Em três camadas, responsabilidades claras</h2>
+      <p>Toda requisição percorre o mesmo caminho previsível, do roteador ao banco.</p>
     </div>
-    <ul class="lp-checklist">
-      <li>Senhas com <strong>bcrypt</strong> (custo 12) e hash jamais exposto em respostas</li>
-      <li>Bloqueio temporário de conta após tentativas malsucedidas</li>
-      <li>Defesa contra enumeração de contas por tempo de resposta</li>
-      <li>Política de senha forte e obrigatoriedade de troca no primeiro acesso</li>
-      <li>Proteção contra CSRF, XSS e injeção NoSQL</li>
-      <li>Política de segurança de conteúdo restritiva, sem scripts embutidos</li>
-      <li>Limitação de taxa por IP em toda a API e reforçada na autenticação</li>
-      <li>CORS por lista de origens explícita, nunca liberado a todos</li>
-    </ul>
-  </section>
-
-  <section class="lp-section" id="arquitetura">
-    <div class="lp-section-head">
-      <h2>Camadas explícitas, responsabilidades claras</h2>
-      <p class="muted">Toda requisição percorre o mesmo caminho previsível.</p>
-    </div>
-    <div class="lp-flow">
-      <span class="lp-step">Rota</span><span class="lp-arrow">→</span>
-      <span class="lp-step">Controlador</span><span class="lp-arrow">→</span>
-      <span class="lp-step">Serviço</span><span class="lp-arrow">→</span>
-      <span class="lp-step">Modelo</span>
-    </div>
-    <p class="lp-flow-note muted">
-      A regra de negócio vive no serviço; o controlador apenas traduz HTTP e o
-      modelo apenas descreve o dado. Validação de entrada com Zod em toda
-      escrita.
-    </p>
-  </section>
-
-  <section class="lp-section lp-section-alt" id="desempenho">
-    <div class="lp-section-head">
-      <h2>Capacidade medida, não estimada</h2>
-      <p class="muted">
-        Números obtidos com k6 em ambiente isolado. Metodologia completa e como
-        reproduzir estão na documentação do repositório.
-      </p>
-    </div>
-    <div class="lp-grid lp-grid-3">
-      <article class="lp-card lp-metric">
-        <strong>200</strong>
-        <span>usuários simultâneos sem nenhuma falha</span>
-      </article>
-      <article class="lp-card lp-metric">
-        <strong>214</strong>
-        <span>requisições por segundo em regime estável</span>
-      </article>
-      <article class="lp-card lp-metric">
-        <strong>0%</strong>
-        <span>de erro nos cenários de referência</span>
-      </article>
+    <div class="lp-steps">
+      <div class="lp-step">
+        <span class="lp-step-n">1</span>
+        <h3>Controlador</h3>
+        <p>Traduz HTTP: valida a entrada com Zod, chama o serviço e formata a resposta. Nada além disso.</p>
+      </div>
+      <div class="lp-step">
+        <span class="lp-step-n">2</span>
+        <h3>Serviço</h3>
+        <p>Onde vive a regra de negócio. Independente de HTTP, testável isoladamente e reaproveitável.</p>
+      </div>
+      <div class="lp-step">
+        <span class="lp-step-n">3</span>
+        <h3>Modelo</h3>
+        <p>Descreve o dado e seus índices. Sem lógica de aplicação embutida no schema.</p>
+      </div>
     </div>
   </section>
 
-  <section class="lp-final">
-    <h2>Comece pelo lugar certo</h2>
-    <p>Clone, renomeie e escreva apenas aquilo que é do seu domínio.</p>
-    <a class="btn-primary" href="/login">Entrar na plataforma</a>
+  <!-- Desempenho -->
+  <section class="lp-section lp-alt" id="desempenho">
+    <div class="lp-curso">
+      <div class="lp-curso-copy">
+        <span class="lp-eyebrow">Desempenho</span>
+        <h2>Capacidade medida, não estimada</h2>
+        <p>
+          Os números vêm da execução real do cenário k6 incluído no repositório,
+          em ambiente isolado com banco dedicado. A metodologia completa e o
+          passo a passo para reproduzir estão na documentação.
+        </p>
+        <ul class="lp-list">
+          <li>100 usuários simultâneos com todos os limiares aprovados</li>
+          <li>200 usuários ainda sem nenhuma falha de requisição</li>
+          <li>Leitura autenticada e páginas em poucos milissegundos</li>
+        </ul>
+      </div>
+      <div class="lp-curso-card">
+        <div class="lp-curso-row"><span>Usuários simultâneos</span><strong>200</strong></div>
+        <div class="lp-curso-row"><span>Requisições por segundo</span><strong>214</strong></div>
+        <div class="lp-curso-row"><span>Taxa de erro</span><strong>0%</strong></div>
+        <div class="lp-curso-row"><span>Escala</span><strong>Horizontal</strong></div>
+      </div>
+    </div>
   </section>
-</main>
 
-<footer class="lp-footer">
-  <p>&copy; <%= new Date().getFullYear() %> Projeto Profissional. Template distribuído sob licença MIT.</p>
-  <p class="muted small">Acesso restrito a contas provisionadas pelo administrador.</p>
-</footer>
+  <!-- CTA -->
+  <section class="lp-cta">
+    <div class="lp-cta-inner">
+      <h2>Comece pelo lugar certo</h2>
+      <p>Clone, renomeie e escreva apenas aquilo que é do seu domínio.</p>
+      <a class="btn-primary btn-lg" href="/login">Acessar o sistema</a>
+    </div>
+  </section>
 
+  <!-- Rodapé profissional (estilo empresa) -->
+  <footer class="lp-footer">
+    <div class="lp-footer-inner">
+      <div class="lp-footer-top">
+        <div class="lp-footer-brand">
+          <span class="lp-brand-mark">PP</span>
+          <div>
+            <strong><%= appName %></strong>
+            <p class="lp-footer-tag">Base segura para aplicações web com autenticação e controle de acesso</p>
+          </div>
+        </div>
+        <div class="lp-footer-cols">
+          <div class="lp-footer-col">
+            <h4>Produto</h4>
+            <a href="#recursos">Recursos</a>
+            <a href="#como-funciona">Arquitetura</a>
+            <a href="#desempenho">Desempenho</a>
+          </div>
+          <div class="lp-footer-col">
+            <h4>Segurança</h4>
+            <a href="#seguranca">Como protegemos</a>
+            <a href="/login">Acessar</a>
+          </div>
+          <div class="lp-footer-col">
+            <h4>Suporte</h4>
+            <a href="/login">Entrar</a>
+            <a href="https://phrandrade.com" target="_blank" rel="noopener">Contato</a>
+          </div>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>
+          &copy; <%= new Date().getFullYear() %>
+          <a href="https://phrandrade.com" target="_blank" rel="noopener">Pedro Henrique Rocha de Andrade</a>
+          — feito com café, código e um céu estrelado.
+        </p>
+        <a class="lp-top-link" href="#topo">Voltar ao topo &uarr;</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
