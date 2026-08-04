@@ -19,7 +19,7 @@ cd app
 npm install
 npm test                    # 20 testes, Mongo em memória
 npm test -- auth.test.js    # um arquivo só
-npm run dev                 # node --watch, porta 5000
+npm run dev                 # node --watch, porta 4447
 
 docker compose up --build
 docker compose logs -f app

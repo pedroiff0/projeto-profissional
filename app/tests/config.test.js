@@ -38,6 +38,17 @@ describe('config/env — guards de producao', () => {
     expect(() => carregarEnv({ NODE_ENV: 'production', JWT_SECRET: 'curto' }))
       .toThrow(/JWT_SECRET deve ter no minimo 32 caracteres/);
   });
+
+  it('usa 3 tentativas / 30 min como padrao de forca bruta', () => {
+    const out = execFileSync(process.execPath, ['-p',
+      `JSON.stringify(require(${JSON.stringify(`${APP}/src/config/env`)}))`,
+    ], { cwd: '/tmp', env: { PATH: process.env.PATH }, encoding: 'utf8' });
+    const env = JSON.parse(out);
+    expect(env.maxFailedAttempts).toBe(3);
+    expect(env.lockoutMs).toBe(30 * 60 * 1000);
+    expect(env.rateLimitAuthMax).toBe(3);
+    expect(env.rateLimitAuthWindowMs).toBe(30 * 60 * 1000);
+  });
 });
 
 describe('seed de carga — guard de banco', () => {

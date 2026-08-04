@@ -24,7 +24,7 @@ Estado atual: **20 testes, 3 suítes, todos aprovados** em ~11 s.
 comportamento do app de propósito:
 
 - **Limitação de taxa desativada** — a suíte faz dezenas de logins e seria
-  bloqueada pelo limite de 10 tentativas/15 min.
+  bloqueada pelo limite de 3 tentativas/30 min.
 - **`csrfGuard` desativado** — o Supertest não é um navegador e não envia
   `Origin`/`Referer`.
 
@@ -66,7 +66,7 @@ app/tests/
 | Login válido | 200, cookie `HttpOnly`, `passwordHash` ausente da resposta |
 | Senha errada | 401 com mensagem genérica |
 | E-mail inexistente | 401 **idêntico** ao anterior (anti-enumeração) |
-| 5 tentativas falhas | Conta bloqueada com 429 |
+| 3 tentativas falhas | Conta bloqueada com 429 |
 | Injeção NoSQL | `{"$gt": ""}` não autentica |
 | Conta inativa | 401 |
 | `/me` sem token | 401 |

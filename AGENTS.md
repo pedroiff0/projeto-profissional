@@ -95,7 +95,7 @@ rota afetados.
 cd app
 npm install
 npm test              # Jest + Mongo em memória
-npm run dev           # watch em http://localhost:5000
+npm run dev           # watch em http://localhost:4447
 docker compose up --build
 docker compose logs -f app
 ```

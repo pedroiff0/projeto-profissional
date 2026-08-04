@@ -16,7 +16,7 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
   temporária exibida uma única vez; conta nasce com `mustChangePassword`.
 - Fluxos de troca de senha, esquecimento e redefinição por token com hash
   SHA-256 e expiração via TTL index.
-- Lockout de conta (5 tentativas / 15 min) e rate limit por IP.
+- Lockout de conta (3 tentativas / 30 min) e rate limit por IP.
 - `AuditLog` com retenção de 180 dias para eventos sensíveis.
 - Endurecimento: Helmet com CSP sem `unsafe-inline`, `csrfGuard`,
   `sanitizeInput` (anti-injeção NoSQL), CORS por allowlist, limite de corpo.

@@ -7,7 +7,7 @@ function requiredInProd(name, value) {
   return value;
 }
 
-const port = Number(process.env.PORT || 5000);
+const port = Number(process.env.PORT || 4447);
 const jwtSecret = process.env.JWT_SECRET || '';
 
 // Em producao um secret fraco/ausente e falha de boot, nao um default silencioso.
@@ -49,7 +49,14 @@ module.exports = {
     return off;
   })(),
   rateLimitApiMax: Number(process.env.RATE_LIMIT_API_MAX || 300),
-  rateLimitAuthMax: Number(process.env.RATE_LIMIT_AUTH_MAX || 10),
+  rateLimitAuthMax: Number(process.env.RATE_LIMIT_AUTH_MAX || 3),
+  rateLimitAuthWindowMs: Number(process.env.RATE_LIMIT_AUTH_WINDOW_MIN || 30) * 60 * 1000,
+
+  // Bloqueio de conta: 3 tentativas malsucedidas travam o login por 30 min.
+  // Complementa o limitador por IP — este protege a CONTA (credential
+  // stuffing distribuido), aquele protege o SERVICO (forca bruta de um IP).
+  maxFailedAttempts: Number(process.env.MAX_FAILED_ATTEMPTS || 3),
+  lockoutMs: Number(process.env.LOCKOUT_MIN || 30) * 60 * 1000,
 
   // Seed do admin unico. Sem senha definida, o seed gera uma aleatoria e
   // imprime UMA vez no log de boot.

@@ -52,7 +52,7 @@ São duas stacks independentes, que podem coexistir na mesma máquina:
 | Projeto | `pp` (padrão) | `pp-test` |
 | Banco | `app_db` em volume nomeado, persistente | `app_test_db` em `tmpfs`, descartável |
 | Serviço do banco | `mongo` | `mongo-test` |
-| Porta no host | `127.0.0.1:5000` | `127.0.0.1:5001` |
+| Porta no host | `127.0.0.1:4447` | `127.0.0.1:4446` |
 | `NODE_ENV` | `production` | `staging` |
 | Limitação de taxa | Ativa | Desativada |
 

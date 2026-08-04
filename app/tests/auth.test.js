@@ -54,15 +54,22 @@ describe('POST /api/auth/login', () => {
     expect(res.body.error).toBe('Credenciais invalidas');
   });
 
-  it('bloqueia a conta apos 5 tentativas falhas', async () => {
+  it('bloqueia a conta apos 3 tentativas falhas, por 30 min', async () => {
     await criarUser();
-    for (let i = 0; i < 5; i += 1) {
-      await request(app).post('/api/auth/login').send({ email: 'user@example.com', password: 'x'.repeat(12) });
-    }
+    const errar = () => request(app).post('/api/auth/login')
+      .send({ email: 'user@example.com', password: 'x'.repeat(12) });
+
+    // Duas falhas ainda nao travam: o limite e 3, nao "ate 3".
+    expect((await errar()).status).toBe(401);
+    expect((await errar()).status).toBe(401);
+    expect((await errar()).status).toBe(401); // 3a falha arma o lockout
+
+    // Agora nem a senha correta entra, e a mensagem informa 30 min.
     const res = await request(app)
       .post('/api/auth/login')
       .send({ email: 'user@example.com', password: SENHA });
     expect(res.status).toBe(429);
+    expect(res.body.error).toMatch(/30 min/);
   });
 
   it('resiste a injecao NoSQL no corpo', async () => {

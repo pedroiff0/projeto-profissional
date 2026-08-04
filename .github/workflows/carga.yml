@@ -34,7 +34,7 @@ jobs:
       - name: Aguardar readiness
         run: |
           for i in $(seq 1 30); do
-            if curl -sf http://localhost:5001/api/health/ready; then exit 0; fi
+            if curl -sf http://localhost:4446/api/health/ready; then exit 0; fi
             sleep 2
           done
           echo "App nao ficou pronto a tempo"

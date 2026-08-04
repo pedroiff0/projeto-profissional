@@ -17,13 +17,14 @@ const apiLimiter = rateLimit({
 });
 
 // Limite estrito para login / reset de senha (forca bruta e credential stuffing).
+// Padrao: 3 tentativas por IP, bloqueio de 30 min.
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: env.rateLimitAuthWindowMs,
   limit: env.rateLimitAuthMax,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   skip,
-  message: { error: 'Muitas tentativas - tente novamente em alguns minutos.' },
+  message: { error: 'Muitas tentativas - tente novamente em 30 minutos.' },
 });
 
 module.exports = { apiLimiter, authLimiter };

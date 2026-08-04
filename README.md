@@ -28,7 +28,7 @@ cp .env.example .env
 
 cd app && npm install
 npm test          # 20 testes
-npm run dev       # http://localhost:5000
+npm run dev       # http://localhost:4447
 ```
 
 No primeiro boot, se não houver nenhum admin no banco, o sistema cria um e
@@ -98,14 +98,14 @@ token ou hash.
 
 - Bcrypt cost 12; hash nunca sai em nenhuma resposta (`select:false`).
 - Senha mínima: 12 caracteres com maiúscula, minúscula e dígito.
-- Lockout: 5 tentativas → 15 min de bloqueio.
+- Lockout: 3 tentativas → 30 min de bloqueio.
 - Comparação em tempo constante contra hash dummy quando o e-mail não existe
   (anti-enumeração por timing); `/forgot-password` responde igual sempre.
 - Cookie `httpOnly` + `SameSite=Lax` + `Secure` automático em HTTPS.
 - `csrfGuard`: valida Origin/Referer em mutações autenticadas por cookie.
 - `sanitizeInput`: remove chaves `$`/`.` (injeção NoSQL), corta profundidade.
 - Helmet com CSP restritiva — **sem `unsafe-inline`**: todo JS fica em arquivo.
-- Rate limit: 300 req/5 min na API, 10 req/15 min em login/reset.
+- Rate limit: 300 req/5 min na API, 3 tentativas/30 min em login/reset.
 - CORS por allowlist explícita, nunca `*`.
 - Corpo limitado a 100 kB; `x-powered-by` desligado.
 - `tokenValidAfter` derruba todas as sessões ao trocar senha ou desativar conta.
@@ -160,7 +160,7 @@ Metodologia, perfis (`smoke`, `carga`, `estresse`, `pico`, `auth`) e análise:
 | Arquivo | `docker-compose.yml` | `docker-compose.test.yml` |
 | Projeto | `pp` | `pp-test` |
 | Banco | `app_db`, volume persistente | `app_test_db`, `tmpfs` descartável |
-| Porta | `127.0.0.1:5000` | `127.0.0.1:5001` |
+| Porta | `127.0.0.1:4447` | `127.0.0.1:4446` |
 | Limitação de taxa | Ativa | Desativada |
 
 As duas podem rodar ao mesmo tempo, em redes Docker separadas.

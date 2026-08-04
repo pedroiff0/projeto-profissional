@@ -18,7 +18,7 @@ import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 import { Trend, Rate, Counter } from 'k6/metrics';
 
-const BASE = __ENV.BASE_URL || 'http://localhost:5000';
+const BASE = __ENV.BASE_URL || 'http://localhost:4446';
 const PERFIL = __ENV.PERFIL || 'carga';
 const CARGA_VUS = Number(__ENV.CARGA_VUS || 200);
 const DURACAO = __ENV.DURACAO || '1m';

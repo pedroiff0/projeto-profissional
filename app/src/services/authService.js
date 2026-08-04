@@ -6,8 +6,6 @@ const AppError = require('../utils/AppError');
 const env = require('../config/env');
 
 const SALT_ROUNDS = 12;
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_MS = 15 * 60 * 1000;
 const RESET_TTL_MS = 60 * 60 * 1000;
 
 // Hash descartavel usado para igualar o tempo de resposta quando o usuario
@@ -67,8 +65,8 @@ async function login({ email, password }) {
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
     user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
-    if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
-      user.lockedUntil = new Date(Date.now() + LOCKOUT_MS);
+    if (user.failedLoginAttempts >= env.maxFailedAttempts) {
+      user.lockedUntil = new Date(Date.now() + env.lockoutMs);
       user.failedLoginAttempts = 0;
     }
     await user.save();

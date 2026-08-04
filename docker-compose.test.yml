@@ -6,7 +6,7 @@
 #   - projeto e volumes proprios (-p pp-test): nao compartilha dados
 #   - banco app_test_db num servico mongo-test separado
 #   - NODE_ENV=staging e limites de taxa desativados (medir o app, nao o limiter)
-#   - porta 5001 no host, para poder subir junto com a producao (5000)
+#   - porta 4446 no host, para poder subir junto com a producao (4447)
 
 name: pp-test
 
@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: app/Dockerfile
     ports:
-      - "127.0.0.1:5001:5000"
+      - "127.0.0.1:4446:5000"
     environment:
       # staging, nao production: RATE_LIMIT_DISABLED e recusado em producao.
       NODE_ENV: staging
@@ -24,7 +24,7 @@ services:
       MONGO_URI: mongodb://mongo-test:27017/app_test_db
       JWT_SECRET: ${JWT_SECRET_TEST:-secret-de-teste-com-mais-de-32-caracteres}
       JWT_EXPIRES_IN: 2h
-      APP_BASE_URL: http://localhost:5001
+      APP_BASE_URL: http://localhost:4446
       COOKIE_SECURE: "false"
       # Desligado APENAS aqui: com 300 req/5min o teste mediria o limitador.
       RATE_LIMIT_DISABLED: "true"

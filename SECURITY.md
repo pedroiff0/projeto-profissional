@@ -62,8 +62,8 @@ rebaixar nem desativar a própria conta, nem a última conta admin ativa.
 
 ### Força bruta
 
-- Lockout por conta: 5 falhas → 15 minutos bloqueado (429).
-- Rate limit por IP: 10 req/15 min em login e reset; 300 req/5 min na API.
+- Lockout por conta: 3 falhas → 30 minutos bloqueado (429).
+- Rate limit por IP: 3 tentativas/30 min em login e reset; 300 req/5 min na API.
 - Rate limiters são desligados em `NODE_ENV=test` para não bloquear a suíte.
 - Isto não substitui WAF/CDN contra ataque distribuído.
 
