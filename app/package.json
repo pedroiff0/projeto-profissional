@@ -10,6 +10,8 @@
     "dev": "node --watch src/server.js",
     "test": "NODE_ENV=test jest --runInBand --forceExit",
     "test:watch": "NODE_ENV=test jest --watch --runInBand",
+    "test:coverage": "NODE_ENV=test jest --runInBand --forceExit --coverage",
+    "seed:carga": "node scripts/seed-carga.js",
     "lint": "eslint src tests public/js"
   },
   "dependencies": {

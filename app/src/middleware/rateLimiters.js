@@ -1,25 +1,28 @@
 const rateLimit = require('express-rate-limit');
 const env = require('../config/env');
 
-const skipInTest = () => env.nodeEnv === 'test';
+// Desligado em teste (a suite faz dezenas de logins) e quando
+// RATE_LIMIT_DISABLED=true — usado APENAS em teste de carga, e recusado
+// com NODE_ENV=production (ver config/env.js).
+const skip = () => env.nodeEnv === 'test' || env.rateLimitDisabled;
 
 // Limite geral da API: mitiga scraping/polling descontrolado de um IP.
 const apiLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  limit: 300,
+  limit: env.rateLimitApiMax,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  skip: skipInTest,
+  skip,
   message: { error: 'Muitas requisicoes - tente novamente em alguns minutos.' },
 });
 
 // Limite estrito para login / reset de senha (forca bruta e credential stuffing).
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 10,
+  limit: env.rateLimitAuthMax,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
-  skip: skipInTest,
+  skip,
   message: { error: 'Muitas tentativas - tente novamente em alguns minutos.' },
 });
 

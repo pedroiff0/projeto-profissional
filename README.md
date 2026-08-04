@@ -114,6 +114,66 @@ token ou hash.
 
 Detalhes e processo de reporte: [SECURITY.md](SECURITY.md).
 
+## Testes
+
+Suíte com **15 testes** (Jest + Supertest) contra um MongoDB real em memória —
+sem mock de banco.
+
+```bash
+cd app
+npm test                      # suíte completa (~10 s)
+npm run test:watch            # re-executa ao salvar
+npm test -- auth.test.js      # um arquivo
+npm run test:coverage         # cobertura
+```
+
+Documentação completa: [docs/testing.md](docs/testing.md).
+
+## Teste de carga
+
+Stack de teste isolada (banco próprio, descartável) e cenário k6 dockerizado.
+
+```bash
+docker compose -f docker-compose.test.yml -p pp-test up -d --build
+docker compose -f docker-compose.test.yml -p pp-test exec -T app-test node scripts/seed-carga.js 50
+docker compose -f docker-compose.test.yml -p pp-test --profile carga \
+  run --rm -e PERFIL=carga -e CARGA_VUS=100 k6 run /scripts/carga.js
+```
+
+Resultados medidos em Intel i5-9400F (6 núcleos), 1 instância:
+
+| Carga | Erros | Vazão | Leitura p95 | Situação |
+|---|---|---|---|---|
+| 100 VUs | 0,00% | 214 req/s | 287 ms | Todos os limiares aprovados |
+| 200 VUs | 0,00% | 262 req/s | 989 ms | Sem erros, latência acima da meta |
+
+O gargalo é o login (bcrypt custo 12, limitado por CPU): ~4,5 logins/s por
+instância. A aplicação é *stateless*, então escala horizontalmente.
+
+Metodologia, perfis (`smoke`, `carga`, `estresse`, `pico`, `auth`) e análise:
+[docs/load-testing.md](docs/load-testing.md).
+
+## Ambientes
+
+| | Produção | Teste / carga |
+|---|---|---|
+| Arquivo | `docker-compose.yml` | `docker-compose.test.yml` |
+| Projeto | `pp` | `pp-test` |
+| Banco | `app_db`, volume persistente | `app_test_db`, `tmpfs` descartável |
+| Porta | `127.0.0.1:5000` | `127.0.0.1:5001` |
+| Limitação de taxa | Ativa | Desativada |
+
+As duas podem rodar ao mesmo tempo, em redes Docker separadas.
+
+## Documentação
+
+- [docs/architecture.md](docs/architecture.md) — camadas e fluxo de requisição
+- [docs/testing.md](docs/testing.md) — suíte npm, como escrever testes
+- [docs/load-testing.md](docs/load-testing.md) — capacidade medida
+- [docs/deployment.md](docs/deployment.md) — deploy, proxy reverso, backup
+- [SECURITY.md](SECURITY.md) — arquitetura de segurança
+- [AGENTS.md](AGENTS.md) — instruções para agentes de código
+
 ## Adaptar para um projeto novo
 
 1. `app/package.json`: `name` e `description`.

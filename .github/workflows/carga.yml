@@ -1,0 +1,71 @@
+name: Teste de carga
+
+# Nao roda a cada push: levaria minutos e daria resultado ruidoso em
+# executor compartilhado. Manual ou semanal.
+on:
+  workflow_dispatch:
+    inputs:
+      perfil:
+        description: 'Perfil de carga'
+        type: choice
+        options: [smoke, carga, estresse, pico, auth]
+        default: carga
+      vus:
+        description: 'Usuarios virtuais simultaneos'
+        default: '100'
+      duracao:
+        description: 'Duracao do patamar estavel'
+        default: '1m'
+  schedule:
+    - cron: '0 4 * * 1' # segundas, 04:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  carga:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Subir a stack de teste
+        run: docker compose -f docker-compose.test.yml -p pp-test up -d --build
+
+      - name: Aguardar readiness
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5001/api/health/ready; then exit 0; fi
+            sleep 2
+          done
+          echo "App nao ficou pronto a tempo"
+          docker compose -f docker-compose.test.yml -p pp-test logs app-test
+          exit 1
+
+      - name: Semear usuarios de carga
+        run: |
+          docker compose -f docker-compose.test.yml -p pp-test \
+            exec -T app-test node scripts/seed-carga.js 50
+
+      - name: Executar k6
+        run: |
+          docker compose -f docker-compose.test.yml -p pp-test --profile carga run --rm \
+            -e PERFIL=${{ inputs.perfil || 'carga' }} \
+            -e CARGA_VUS=${{ inputs.vus || '100' }} \
+            -e DURACAO=${{ inputs.duracao || '1m' }} \
+            k6 run --summary-export=/resultados/resumo.json /scripts/carga.js
+
+      - name: Publicar resultado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado-carga
+          path: loadtest/resultados/
+          if-no-files-found: ignore
+
+      - name: Logs da aplicacao em caso de falha
+        if: failure()
+        run: docker compose -f docker-compose.test.yml -p pp-test logs app-test
+
+      - name: Derrubar a stack
+        if: always()
+        run: docker compose -f docker-compose.test.yml -p pp-test down -v

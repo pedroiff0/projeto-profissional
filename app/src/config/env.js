@@ -36,6 +36,21 @@ module.exports = {
 
   corsAllowedOrigins: process.env.CORS_ALLOWED_ORIGINS || '',
 
+  // --- Rate limiting -------------------------------------------------------
+  // Configuravel para permitir teste de carga honesto: com o limite padrao
+  // (300 req/5min) qualquer benchmark mede o limiter, nao a aplicacao.
+  // RATE_LIMIT_DISABLED=true e recusado em producao de proposito — desligar
+  // protecao de forca bruta em producao nunca pode ser um acidente de env.
+  rateLimitDisabled: (() => {
+    const off = String(process.env.RATE_LIMIT_DISABLED || '').toLowerCase() === 'true';
+    if (off && (process.env.NODE_ENV || '') === 'production') {
+      throw new Error('RATE_LIMIT_DISABLED=true nao e permitido com NODE_ENV=production');
+    }
+    return off;
+  })(),
+  rateLimitApiMax: Number(process.env.RATE_LIMIT_API_MAX || 300),
+  rateLimitAuthMax: Number(process.env.RATE_LIMIT_AUTH_MAX || 10),
+
   // Seed do admin unico. Sem senha definida, o seed gera uma aleatoria e
   // imprime UMA vez no log de boot.
   adminEmail: process.env.ADMIN_EMAIL || 'admin@example.com',
