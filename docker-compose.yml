@@ -5,7 +5,7 @@ services:
       dockerfile: app/Dockerfile
     ports:
       # Publica so no loopback por padrao. Exponha em 0.0.0.0 conscientemente.
-      - "127.0.0.1:4447:5000"
+      - "${BIND_ADDR:-127.0.0.1}:4447:5000"
     environment:
       NODE_ENV: production
       PORT: 5000

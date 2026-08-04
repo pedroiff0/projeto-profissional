@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: app/Dockerfile
     ports:
-      - "127.0.0.1:4446:5000"
+      - "${BIND_ADDR:-127.0.0.1}:4446:5000"
     environment:
       # staging, nao production: RATE_LIMIT_DISABLED e recusado em producao.
       NODE_ENV: staging

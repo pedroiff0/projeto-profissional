@@ -165,6 +165,20 @@ Metodologia, perfis (`smoke`, `carga`, `estresse`, `pico`, `auth`) e análise:
 
 As duas podem rodar ao mesmo tempo, em redes Docker separadas.
 
+### Acesso de outra máquina
+
+Por padrão o Docker publica só em `127.0.0.1` — de outro host a página não
+abre (e o log da aplicação não acusa nada, porque o pacote nunca chega).
+Defina `BIND_ADDR` no `.env` com a interface desejada:
+
+```bash
+BIND_ADDR=100.120.54.126          # IP da VPN/Tailscale
+APP_BASE_URL=http://100.120.54.126:4447
+COOKIE_SECURE=false               # obrigatório em HTTP puro
+```
+
+`BIND_ADDR=0.0.0.0` expõe em todas as interfaces — só com firewall na frente.
+
 ## Documentação
 
 - [docs/architecture.md](docs/architecture.md) — camadas e fluxo de requisição
