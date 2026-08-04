@@ -1,0 +1,14 @@
+<%- include('partials/header', { title: 'Primeiro acesso' }) %>
+<section class="card auth-card">
+  <h1>Defina sua senha</h1>
+  <p class="muted">Sua conta foi criada com uma senha temporária. Troque-a para continuar.</p>
+  <div id="error" class="alert alert-error" hidden></div>
+  <form id="form-primeiro-acesso" novalidate>
+    <label class="field">
+      <span>Nova senha</span>
+      <input id="newPassword" type="password" autocomplete="new-password" required />
+    </label>
+    <button type="submit" class="btn-primary btn-block">Salvar e continuar</button>
+  </form>
+</section>
+<%- include('partials/footer', { pageScript: 'primeiro-acesso' }) %>

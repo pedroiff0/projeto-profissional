@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+
+# Ambiente / segredos — NUNCA versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Build / cache / cobertura
+coverage/
+dist/
+*.log
+npm-debug.log*
+.cache/
+
+# Editores / SO
+.DS_Store
+.idea/
+*.swp

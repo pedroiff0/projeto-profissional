@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title : 'Projeto Profissional' %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">Projeto Profissional</a>
+  <nav>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <a href="/app">Painel</a>
+      <% if (user.role === 'admin') { %><a href="/admin">Usuários</a><% } %>
+      <a href="/perfil">Perfil</a>
+      <button id="btn-logout" type="button" class="btn-link">Sair</button>
+    <% } else { %>
+      <a href="/login">Entrar</a>
+    <% } %>
+  </nav>
+</header>
+<main class="container">

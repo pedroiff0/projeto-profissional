@@ -1,0 +1,19 @@
+<%- include('partials/header', { title: 'Entrar' }) %>
+<section class="card auth-card">
+  <h1>Entrar</h1>
+  <div id="error" class="alert alert-error" hidden></div>
+  <form id="form-login" method="POST" action="/api/auth/login" novalidate>
+    <label class="field">
+      <span>E-mail</span>
+      <input id="email" name="email" type="email" autocomplete="username" required />
+    </label>
+    <label class="field">
+      <span>Senha</span>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit" class="btn-primary btn-block">Entrar</button>
+  </form>
+  <p class="auth-foot"><a href="/forgot-password">Esqueci minha senha</a></p>
+  <p class="muted small">Não há autocadastro: contas são criadas pelo administrador.</p>
+</section>
+<%- include('partials/footer', { pageScript: 'login' }) %>

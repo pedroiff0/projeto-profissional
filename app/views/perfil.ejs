@@ -1,0 +1,19 @@
+<%- include('partials/header', { title: 'Perfil' }) %>
+<section class="card">
+  <h1>Meu perfil</h1>
+  <div id="error" class="alert alert-error" hidden></div>
+  <div id="ok" class="alert alert-ok" hidden></div>
+  <form id="form-perfil" novalidate>
+    <label class="field"><span>Nome</span><input id="name" type="text" value="<%= user.name %>" required /></label>
+    <label class="field"><span>E-mail</span><input type="email" value="<%= user.email %>" disabled /></label>
+    <button type="submit" class="btn-primary">Salvar</button>
+  </form>
+  <hr />
+  <h2>Alterar senha</h2>
+  <form id="form-senha" novalidate>
+    <label class="field"><span>Senha atual</span><input id="currentPassword" type="password" autocomplete="current-password" required /></label>
+    <label class="field"><span>Nova senha</span><input id="newPassword" type="password" autocomplete="new-password" required /></label>
+    <button type="submit" class="btn-primary">Alterar senha</button>
+  </form>
+</section>
+<%- include('partials/footer', { pageScript: 'perfil' }) %>
