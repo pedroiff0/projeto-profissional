@@ -43,7 +43,10 @@ app/src/
 5. **Sem JS inline**: a CSP não permite `unsafe-inline`. Todo script em
    arquivo servido de `/js/`.
 6. **Segredos só em `.env`**, lidos por `config/env.js`. Nunca hardcoded.
-7. **Teste junto**: rota nova sem teste em `app/tests/` não está pronta.
+7. **Interface segue o `DESIGN.md`**: cor, tipografia, elevação e espaçamento
+   saem dos tokens de lá, não de valor improvisado no CSS. Mudou o visual,
+   atualize o token e rode `npx -y @google/design.md lint DESIGN.md`.
+8. **Teste junto**: rota nova sem teste em `app/tests/` não está pronta.
 
 ## O que NUNCA fazer
 
@@ -57,6 +60,8 @@ app/src/
 - ❌ Interpolar dado do banco em HTML sem `escapeHtml()`, nem usar `<%- %>`
   do EJS com conteúdo de usuário.
 - ❌ Montar `RegExp` a partir de entrada do usuário sem escapar metacaracteres.
+- ❌ Introduzir emoji na interface (use SVG inline) ou cinza novo em texto
+  sem medir contraste — ver `DESIGN.md`, seção Do's and Don'ts.
 - ❌ Logar senha, token, hash ou PII.
 - ❌ Commitar `.env`, ou pôr valor real em `.env.example`.
 - ❌ Remover `sanitizeInput`, `csrfGuard` ou os rate limiters "porque atrapalha

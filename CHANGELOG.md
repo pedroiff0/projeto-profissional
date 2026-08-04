@@ -5,6 +5,12 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não lançado]
 
+### Adicionado
+
+- `DESIGN.md`: sistema visual em tokens no formato DESIGN.md (Google), com
+  exports `tailwind.theme.json` e `tokens.json`. Lint oficial sem erros nem
+  avisos; contrastes de texto verificados contra WCAG AA.
+
 ## [0.1.0]
 
 ### Adicionado

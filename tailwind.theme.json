@@ -1,0 +1,116 @@
+{
+  "theme": {
+    "extend": {
+      "colors": {
+        "primary": "#2563eb",
+        "secondary": "#0b5f9e",
+        "tertiary": "#0f172a",
+        "neutral": "#f6f8fb",
+        "surface": "#ffffff",
+        "text": "#0f172a",
+        "muted": "#475569",
+        "subtle": "#64748b",
+        "border": "#e2e8f0",
+        "error": "#b42318",
+        "success": "#067647",
+        "footer-bg": "#0f172a",
+        "footer-text": "#b6c2d1"
+      },
+      "fontFamily": {
+        "h1": [
+          "system-ui"
+        ],
+        "h2": [
+          "system-ui"
+        ],
+        "h3": [
+          "system-ui"
+        ],
+        "lead": [
+          "system-ui"
+        ],
+        "body-md": [
+          "system-ui"
+        ],
+        "body-sm": [
+          "system-ui"
+        ],
+        "eyebrow": [
+          "system-ui"
+        ],
+        "stat": [
+          "system-ui"
+        ]
+      },
+      "fontSize": {
+        "h1": [
+          "3.1rem",
+          {
+            "letterSpacing": "-0.03em",
+            "fontWeight": "800"
+          }
+        ],
+        "h2": [
+          "2.1rem",
+          {
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "h3": [
+          "1.15rem",
+          {
+            "fontWeight": "700"
+          }
+        ],
+        "lead": [
+          "1.15rem",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "body-md": [
+          "1rem",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "0.9rem",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "eyebrow": [
+          "0.8rem",
+          {
+            "letterSpacing": "0.08em",
+            "fontWeight": "700"
+          }
+        ],
+        "stat": [
+          "2.3rem",
+          {
+            "fontWeight": "800"
+          }
+        ]
+      },
+      "borderRadius": {
+        "sm": "9px",
+        "md": "10px",
+        "lg": "16px",
+        "xl": "18px",
+        "pill": "999px",
+        "section": "26px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "40px",
+        "section": "72px"
+      }
+    }
+  }
+}

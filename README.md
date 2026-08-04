@@ -185,6 +185,9 @@ COOKIE_SECURE=false               # obrigatório em HTTP puro
 - [docs/testing.md](docs/testing.md) — suíte npm, como escrever testes
 - [docs/load-testing.md](docs/load-testing.md) — capacidade medida
 - [docs/deployment.md](docs/deployment.md) — deploy, proxy reverso, backup
+- [DESIGN.md](DESIGN.md) — sistema visual em tokens (spec DESIGN.md do Google):
+  paleta, tipografia, elevação, componentes e as regras de acessibilidade.
+  Valide com `npx -y @google/design.md lint DESIGN.md`.
 - [SECURITY.md](SECURITY.md) — arquitetura de segurança
 - [AGENTS.md](AGENTS.md) — instruções para agentes de código
 
