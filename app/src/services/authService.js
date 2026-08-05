@@ -1,9 +1,12 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../models/user.model');
 const AppError = require('../utils/AppError');
 const env = require('../config/env');
+const { signToken } = require('../middleware/auth');
+
+function generateToken(user) {
+  return signToken(user, 'production');
+}
 
 const SALT_ROUNDS = 12;
 const RESET_TTL_MS = 60 * 60 * 1000;
@@ -25,14 +28,6 @@ function toPublicUser(user) {
   };
 }
 
-function generateToken(user) {
-  return jwt.sign(
-    { id: user._id.toString(), role: user.role },
-    env.jwtSecret,
-    { expiresIn: env.jwtExpiresIn, algorithm: 'HS256' }
-  );
-}
-
 function hashPassword(plain) {
   return bcrypt.hash(plain, SALT_ROUNDS);
 }
@@ -46,7 +41,9 @@ function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
-async function login({ email, password }) {
+// models = models da connection do modo (banco) atual; mode isola o JWT.
+async function login({ email, password }, models, mode) {
+  const User = models.User;
   const user = await User.findOne({ email }).select('+passwordHash');
 
   if (!user) {
@@ -78,12 +75,13 @@ async function login({ email, password }) {
   user.lastLoginAt = new Date();
   await user.save();
 
-  return { user: toPublicUser(user), token: generateToken(user) };
+  return { user: toPublicUser(user), token: signToken(user, mode) };
 }
 
 // Troca de senha (primeiro acesso ou usuario autenticado). Invalida todas as
 // sessoes anteriores via tokenValidAfter.
-async function changePassword(userId, { currentPassword, newPassword }) {
+async function changePassword(userId, { currentPassword, newPassword }, models) {
+  const User = models.User;
   const user = await User.findById(userId).select('+passwordHash');
   if (!user) throw new AppError('Usuario nao encontrado', 404);
 
@@ -102,11 +100,12 @@ async function changePassword(userId, { currentPassword, newPassword }) {
   user.passwordResetExpires = null;
   await user.save();
 
-  return { user: toPublicUser(user), token: generateToken(user) };
+  return { user: toPublicUser(user), token: signToken(user) };
 }
 
 // Sempre "sucesso" para o chamador: nao revela se o e-mail existe.
-async function requestPasswordReset(email) {
+async function requestPasswordReset(email, models) {
+  const User = models.User;
   const user = await User.findOne({ email, isActive: true });
   if (!user) return null;
 
@@ -119,7 +118,8 @@ async function requestPasswordReset(email) {
   return { user, token };
 }
 
-async function resetPassword({ token, newPassword }) {
+async function resetPassword({ token, newPassword }, models) {
+  const User = models.User;
   const tokenHash = sha256(token);
   const user = await User.findOne({
     passwordResetTokenHash: tokenHash,
@@ -137,7 +137,8 @@ async function resetPassword({ token, newPassword }) {
   return toPublicUser(user);
 }
 
-async function updateProfile(userId, data) {
+async function updateProfile(userId, data, models) {
+  const User = models.User;
   const user = await User.findById(userId);
   if (!user) throw new AppError('Usuario nao encontrado', 404);
   if (data.name !== undefined) user.name = data.name;

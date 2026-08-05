@@ -12,6 +12,8 @@ process.env.SEED_PASSWORD_FILE = ARQ_SENHA;
 
 const express = require('express');
 const request = require('supertest');
+const { seedAdminIfEmpty } = require('../src/seeds/admin.seed');
+const { carregarDemo } = require('../src/services/demoService');
 const { createApp } = require('../src/app');
 const { setupDb, teardownDb, clearDb } = require('./helpers/db');
 const { HTTP_CATALOG } = require('../src/routes/status.routes');
@@ -109,18 +111,17 @@ describe('Consistência do catálogo HTTP', () => {
   });
 });
 
-// Render de páginas autenticadas (projeto/catálogo) após login via cookie.
-const { seedAdminIfEmpty } = require('../src/seeds/admin.seed');
-const { carregarDemo } = require('../src/services/demoService');
-
 describe('Páginas de domínio (autenticadas)', () => {
+  const models = require('./helpers/models');
+  let pm;
+  beforeAll(async () => { pm = models.prod; });
   it('login via cookie e render de /projetos e /catalogo', async () => {
-    await seedAdminIfEmpty({ populaDemo: false });
+    await seedAdminIfEmpty({ populaDemo: false }, pm);
     // Tira o mustChangePassword para poder acessar areas logadas no teste.
-    await require('../src/models/user.model').updateOne(
+    await pm.User.updateOne(
       { email: 'admin@admin.com' }, { $set: { mustChangePassword: false } }
     );
-    await carregarDemo({ usuarios: 4, projetos: 10, itens: 20 });
+    await carregarDemo({ usuarios: 4, projetos: 10, itens: 20 }, pm);
     const login = await request(app).post('/api/auth/login')
       .send({ email: 'admin@admin.com', password: 'AdminComum123!!' });
     const cookie = login.headers['set-cookie'][0].split(';')[0]; // token=...

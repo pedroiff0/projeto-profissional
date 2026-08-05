@@ -4,7 +4,8 @@ process.env.JWT_SECRET = 'test-secret-com-mais-de-32-caracteres-ok!!';
 const request = require('supertest');
 const { createApp } = require('../src/app');
 const { setupDb, teardownDb, clearDb } = require('./helpers/db');
-const User = require('../src/models/user.model');
+const models = require('./helpers/models');
+let User;
 const authService = require('../src/services/authService');
 
 const app = createApp();
@@ -20,6 +21,7 @@ async function criar(role, email) {
 }
 
 beforeAll(setupDb);
+beforeAll(async () => { User = models.prod.User; });
 afterAll(teardownDb);
 afterEach(clearDb);
 

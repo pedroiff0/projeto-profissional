@@ -12,15 +12,15 @@ function extractToken(req) {
   return null;
 }
 
-async function resolveUser(token) {
+async function resolveUser(token, mode, Models) {
   const payload = jwt.verify(token, env.jwtSecret, { algorithms: ['HS256'] });
-  const user = await User.findById(payload.id);
+  // Isolamento por banco: um token de 'demo' nao abre 'production' (e vice-versa).
+  if (mode && payload.mode && payload.mode !== mode) return null;
+  const UserModel = (Models && Models.User) || User;
+  const user = await UserModel.findById(payload.id);
   if (!user || !user.isActive) return null;
   // Invalidacao global de sessao: token emitido antes de tokenValidAfter
   // (troca de senha, logout global, desativacao) e recusado.
-  // ATENCAO: `iat` do JWT e em SEGUNDOS e truncado para baixo. Comparar
-  // direto com milissegundos invalidaria tokens legitimos emitidos no mesmo
-  // segundo — por isso os dois lados sao normalizados para segundos.
   if (payload.iat && user.tokenValidAfter) {
     const validAfterSec = Math.floor(user.tokenValidAfter.getTime() / 1000);
     if (payload.iat < validAfterSec) return null;
@@ -43,7 +43,7 @@ async function auth(req, res, next) {
   try {
     const token = extractToken(req);
     if (!token) throw new AppError('Autenticacao necessaria', 401);
-    const user = await resolveUser(token);
+    const user = await auth._resolve(token, req.mode, req.models);
     if (!user) throw new AppError('Autenticacao necessaria', 401);
     req.user = toRequestUser(user);
     next();
@@ -53,4 +53,16 @@ async function auth(req, res, next) {
   }
 }
 
-module.exports = { auth, extractToken, resolveUser, toRequestUser };
+// Gera token ja incluindo o modo (banco) — usado pelo auth e pelo autologin demo.
+function signToken(user, mode) {
+  return jwt.sign(
+    { id: user._id.toString(), role: user.role, mode: mode || 'production' },
+    env.jwtSecret,
+    { algorithm: 'HS256', expiresIn: env.jwtExpiresIn }
+  );
+}
+
+// exposto para que o resolveUser receba Models quando houver (evita require circular).
+auth._resolve = resolveUser;
+
+module.exports = { auth, extractToken, resolveUser, toRequestUser, signToken };

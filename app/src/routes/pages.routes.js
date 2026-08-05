@@ -5,17 +5,12 @@ const {
   requirePageRole,
   requirePasswordChanged,
 } = require('../middleware/pageAuth');
-
 const { HTTP_CATALOG } = require('../routes/status.routes');
+
 const router = express.Router();
 
-router.get('/', optionalPageAuth, (req, res) => {
-  if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/app');
-  res.render('landing');
-});
-
 router.get('/login', optionalPageAuth, (req, res) => {
-  if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/app');
+  if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/');
   res.render('login');
 });
 
@@ -25,15 +20,21 @@ router.get('/reset-password', (req, res) =>
   res.render('reset-password', { token: String(req.query.token || '') })
 );
 
-// Fora do guard requirePasswordChanged de proposito (senao redirecionaria
-// para si mesma).
 router.get('/primeiro-acesso', pageAuth, (req, res) =>
   res.render('primeiro-acesso', { user: req.user })
 );
 
-router.get('/app', pageAuth, requirePasswordChanged, (req, res) =>
-  res.render('dashboard', { user: req.user, pageScript: 'dashboard' })
-);
+// Dashboard (montado sob /app, /test e /demo -> a rota interna e '/')
+router.get('/', pageAuth, requirePasswordChanged, (req, res) => {
+  const modo = (req.baseUrl || '').replace('/', '') || 'app';
+  res.render('dashboard', {
+    user: req.user,
+    pageScript: 'dashboard',
+    modo,
+    demoApi: `/api/${modo}/demo/load`,
+    mostraDemo: modo !== 'production',
+  });
+});
 
 router.get('/perfil', pageAuth, requirePasswordChanged, (req, res) =>
   res.render('perfil', { user: req.user })
@@ -45,6 +46,10 @@ router.get('/projetos', pageAuth, requirePasswordChanged, (req, res) =>
 
 router.get('/catalogo', pageAuth, requirePasswordChanged, (req, res) =>
   res.render('catalogo', { user: req.user, pageScript: 'catalogo' })
+);
+
+router.get('/admin', pageAuth, requirePasswordChanged, requirePageRole('admin'), (req, res) =>
+  res.render('admin/usuarios', { user: req.user })
 );
 
 router.get('/status', (req, res) => {

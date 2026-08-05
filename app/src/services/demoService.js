@@ -1,126 +1,72 @@
-const User = require('../models/user.model');
-const Project = require('../models/project.model');
-const CatalogItem = require('../models/catalogItem.model');
-const authService = require('../services/authService');
+const authService = require('./authService');
+const { resolverSenhaAdmin } = require('../seeds/admin.seed');
 
-const NOMES = [
-  'Ana Oliveira', 'Bruno Santos', 'Carla Lima', 'Diego Souza', 'Elena Costa',
-  'Felipe Almeida', 'Gabriela Rocha', 'Henrique Dias', 'Isabela Martins',
-  'João Pereira', 'Karen Nunes', 'Lucas Ferreira', 'Marina Silva', 'Nuno Carvalho',
-  'Olívia Borges', 'Pedro Rocha', 'Quésia Alves', 'Rafael Gomes', 'Sofia Mendes',
-  'Thiago Barbosa', 'Úrsula Pinto', 'Vitor Hugo', 'Wagner Castro', 'Yara Ribeiro',
-  'Zeca Monteiro', 'Beatriz Lopes', 'César Ramos', 'Débora Vieira', 'Eduardo Tavares',
-  'Fernanda Cardoso', 'Gustavo Teixeira', 'Helena Moraes', 'Igor Nogueira',
-];
-const CATEGORIAS = ['Escritório', 'TI', 'Limpeza', 'Mobiliário', 'Papelaria', 'Industrial'];
-const STATUS = ['planejado', 'em_andamento', 'concluido', 'pausado'];
-const TAGS = ['urgente', 'interno', 'cliente', 'poc', 'melhoria', 'bug', 'feature'];
+// Popula o banco de DEMO (ou teste) com um conjunto completo para exploracao.
+// Recebe `models` da connection do modo. Nao duplica: se ja houver projetos ou
+// itens, retorna { carregado:false }. `force` apaga e repopula.
+async function carregarDemo({ usuarios = 30, projetos = 40, itens = 120, force = false } = {}, models) {
+  const { User, Project, CatalogItem } = models;
+  const { senha, doArquivo } = resolverSenhaAdmin();
+  const passwordHash = await authService.hashPassword(senha);
 
-function hashSenhaComum() {
-  // Senha compartilhada dos usuarios demo (mesma do admin, vem do arquivo).
-  // Usamos um hash fixo calculado uma vez por processo.
-  if (!hashSenhaComum._cache) {
-    // eslint-disable-next-line global-require
-    const fs = require('fs');
-    const os = require('os');
-    const path = require('path');
-    let senha = 'AdminComum123!!';
-    const arq = process.env.SEED_PASSWORD_FILE;
-    if (arq && fs.existsSync(arq)) {
-      const txt = fs.readFileSync(arq, 'utf8');
-      const m = txt.match(/Senha:\s*`?["']?(.+?)["'`]?\s*$/im);
-      if (m) senha = m[1].replace(/[`"']/g, '').trim();
-    }
-    hashSenhaComum._cache = senha;
+  if (!force) {
+    const jaExiste =
+      (await Project.countDocuments({})) > 0 || (await CatalogItem.countDocuments({})) > 0;
+    if (jaExiste) return { carregado: false, motivo: 'ja_existe' };
   }
-  return hashSenhaComum._cache;
-}
-
-async function popularUsuarios(qtd) {
-  const senha = hashSenhaComum();
-  const hash = await authService.hashPassword(senha);
-  const ops = [];
-  for (let i = 0; i < qtd; i += 1) {
-    const nome = NOMES[i % NOMES.length];
-    const seq = Math.floor(i / NOMES.length);
-    const email = `demo${i + 1}@example.com`;
-    ops.push({
-      updateOne: {
-        filter: { email },
-        update: {
-          $set: {
-            name: seq ? `${nome} ${seq + 1}` : nome,
-            email,
-            role: i % 7 === 0 ? 'admin' : 'user',
-            passwordHash: hash,
-            isActive: true,
-            mustChangePassword: false,
-            tokenValidAfter: new Date(Date.now() - 60_000),
-          },
-        },
-        upsert: true,
-      },
-    });
-  }
-  await User.bulkWrite(ops);
-  return qtd;
-}
-
-async function popularProjetos(qtd, owners) {
-  const nomes = ['Migração', 'Refatoração', 'Onboarding', 'Dashboard', 'API', 'App', 'Pipeline',
-    'Relatório', 'Integração', 'Backup', 'Cache', 'Auditoria', 'Mobile', 'Web', 'Docs'];
-  const ops = [];
-  for (let i = 0; i < qtd; i += 1) {
-    const owner = owners[i % owners.length];
-    const status = STATUS[i % STATUS.length];
-    const tags = [TAGS[i % TAGS.length], TAGS[(i + 3) % TAGS.length]];
-    ops.push({
-      name: `${nomes[i % nomes.length]} #${i + 1}`,
-      description: `Projeto de demonstração ${i + 1} — exercita listagem, filtro e detalhe.`,
-      status,
-      tags: [...new Set(tags)],
-      ownerId: owner._id,
-      ownerName: owner.name,
-    });
-  }
-  await Project.insertMany(ops);
-  return qtd;
-}
-
-async function popularCatalogo(qtd) {
-  const ops = [];
-  for (let i = 0; i < qtd; i += 1) {
-    const cat = CATEGORIAS[i % CATEGORIAS.length];
-    ops.push({
-      sku: `SKU-${String(i + 1).padStart(4, '0')}`,
-      name: `Item de catálogo ${i + 1}`,
-      category: cat,
-      price: Number((10 + (i * 7.5) % 990).toFixed(2)),
-      stock: (i * 13) % 500,
-      active: i % 9 !== 0,
-    });
-  }
-  await CatalogItem.insertMany(ops);
-  return qtd;
-}
-
-// Carrega o conjunto completo de demonstração, se ainda não existir.
-// 'force' recria do zero (apaga coleções demo antes).
-async function carregarDemo({ projetos = 40, itens = 120, usuarios = 30, force = false } = {}) {
   if (force) {
     await Project.deleteMany({});
     await CatalogItem.deleteMany({});
     await User.deleteMany({ email: /@example\.com$/ });
-  } else {
-    const jaTem = await CatalogItem.countDocuments({});
-    if (jaTem > 0) return { carregado: false, motivo: 'ja_existe' };
   }
 
-  const nU = await popularUsuarios(usuarios);
-  const owners = await User.find({ email: /@example\.com$/ }).limit(usuarios);
-  const nP = await popularProjetos(projetos, owners);
-  const nI = await popularCatalogo(itens);
-  return { carregado: true, usuarios: nU, projetos: nP, itens: nI };
+  // Usuarios demo compartilham a senha do admin (facilita login manual).
+  const perfis = [];
+  for (let i = 1; i <= usuarios; i += 1) {
+    perfis.push({
+      name: `Demo ${i}`,
+      email: `demo${i}@example.com`,
+      role: i % 7 === 0 ? 'admin' : 'user',
+      passwordHash,
+      isActive: true,
+      mustChangePassword: false,
+      tokenValidAfter: new Date(Date.now() - 60_000),
+    });
+  }
+  await User.insertMany(perfis);
+
+  const status = ['planejado', 'em_andamento', 'concluido', 'pausado'];
+  const tags = ['urgente', 'cliente', 'interno', 'beta', 'pilotis'];
+  const owners = await User.find({}).lean();
+  const projDocs = [];
+  for (let i = 1; i <= projetos; i += 1) {
+    const dono = owners[i % owners.length];
+    projDocs.push({
+      name: `Projeto Demo ${i}`,
+      description: `Descrição de demonstração #${i}.`,
+      status: status[i % status.length],
+      tags: [tags[i % tags.length], tags[(i + 2) % tags.length]],
+      ownerId: dono._id,
+      ownerName: dono.name,
+    });
+  }
+  await Project.insertMany(projDocs);
+
+  const categorias = ['Escritório', 'TI', 'Limpeza', 'Mobiliário', 'Papelaria', 'Industrial'];
+  const itensDocs = [];
+  for (let i = 1; i <= itens; i += 1) {
+    itensDocs.push({
+      sku: `SKU-${String(i).padStart(4, '0')}`,
+      name: `Item de Catálogo ${i}`,
+      category: categorias[i % categorias.length],
+      price: Number((10 + (i % 90) + Math.random()).toFixed(2)),
+      stock: (i * 3) % 200,
+      active: i % 5 !== 0,
+    });
+  }
+  await CatalogItem.insertMany(itensDocs);
+
+  return { carregado: true, usuarios, projetos, itens, senha, doArquivo };
 }
 
-module.exports = { carregarDemo, popularUsuarios, popularProjetos, popularCatalogo };
+module.exports = { carregarDemo };

@@ -13,7 +13,7 @@ const COOKIE_OPTIONS = {
 
 async function login(req, res, next) {
   try {
-    const { user, token } = await authService.login(req.body);
+    const { user, token } = await authService.login(req.body, req.models, req.mode);
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
     await audit('auth.login.success', { req, actorId: user.id });
     // token tambem no corpo para clientes nao-browser (Bearer).
@@ -36,7 +36,7 @@ async function me(req, res) {
 
 async function updateProfile(req, res, next) {
   try {
-    const user = await authService.updateProfile(req.user.id, req.body);
+    const user = await authService.updateProfile(req.user.id, req.body, req.models);
     res.status(200).json({ user });
   } catch (err) {
     next(err);
@@ -45,7 +45,7 @@ async function updateProfile(req, res, next) {
 
 async function changePassword(req, res, next) {
   try {
-    const { user, token } = await authService.changePassword(req.user.id, req.body);
+    const { user, token } = await authService.changePassword(req.user.id, req.body, req.models);
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
     await audit('auth.password.changed', { req, actorId: user.id });
     res.status(200).json({ user, token });
@@ -56,7 +56,7 @@ async function changePassword(req, res, next) {
 
 async function forgotPassword(req, res, next) {
   try {
-    const result = await authService.requestPasswordReset(req.body.email);
+    const result = await authService.requestPasswordReset(req.body.email, req.models);
     if (result) {
       await audit('auth.password.reset_requested', { req, actorId: result.user._id });
       // TODO(producao): enviar o link por e-mail. Em dev, o link vai ao log.
@@ -73,7 +73,7 @@ async function forgotPassword(req, res, next) {
 
 async function resetPassword(req, res, next) {
   try {
-    const user = await authService.resetPassword(req.body);
+    const user = await authService.resetPassword(req.body, req.models);
     await audit('auth.password.reset_completed', { req, actorId: user.id });
     res.status(200).json({ message: 'Senha redefinida com sucesso.' });
   } catch (err) {
