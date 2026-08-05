@@ -7,6 +7,11 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 
+- Mapeamento de respostas HTTP: página `/status` (tabela filtrável por `?q=`),
+  API `GET /api/status/:code` (JSON estruturado, 404 se não mapeado) e página
+  de erro rericada (código grande, título amigável, ação de recuperação, botão
+  Voltar e detalhes de validação). Catálogo centralizado em `HTTP_CATALOG`/
+  `ERROR_CATALOG`; suíte sobe de 20 para 44 testes.
 - `DESIGN.md`: sistema visual em tokens no formato DESIGN.md (Google), com
   exports `tailwind.theme.json` e `tokens.json`. Lint oficial sem erros nem
   avisos; contrastes de texto verificados contra WCAG AA.

@@ -1,7 +1,24 @@
-<%- include('partials/header', { title: 'Erro ' + status }) %>
-<section class="card">
-  <h1><%= status %></h1>
-  <p><%= message %></p>
-  <a href="/">Voltar ao início</a>
+<%- include('partials/header', { title: (typeof title !== 'undefined' ? title : ('Erro ' + status)) }) %>
+<section class="card error-card">
+  <div class="error-eyebrow">STATUS HTTP</div>
+  <h1 class="error-code"><%= status %></h1>
+  <p class="error-title"><%= typeof title !== 'undefined' ? title : 'Ocorreu um erro' %></p>
+  <p class="error-message"><%= message %></p>
+  <% if (typeof action !== 'undefined' && action) { %>
+    <p class="error-action"><%= action %></p>
+  <% } %>
+  <% if (typeof details !== 'undefined' && details) { %>
+    <ul class="error-details">
+      <% Object.entries(details).forEach(function (entry) { %>
+        <% (entry[1] || []).forEach(function (msg) { %>
+          <li><strong><%= entry[0] %></strong>: <%= msg %></li>
+        <% }); %>
+      <% }); %>
+    </ul>
+  <% } %>
+  <div class="error-actions">
+    <a class="btn-primary" href="<%= typeof backUrl !== 'undefined' && backUrl ? backUrl : '/' %>">Voltar</a>
+    <a class="btn-outline" href="/">Página inicial</a>
+  </div>
 </section>
 <%- include('partials/footer') %>

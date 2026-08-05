@@ -27,7 +27,7 @@ cp .env.example .env
 # gere um secret:  openssl rand -base64 48   -> cole em JWT_SECRET
 
 cd app && npm install
-npm test          # 20 testes
+npm test          # 44 testes
 npm run dev       # http://localhost:4447
 ```
 
@@ -80,7 +80,26 @@ mora no service; o controller só traduz HTTP.
 | GET    | `/api/health/{live,ready}`            | público |
 
 Páginas: `/`, `/login`, `/forgot-password`, `/reset-password`,
-`/primeiro-acesso`, `/app`, `/perfil`, `/admin`.
+`/primeiro-acesso`, `/app`, `/perfil`, `/admin` e `/status`.
+
+### Mapeamento de respostas HTTP (`/status`)
+
+Catálogo legível de todos os status devolvidos pela aplicação — usado
+internamente e pelo suporte.
+
+- **Página** `GET /status` — tabela com código, nome, classe
+  (sucesso / redirecionamento / erro do cliente / erro do servidor), se é
+  reenviável e a descrição. Filtre por código, nome ou descrição com
+  `?q=timeout`.
+- **API** `GET /api/status/:code` — JSON estruturado (`{ code, name, kind,
+  retryable, desc }`); retorna `404` se o código não estiver mapeado.
+
+As mensagens de erro renderizadas (`views/error.ejs`) usam o mesmo catálogo
+(`ERROR_CATALOG` em `src/middleware/errorHandler.js`): título amigável, ação de
+recuperação, detalhes de validação e botão **Voltar** (aponte para o `Referer`
+same-origin, nunca `javascript:` — a CSP proíbe script inline). Para adicionar
+um status novo, basta acrescentar a entrada em `HTTP_CATALOG` (e em
+`ERROR_CATALOG` se for erro); não há `if`s espalhados pelo handler.
 
 ## Modelo de dados
 
@@ -116,7 +135,7 @@ Detalhes e processo de reporte: [SECURITY.md](SECURITY.md).
 
 ## Testes
 
-Suíte com **20 testes** (Jest + Supertest) contra um MongoDB real em memória —
+Suíte com **44 testes** (Jest + Supertest) contra um MongoDB real em memória —
 sem mock de banco.
 
 ```bash
@@ -199,6 +218,78 @@ COOKIE_SECURE=false               # obrigatório em HTTP puro
 4. Papéis: ajuste o enum em `models/user.model.js` e `schemas/admin.schemas.js`.
 5. Domínio: novo model → service → controller → routes, registrado em
    `routes/index.js`. Teste em `tests/`.
+
+## Desenvolvimento
+
+Fluxo de trabalho recomendado para evoluir este template (vale para qualquer
+projeto derivado):
+
+```bash
+# 1. branch a partir de main, nome por tipo (feat/fix/docs/chore/refactor/test)
+git switch -c feat/mapeamento-http main
+
+# 2. .env local (gitignored) + instalação
+cp .env.example .env            # JWT_SECRET=$(openssl rand -base64 48)
+cd app && npm install
+
+# 3. loop desenvolver → testar → verificar
+npm run dev                     # http://localhost:4447
+npm test                       # suíte Jest (Mongo em memória)
+npm run test:watch             # reexecuta ao salvar
+npm run test:coverage          # cobertura
+
+# 4. antes de commitar: lint de design/contraste e audit de dependências
+npx -y @google/design.md lint DESIGN.md
+npm audit --audit-level=high
+```
+
+### Arquitetura em camadas
+
+Sempre: **Rota → Controller → Service → Model**. O service nunca recebe `req`;
+recebe dados validados + `userId` explícitos. Validação de entrada obrigatória
+com Zod (`validate(schema)`) em todo POST/PUT/PATCH. Erros esperados usam
+`AppError(msg, status)`; o `errorHandler` é o único lugar que formata a resposta.
+Detalhes completos em [AGENTS.md](AGENTS.md) e [docs/architecture.md](docs/architecture.md).
+
+### Convenções de commit
+
+[Padrão Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` nova funcionalidade (incrementa MINOR)
+- `fix:` correção de bug (incrementa PATCH)
+- `docs:` documentação · `refactor:` sem mudança de comportamento
+- `test:` testes · `chore:` manutenção (deps, CI)
+
+Ex.: `feat: adiciona mapeamento de respostas HTTP` · `fix: corrige comparação de iat`.
+
+## Documentação
+
+Este repositório documenta a si mesmo em várias camadas — mantenha todas ao
+alterar o código. Documentação desatualizada conta como déficit de PR.
+
+| Arquivo | Conteúdo | Quando atualizar |
+|---|---|---|
+| `README.md` | Visão geral, stack, endpoints, como rodar | a cada feature/endpoint novo |
+| `AGENTS.md` | Instruções para agentes de código | ao mudar arquitetura/regras |
+| `CLAUDE.md` | Mesma função do AGENTS (público) | junto com AGENTS |
+| `CONTRIBUTING.md` | Como contribuir | ao mudar o fluxo de PR |
+| `SECURITY.md` | Modelo de ameaças e reporte | ao mudar segurança |
+| `CHANGELOG.md` | Histórico por versão (Keep a Changelog) | a cada merge em `main` |
+| `DESIGN.md` | Sistema visual em tokens | ao tocar em CSS/cores |
+| `docs/*.md` | Arquitetura, testes, carga, deploy | ao mudar o respectivo tópico |
+
+Regras práticas:
+
+- **Números são sagrados.** Qualquer métrica na interface ou na doc
+  (req/s, % de erro, ms de latência, nº de testes) tem de vir de medição real.
+  Não publique número não verificado — propaga a correção para todos os arquivos.
+- **CSP govera a view.** Nada de `<script>` inline; todo JS em `public/js/`,
+  referenciado por `pageScript`. Documente o comportamento, não o código.
+- **DESIGN.md é a fonte de tokens.** Antes de criar uma cor/cinza novo em
+  `main.css`, meça o contraste (WCAG AA) e, se aprovado, adicione ao token —
+  não repita hex solto na view.
+- **CHANGELOG é humano.** Agrupe por *Adicionado / Alterado / Corrigido /
+  Segurança*; referencie o PR quando possível.
 
 ## Licença
 
