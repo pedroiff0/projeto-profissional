@@ -32,15 +32,19 @@ router.get('/primeiro-acesso', pageAuth, (req, res) =>
 );
 
 router.get('/app', pageAuth, requirePasswordChanged, (req, res) =>
-  res.render('dashboard', { user: req.user })
+  res.render('dashboard', { user: req.user, pageScript: 'dashboard' })
 );
 
 router.get('/perfil', pageAuth, requirePasswordChanged, (req, res) =>
   res.render('perfil', { user: req.user })
 );
 
-router.get('/admin', pageAuth, requirePasswordChanged, requirePageRole('admin'), (req, res) =>
-  res.render('admin/usuarios', { user: req.user })
+router.get('/projetos', pageAuth, requirePasswordChanged, (req, res) =>
+  res.render('projetos', { user: req.user, pageScript: 'projetos' })
+);
+
+router.get('/catalogo', pageAuth, requirePasswordChanged, (req, res) =>
+  res.render('catalogo', { user: req.user, pageScript: 'catalogo' })
 );
 
 router.get('/status', (req, res) => {

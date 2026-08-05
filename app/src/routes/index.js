@@ -6,6 +6,9 @@ router.use('/health', require('./health.routes'));
 router.use('/auth', require('./auth.routes'));
 router.use('/admin', require('./admin.routes'));
 router.use('/status', require('./status.routes'));
+router.use('/projects', require('./project.routes'));
+router.use('/catalog', require('./catalog.routes'));
+router.use('/demo', require('./demo.routes'));
 
 // Novos dominios entram aqui: router.use('/pedidos', require('./pedidos.routes'));
 

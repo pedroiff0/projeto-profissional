@@ -1,7 +1,15 @@
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret-com-mais-de-32-caracteres-ok!!';
 
+// Fixture de senha compartilhada (mesmo formato do ~/Documentos/comum/...),
+// para o admin@admin.com poder logar nestes testes.
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
+const ARQ_SENHA = path.join(os.tmpdir(), `paginas-senha-${process.pid}.md`);
+fs.writeFileSync(ARQ_SENHA, 'Senha:   `AdminComum123!!`\n');
+process.env.SEED_PASSWORD_FILE = ARQ_SENHA;
+
 const express = require('express');
 const request = require('supertest');
 const { createApp } = require('../src/app');
@@ -98,5 +106,42 @@ describe('Consistência do catálogo HTTP', () => {
       const n = Number(code);
       if (n >= 400) expect(ERROR_CATALOG[n]).toBeDefined();
     }
+  });
+});
+
+// Render de páginas autenticadas (projeto/catálogo) após login via cookie.
+const { seedAdminIfEmpty } = require('../src/seeds/admin.seed');
+const { carregarDemo } = require('../src/services/demoService');
+
+describe('Páginas de domínio (autenticadas)', () => {
+  it('login via cookie e render de /projetos e /catalogo', async () => {
+    await seedAdminIfEmpty({ populaDemo: false });
+    // Tira o mustChangePassword para poder acessar areas logadas no teste.
+    await require('../src/models/user.model').updateOne(
+      { email: 'admin@admin.com' }, { $set: { mustChangePassword: false } }
+    );
+    await carregarDemo({ usuarios: 4, projetos: 10, itens: 20 });
+    const login = await request(app).post('/api/auth/login')
+      .send({ email: 'admin@admin.com', password: 'AdminComum123!!' });
+    const cookie = login.headers['set-cookie'][0].split(';')[0]; // token=...
+
+    const projetos = await request(app).get('/projetos').set('Cookie', cookie);
+    expect(projetos.status).toBe(200);
+    expect(projetos.text).toMatch(/proj-list/);
+
+    const catalogo = await request(app).get('/catalogo').set('Cookie', cookie);
+    expect(catalogo.status).toBe(200);
+    expect(catalogo.text).toMatch(/cat-body/);
+
+    const dash = await request(app).get('/app').set('Cookie', cookie);
+    expect(dash.status).toBe(200);
+    // Botão de demo só aparece fora de produção (NODE_ENV=test aqui).
+    expect(dash.text).toMatch(/btn-demo/);
+  });
+
+  it('página autenticada redireciona para /login sem cookie', async () => {
+    const res = await request(app).get('/projetos');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
   });
 });

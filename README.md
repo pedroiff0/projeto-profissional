@@ -27,7 +27,7 @@ cp .env.example .env
 # gere um secret:  openssl rand -base64 48   -> cole em JWT_SECRET
 
 cd app && npm install
-npm test          # 50 testes
+npm test          # 60 testes
 npm run dev       # http://localhost:4447
 ```
 
@@ -76,10 +76,29 @@ docker compose -f docker-compose.test.yml -p pp-test up -d --build   # teste :44
 - `app/scripts/seed-carga.js [n]` — semeia `n` usuários para o teste de carga
   (só banco de teste; recusa produção).
 
-```
+## Dados de demonstração (botão "Carregar demo")
+
+No dashboard (`/app`), fora de produção, há um botão **Carregar dados de
+demonstração** que popula o banco com um conjunto completo para explorar todas
+as telas: dezenas de usuários, projetos e itens de catálogo. O backend bloqueia
+esse endpoint (`POST /api/demo/load`) em `NODE_ENV=production`.
+
+O que é carregado (via `demoService.carregarDemo`):
+
+- **Usuários** (`@example.com`): ~30, com papéis `admin`/`user` variados, todos
+  com a senha compartilhada do arquivo.
+- **Projetos**: ~40, com status, tags e dono (exercita listagem, filtro, escopo
+  por usuário e detalhe).
+- **Catálogo**: ~120 itens com SKU, categoria, preço e estoque (exercita
+  listagem, busca `$text`, paginação e filtro).
+
+Telas de exploração: `/projetos` (filtro por status/tag + paginação) e
+`/catalogo` (busca + filtro de categoria). Ambas consomem as APIs
+`/api/projects` e `/api/catalog`, validadas com Zod. O botão "Recarregar do
+zero" apaga e repopula (`force=true`).
 app/src/
   config/      env.js (validação de ambiente), db.js
-  models/      Mongoose schemas (user, auditLog)
+  models/      Mongoose schemas (user, auditLog, project, catalogItem)
   services/    regra de negócio (authService, userService)
   controllers/ handlers de rota (req -> service -> res)
   routes/      mapeamento de endpoints
@@ -169,7 +188,7 @@ Detalhes e processo de reporte: [SECURITY.md](SECURITY.md).
 
 ## Testes
 
-Suíte com **50 testes** (Jest + Supertest) contra um MongoDB real em memória —
+Suíte com **60 testes** (Jest + Supertest) contra um MongoDB real em memória —
 sem mock de banco.
 
 ```bash

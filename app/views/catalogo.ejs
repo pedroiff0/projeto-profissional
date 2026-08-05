@@ -1,0 +1,25 @@
+<%- include('partials/header', { title: 'Catálogo' }) %>
+<section class="card">
+  <div class="lp-brand-row" style="margin-bottom:.5rem">
+    <h1>Catálogo</h1>
+    <a class="btn-primary" href="/projetos" style="margin-left:auto">Ver projetos</a>
+  </div>
+  <form class="field status-search" method="get" action="/catalogo">
+    <div class="row">
+      <input type="text" name="q" placeholder="buscar por nome/sku/categoria" aria-label="Buscar" />
+      <select name="category" aria-label="Filtrar por categoria">
+        <option value="">Todas as categorias</option>
+        <option>Escritório</option><option>TI</option><option>Limpeza</option>
+        <option>Mobiliário</option><option>Papelaria</option><option>Industrial</option>
+      </select>
+      <button class="btn-primary" type="submit">Buscar</button>
+    </div>
+  </form>
+  <p id="cat-count" class="muted small"></p>
+  <table class="table status-table">
+    <thead><tr><th>SKU</th><th>Nome</th><th>Categoria</th><th>Preço</th><th>Estoque</th></tr></thead>
+    <tbody id="cat-body"></tbody>
+  </table>
+  <div id="cat-pager" class="row"></div>
+</section>
+<%- include('partials/footer') %>
