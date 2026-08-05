@@ -1,14 +1,37 @@
 <%- include('partials/header', { title: 'Bem-vindo' }) %>
-<section class="card">
-  <h1><%= appName %></h1>
-  <p class="muted">Escolha um ambiente. Cada um usa um banco de dados separado.</p>
-  <div class="row" style="margin-top:1rem; flex-wrap:wrap; gap:1rem">
-    <% bancos.forEach(function(b) { %>
-      <a class="<%= b.classe %>" href="<%= b.href %>" style="flex:1 1 200px; text-align:center; padding:1rem">
-        <strong><%= b.titulo %></strong><br>
-        <span class="muted small"><%= b.desc %></span>
-      </a>
-    <% }); %>
-  </div>
-</section>
+<main class="container">
+  <section class="card hero">
+    <h1><%= appName %></h1>
+    <p class="muted">Um único sistema, <strong>três bancos de dados isolados</strong>. Escolha um ambiente para entrar.</p>
+  </section>
+
+  <section class="card">
+    <h2>Ambientes</h2>
+    <p class="muted">Cada ambiente usa um banco próprio e separado. Um login de um banco <strong>não</strong> funciona nos outros.</p>
+    <div class="row env-grid">
+      <% bancos.forEach(function(b) { %>
+        <article class="env-card <%= b.classe %>">
+          <header class="env-head">
+            <h3><%= b.titulo %></h3>
+            <span class="env-badge"><%= b.badge %></span>
+          </header>
+          <p class="muted small"><%= b.desc %></p>
+          <a class="btn-primary btn-block" href="<%= b.href %>"><%= b.cta %></a>
+        </article>
+      <% }); %>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Sobre o ambiente Demo</h2>
+    <p>O <strong>Demo</strong> é um banco de demonstração <em>populado automaticamente</em> com dezenas de
+    usuários, projetos e itens de catálogo — um playground para explorar todas as telas sem cadastrar nada.</p>
+    <ul class="muted small">
+      <li>Ao clicar em <strong>Explorar Demo</strong>, você entra <strong>já logado</strong> como um usuário de demonstração.</li>
+      <li>Esse usuário <strong>só existe no banco Demo</strong> — ele <strong>não</strong> existe na Produção nem no Teste.</li>
+      <li>Os dados de Demo são descartáveis: recarregados do zero sempre que o banco sobe.</li>
+    </ul>
+    <a class="btn-primary" href="/demo/start">Explorar Demo &rarr;</a>
+  </section>
+</main>
 <%- include('partials/footer') %>
