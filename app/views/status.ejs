@@ -1,0 +1,48 @@
+<%- include('partials/header', { title: 'Mapeamento de respostas HTTP' }) %>
+<section class="card">
+  <div class="error-eyebrow">REFERÊNCIA</div>
+  <h1>Mapeamento de respostas HTTP</h1>
+  <p class="muted">Catálogo dos códigos de status devolvidos pela aplicação, com significado e orientação de recuperação. Use a busca para filtrar por código, nome ou descrição.</p>
+
+  <form class="field status-search" method="get" action="/status">
+    <span>Filtrar</span>
+    <div class="row">
+      <input type="text" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>" placeholder="ex.: 404, unauthorized, timeout" aria-label="Filtro de status" />
+      <button type="submit" class="btn-primary">Buscar</button>
+    </div>
+  </form>
+
+  <% if (!rows.length) { %>
+    <p class="muted">Nenhum status corresponde à busca.</p>
+  <% } else { %>
+    <table class="table status-table">
+      <thead>
+        <tr>
+          <th scope="col">Código</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Classe</th>
+          <th scope="col">Reenviável</th>
+          <th scope="col">Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach(function (r) { %>
+          <tr>
+            <td><span class="status-badge status-<%= r.kind %>"><%= r.code %></span></td>
+            <td><strong><%= r.name %></strong></td>
+            <td class="muted"><%= ({ success: 'Sucesso', redirect: 'Redirecionamento', client: 'Erro do cliente', server: 'Erro do servidor' })[r.kind] %></td>
+            <td>
+              <% if (r.retryable) { %>
+                <span class="dot dot-ok" title="Sim"></span> sim
+              <% } else { %>
+                <span class="dot dot-off" title="Não"></span> não
+              <% } %>
+            </td>
+            <td><%= r.desc %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+<%- include('partials/footer') %>
