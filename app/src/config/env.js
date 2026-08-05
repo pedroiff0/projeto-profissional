@@ -59,8 +59,12 @@ module.exports = {
   lockoutMs: Number(process.env.LOCKOUT_MIN || 30) * 60 * 1000,
 
   // Seed do admin unico. Sem senha definida, o seed gera uma aleatoria e
-  // imprime UMA vez no log de boot.
-  adminEmail: process.env.ADMIN_EMAIL || 'admin@example.com',
+  // imprime UMA vez no log de boot. Em dev/teste usamos admin@admin.com com
+  // senha lida de SEED_PASSWORD_FILE (arquivo local fora do repo, compartilhado
+  // entre projetos no HD do dono).
+  adminEmail: process.env.ADMIN_EMAIL || 'admin@admin.com',
   adminName: process.env.ADMIN_NAME || 'Administrador',
   adminPassword: process.env.ADMIN_PASSWORD || '',
+  // Caminho para o arquivo de senha compartilhada (nao versionado).
+  seedPasswordFile: process.env.SEED_PASSWORD_FILE || '',
 };

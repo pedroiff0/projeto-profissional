@@ -27,12 +27,15 @@ cp .env.example .env
 # gere um secret:  openssl rand -base64 48   -> cole em JWT_SECRET
 
 cd app && npm install
-npm test          # 44 testes
+npm test          # 50 testes
 npm run dev       # http://localhost:4447
 ```
 
-No primeiro boot, se não houver nenhum admin no banco, o sistema cria um e
-imprime a senha **uma única vez** no log. Guarde-a naquele momento.
+No primeiro boot, se não houver nenhum admin no banco, o sistema cria um com
+`admin@admin.com`. A senha vem, **por padrão**, do documento compartilhado
+`~/Documentos/comum/senhas-projetos.md` (arquivo local, não versionado, comum a
+todos os projetos derivados). Se o arquivo não existir, gera uma senha aleatória
+e imprime **uma única vez** no log — guarde-a naquele momento.
 
 Com Docker:
 
@@ -40,7 +43,38 @@ Com Docker:
 JWT_SECRET=$(openssl rand -base64 48) docker compose up --build
 ```
 
-## Estrutura
+## Dois bancos: teste e produção
+
+O template sobe **sempre dois bancos isolados**, nunca compartilhando dados:
+
+| | Produção (`docker-compose.yml`) | Teste/Carga (`docker-compose.test.yml`, `-p pp-test`) |
+|---|---|---|
+| Banco | `app_db` (volume persistente) | `app_test_db` (`tmpfs`, descartável) |
+| População | **Só o admin** `admin@admin.com` | admin + **usuários demo** (Ana, Bruno, Carla, Diego) |
+| Acesso a dados | você insere pela interface | reconfigurável a qualquer momento |
+| Rate limit | ativo | desativado (`RATE_LIMIT_DISABLED`) |
+| `NODE_ENV` | `production` | `staging` |
+
+A produção **nunca** recebe dados de demonstração — ela parte vazia (só o admin)
+e você popula via interface. O banco de teste já nasce populado para inspeção
+visual e testes de carga. Para subir os dois juntos:
+
+```bash
+docker compose up -d --build                       # producao :4447
+docker compose -f docker-compose.test.yml -p pp-test up -d --build   # teste :4446
+```
+
+## Seed de dados
+
+- `app/src/seeds/admin.seed.js` — `seedAdminIfEmpty({ populaDemo })`:
+  cria `admin@admin.com` se não houver admin; com `populaDemo` (tudo que não é
+  `production`) insere usuários sintéticos. `NODE_ENV=production` nunca popula
+  demo.
+- A senha do admin vem de `SEED_PASSWORD_FILE` (default
+  `~/Documentos/comum/senhas-projetos.md`); o arquivo é lido por
+  `resolverSenhaAdmin()` e **não é versionado**.
+- `app/scripts/seed-carga.js [n]` — semeia `n` usuários para o teste de carga
+  (só banco de teste; recusa produção).
 
 ```
 app/src/
@@ -135,7 +169,7 @@ Detalhes e processo de reporte: [SECURITY.md](SECURITY.md).
 
 ## Testes
 
-Suíte com **44 testes** (Jest + Supertest) contra um MongoDB real em memória —
+Suíte com **50 testes** (Jest + Supertest) contra um MongoDB real em memória —
 sem mock de banco.
 
 ```bash

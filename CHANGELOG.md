@@ -12,6 +12,11 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
   de erro rericada (código grande, título amigável, ação de recuperação, botão
   Voltar e detalhes de validação). Catálogo centralizado em `HTTP_CATALOG`/
   `ERROR_CATALOG`; suíte sobe de 20 para 44 testes.
+- Dois bancos sempre isolados (teste `app_test_db` / produção `app_db`): o de
+  teste nasce populado com `admin@admin.com` + usuários demo; a produção sobe só
+  com o admin e é preenchida via interface. Senha do admin lida de
+  `SEED_PASSWORD_FILE` (`~/Documentos/comum/senhas-projetos.md`, não versionado,
+  compartilhado entre projetos). Suíte sobe de 44 para 50 testes.
 - `DESIGN.md`: sistema visual em tokens no formato DESIGN.md (Google), com
   exports `tailwind.theme.json` e `tokens.json`. Lint oficial sem erros nem
   avisos; contrastes de texto verificados contra WCAG AA.
