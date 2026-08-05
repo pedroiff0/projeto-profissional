@@ -17,11 +17,16 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
   `POST /api/demo/load` (bloqueado em `NODE_ENV=production`). Novos domínios
   `Project`/`CatalogItem` com CRUD validado (Zod), escopo por usuário e views
   `/projetos` + `/catalogo`. Suíte sobe de 50 para 60 testes.
-- Dois bancos sempre isolados (teste `app_test_db` / produção `app_db`): o de
-  teste nasce populado com `admin@admin.com` + usuários demo; a produção sobe só
-  com o admin e é preenchida via interface. Senha do admin lida de
-  `SEED_PASSWORD_FILE` (`~/Documentos/comum/senhas-projetos.md`, não versionado,
-  compartilhado entre projetos). Suíte sobe de 44 para 50 testes.
+- Três bancos físicos isolados numa só aplicação (produção `app_db`, teste
+  `app_test_db`, demo `app_demo_db`), acessados por prefixo de rota (`/app`,
+  `/test`, `/demo`) e por `connection.useDb`. Models registrados por
+  connection num registry (`models/registry.js`); JWT carrega o `mode` no
+  payload e o `auth` isola os bancos (token de demo não abre produção).
+  Landing pública (`/`) com três botões; `/demo/start` autologa num usuário
+  demo. Senha do admin lida de `SEED_PASSWORD_FILE`
+  (`~/Documentos/comum/senhas-projetos.md`, não versionado, compartilhado entre
+  projetos) com default para esse caminho quando `SEED_PASSWORD_FILE` não está
+  definido. Suíte mantida em 60 testes.
 - `DESIGN.md`: sistema visual em tokens no formato DESIGN.md (Google), com
   exports `tailwind.theme.json` e `tokens.json`. Lint oficial sem erros nem
   avisos; contrastes de texto verificados contra WCAG AA.

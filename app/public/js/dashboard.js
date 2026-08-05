@@ -7,11 +7,12 @@
   if (!btn) return;
 
   async function carregar(force) {
+    const endpoint = (btn.getAttribute('data-demo-api') || '/api/demo/load') + (force ? '?force=true' : '');
     btn.disabled = true;
     if (btnForce) btnForce.disabled = true;
     status.textContent = 'Carregando dados de demonstração…';
     try {
-      const res = await fetch('/api/demo/load' + (force ? '?force=true' : ''), {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',

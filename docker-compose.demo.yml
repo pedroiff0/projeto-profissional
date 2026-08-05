@@ -1,0 +1,54 @@
+# Stack de DEMO — publica, efemera (tmpfs), com autologin.
+#
+#   docker compose -f docker-compose.demo.yml -p pp-demo up -d --build
+#
+# Diferencas em relacao a producao:
+#   - projeto proprio (-p pp-demo): nao compartilha dados
+#   - banco app_demo_db (tmpfs: descartavel)
+#   - NODE_ENV=demo -> o app popula o banco e a landing tem botao de autologa
+#   - login publico (qualquer um entra como usuario demo)
+#   - porta 4448 no host, sobe junto com producao (4447) e teste (4446)
+
+name: pp-demo
+
+services:
+  app-demo:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    ports:
+      - "${BIND_ADDR:-127.0.0.1}:4448:5000"
+    environment:
+      NODE_ENV: demo
+      PORT: 5000
+      # Database de DEMO (useDb deriva 'app_demo_db' do final da URI).
+      MONGO_URI: mongodb://mongo-demo:27017/app_demo_db
+      JWT_SECRET: ${JWT_SECRET_DEMO:-secret-de-demo-com-mais-de-32-caracteres}
+      JWT_EXPIRES_IN: 2h
+      APP_BASE_URL: http://localhost:4448
+      COOKIE_SECURE: "false"
+      RATE_LIMIT_DISABLED: "true"
+      ADMIN_EMAIL: admin@admin.com
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD_DEMO:-}
+      SEED_PASSWORD_FILE: ${SEED_PASSWORD_FILE:-/home/pedro/Documentos/comum/senhas-projetos.md}
+      POPULA_DEMO: "true"
+      TZ: America/Sao_Paulo
+    depends_on:
+      mongo-demo:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  mongo-demo:
+    image: mongo:7
+    # tmpfs: dados de demo sao descartaveis por design.
+    tmpfs:
+      - /data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped

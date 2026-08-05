@@ -12,14 +12,13 @@
   </div>
 </section>
 
-<%# Botao de demonstracao: so fora de producao (o backend tambem bloqueia). %>
-<% if (process.env.NODE_ENV !== 'production') { %>
+<% if (typeof mostraDemo !== 'undefined' && mostraDemo) { %>
 <section class="card">
   <h2>Carregar dados de demonstração</h2>
-  <p class="muted">Popula o banco com dezenas de usuários, projetos e itens de
+  <p class="muted">Popula este banco com dezenas de usuários, projetos e itens de
      catálogo para você explorar todas as telas. Seguro: só existe fora de produção.</p>
   <div class="row">
-    <button id="btn-demo" class="btn-primary" type="button">Carregar dados de demonstração</button>
+    <button id="btn-demo" class="btn-primary" type="button" data-demo-api="<%= demoApi %>">Carregar dados de demonstração</button>
     <button id="btn-demo-force" class="btn-outline" type="button">Recarregar do zero</button>
   </div>
   <p id="demo-status" class="muted small" aria-live="polite"></p>

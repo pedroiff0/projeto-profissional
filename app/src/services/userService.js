@@ -1,33 +1,25 @@
-const User = require('../models/user.model');
 const AppError = require('../utils/AppError');
 const authService = require('./authService');
 
-// Registro controlado: so o admin cria contas. A senha temporaria e gerada
-// pelo servidor, devolvida UMA vez e nunca persistida em claro.
-async function criarUsuario({ name, email, role }) {
+// models = models da connection do modo (banco) atual.
+async function criarUsuario({ name, email, role }, models) {
+  const User = models.User;
   const existing = await User.findOne({ email });
   if (existing) throw new AppError('Ja existe um usuario com este e-mail', 409);
 
   const senhaTemporaria = authService.gerarSenhaTemporaria();
   const passwordHash = await authService.hashPassword(senhaTemporaria);
 
-  const user = await User.create({
-    name,
-    email,
-    role,
-    passwordHash,
-    mustChangePassword: true,
-  });
+  const user = await User.create({ name, email, role, passwordHash, mustChangePassword: true });
 
   return { user: authService.toPublicUser(user), senhaTemporaria };
 }
 
-async function listarUsuarios({ q, role, page, limit }) {
+async function listarUsuarios({ q, role, page, limit }, models) {
+  const User = models.User;
   const filtro = {};
   if (role) filtro.role = role;
   if (q) {
-    // Escapa metacaracteres: sem isto, uma busca com "(" quebra a query e
-    // um regex catastrofico vira DoS.
     const safe = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     filtro.$or = [{ name: new RegExp(safe, 'i') }, { email: new RegExp(safe, 'i') }];
   }
@@ -46,12 +38,11 @@ async function listarUsuarios({ q, role, page, limit }) {
   };
 }
 
-async function atualizarUsuario(adminId, id, data) {
+async function atualizarUsuario(adminId, id, data, models) {
+  const User = models.User;
   const user = await User.findById(id);
   if (!user) throw new AppError('Usuario nao encontrado', 404);
 
-  // Um admin nao pode se auto-rebaixar nem se auto-desativar (evita deixar o
-  // sistema sem nenhum administrador ativo).
   if (String(id) === String(adminId) && (data.role === 'user' || data.isActive === false)) {
     throw new AppError('Voce nao pode rebaixar ou desativar a propria conta', 422);
   }
@@ -68,7 +59,6 @@ async function atualizarUsuario(adminId, id, data) {
   if (data.role !== undefined) user.role = data.role;
   if (data.isActive !== undefined) {
     user.isActive = data.isActive;
-    // Desativar encerra as sessoes ativas imediatamente.
     if (!data.isActive) user.tokenValidAfter = new Date();
   }
 
@@ -76,8 +66,8 @@ async function atualizarUsuario(adminId, id, data) {
   return authService.toPublicUser(user);
 }
 
-// Reset administrativo: gera nova senha temporaria e derruba as sessoes.
-async function resetarSenha(id) {
+async function resetarSenha(id, models) {
+  const User = models.User;
   const user = await User.findById(id);
   if (!user) throw new AppError('Usuario nao encontrado', 404);
 

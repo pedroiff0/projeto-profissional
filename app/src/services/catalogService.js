@@ -1,38 +1,43 @@
-const CatalogItem = require('../models/catalogItem.model');
-const NotFoundError = require('../utils/AppError');
+const AppError = require('../utils/AppError');
 
-// Catalogo e publico para usuarios autenticados (sem escopo de dono).
-async function listar({ filtro = {}, page = 1, limit = 24 }) {
-  const q = { ...filtro };
-  const skip = (Math.max(1, page) - 1) * limit;
+async function listar({ filtro = {}, page = 1, limit = 24 }, models) {
+  const CatalogItem = models.CatalogItem;
   const [items, total] = await Promise.all([
-    CatalogItem.find(q).sort({ sku: 1 }).skip(skip).limit(limit),
-    CatalogItem.countDocuments(q),
+    CatalogItem.find(filtro).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
+    CatalogItem.countDocuments(filtro),
   ]);
-  return { items, total, page, limit, pages: Math.ceil(total / limit) };
+  return { items, total, page, limit, pages: Math.max(1, Math.ceil(total / limit)) };
 }
 
-async function obter(id) {
+async function obter(id, models) {
+  const CatalogItem = models.CatalogItem;
   const item = await CatalogItem.findById(id);
-  if (!item) throw new NotFoundError('Item nao encontrado', 404);
+  if (!item) throw new AppError('Item nao encontrado', 404);
   return item;
 }
 
-async function criar(dados) {
-  return CatalogItem.create(dados);
+async function criar(data, models) {
+  const CatalogItem = models.CatalogItem;
+  return CatalogItem.create(data);
 }
 
-async function atualizar(id, dados) {
+async function atualizar(id, data, models) {
+  const CatalogItem = models.CatalogItem;
   const item = await CatalogItem.findById(id);
-  if (!item) throw new NotFoundError('Item nao encontrado', 404);
-  Object.assign(item, dados);
+  if (!item) throw new AppError('Item nao encontrado', 404);
+  if (data.name !== undefined) item.name = data.name;
+  if (data.category !== undefined) item.category = data.category;
+  if (data.price !== undefined) item.price = data.price;
+  if (data.stock !== undefined) item.stock = data.stock;
+  if (data.active !== undefined) item.active = data.active;
   await item.save();
   return item;
 }
 
-async function remover(id) {
+async function remover(id, models) {
+  const CatalogItem = models.CatalogItem;
   const item = await CatalogItem.findById(id);
-  if (!item) throw new NotFoundError('Item nao encontrado', 404);
+  if (!item) throw new AppError('Item nao encontrado', 404);
   await item.deleteOne();
   return true;
 }

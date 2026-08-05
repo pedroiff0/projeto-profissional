@@ -8,31 +8,27 @@ const listar = asyncHandler(async (req, res) => {
   if (active === 'true') filtro.active = true;
   if (active === 'false') filtro.active = false;
   if (q) filtro.$text = { $search: q };
-  const resultado = await catalogService.listar({
-    filtro,
-    page: Number(page) || 1,
-    limit: 24,
-  });
+  const resultado = await catalogService.listar({ filtro, page: Number(page) || 1, limit: 24 }, req.models);
   res.json(resultado);
 });
 
 const obter = asyncHandler(async (req, res) => {
-  const item = await catalogService.obter(req.params.id);
+  const item = await catalogService.obter(req.params.id, req.models);
   res.json({ item });
 });
 
 const criar = asyncHandler(async (req, res) => {
-  const item = await catalogService.criar(req.body);
+  const item = await catalogService.criar(req.body, req.models);
   res.status(201).json({ item });
 });
 
 const atualizar = asyncHandler(async (req, res) => {
-  const item = await catalogService.atualizar(req.params.id, req.body);
+  const item = await catalogService.atualizar(req.params.id, req.body, req.models);
   res.json({ item });
 });
 
 const remover = asyncHandler(async (req, res) => {
-  await catalogService.remover(req.params.id);
+  await catalogService.remover(req.params.id, req.models);
   res.status(204).end();
 });
 

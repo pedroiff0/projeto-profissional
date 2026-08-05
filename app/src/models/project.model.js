@@ -21,4 +21,4 @@ const projectSchema = new mongoose.Schema(
 projectSchema.index({ ownerId: 1, status: 1 });
 projectSchema.index({ name: 'text', description: 'text', tags: 'text' });
 
-module.exports = mongoose.model('Project', projectSchema);
+module.exports = projectSchema;

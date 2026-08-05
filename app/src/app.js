@@ -6,23 +6,23 @@ const compression = require('compression');
 
 const apiRoutes = require('./routes');
 const pageRoutes = require('./routes/pages.routes');
+const landingRoutes = require('./routes/landing.routes');
+const demoLoginRoutes = require('./routes/demoLogin.routes');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 const csrfGuard = require('./middleware/csrfGuard');
 const sanitizeInput = require('./middleware/sanitizeInput');
 const { apiLimiter } = require('./middleware/rateLimiters');
+const { selectDb } = require('./middleware/selectDb');
 const env = require('./config/env');
 
 function createApp() {
   const app = express();
 
-  // Atras de nginx/Traefik/Tailscale: confia em 1 hop para req.ip correto
-  // (rate limit por IP real). Ajuste conforme sua topologia.
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../views'));
 
-  // Disponivel em toda view sem precisar repetir no render de cada rota.
   app.locals.appName = env.appName;
 
   app.use(
@@ -39,8 +39,6 @@ function createApp() {
           frameAncestors: ["'none'"],
           baseUri: ["'self'"],
           formAction: ["'self'"],
-          // helmet liga upgrade-insecure-requests por padrao; em HTTP puro
-          // (LAN/VPN) isso quebra CSS/JS. Ligue de volta quando servir HTTPS.
           upgradeInsecureRequests: env.cookieSecure ? [] : null,
         },
       },
@@ -50,14 +48,12 @@ function createApp() {
   );
 
   app.use(compression());
-  // Limite de corpo: sem isto um POST gigante e DoS barato.
   app.use(express.json({ limit: '100kb' }));
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());
   app.use(sanitizeInput);
   app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1h' }));
 
-  // CORS por allowlist explicita (nunca '*' junto com credenciais).
   const extras = (env.corsAllowedOrigins || '').split(',').map((s) => s.trim()).filter(Boolean);
   const allowlist = new Set([env.appBaseUrl, ...extras].filter(Boolean));
   app.use('/api', (req, res, next) => {
@@ -75,8 +71,22 @@ function createApp() {
 
   app.use('/api', apiLimiter);
   app.use('/api', csrfGuard);
-  app.use('/api', apiRoutes);
-  app.use('/', pageRoutes);
+
+  // Landing publica (raiz) com os 3 bancos.
+  app.use('/', landingRoutes);
+
+  // API: alias de producao em /api (preserva testes antigos) + prefixos.
+  app.use('/api', selectDb('production'), apiRoutes);
+  app.use('/api/app', selectDb('production'), apiRoutes);
+  app.use('/api/test', selectDb('test'), apiRoutes);
+  app.use('/api/demo', selectDb('demo'), apiRoutes);
+
+  // Paginas: alias de producao em / (preserva testes antigos) + prefixos.
+  app.use('/', selectDb('production'), pageRoutes);
+  app.use('/app', selectDb('production'), pageRoutes);
+  app.use('/test', selectDb('test'), pageRoutes);
+  app.use('/demo', selectDb('demo'), demoLoginRoutes); // /demo -> autologa
+  app.use('/demo', selectDb('demo'), pageRoutes);      // /demo/* -> dashboard etc.
 
   app.use(notFoundHandler);
   app.use(errorHandler);

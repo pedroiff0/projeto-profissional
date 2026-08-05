@@ -5,7 +5,7 @@ async function pageAuth(req, res, next) {
   try {
     const token = extractToken(req);
     if (!token) return res.redirect('/login');
-    const user = await resolveUser(token);
+    const user = await resolveUser(token, req.mode, req.models);
     if (!user) return res.redirect('/login');
     req.user = toRequestUser(user);
     res.locals.user = req.user;
@@ -19,7 +19,7 @@ async function optionalPageAuth(req, res, next) {
   try {
     const token = extractToken(req);
     if (!token) return next();
-    const user = await resolveUser(token);
+    const user = await resolveUser(token, req.mode, req.models);
     if (user) {
       req.user = toRequestUser(user);
       res.locals.user = req.user;

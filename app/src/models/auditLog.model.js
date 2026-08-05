@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-// Trilha de auditoria de eventos sensiveis (login, criacao/desativacao de
-// conta, troca de senha). Sem PII alem do e-mail do ator; NUNCA senhas,
-// tokens ou hashes.
 const auditLogSchema = new mongoose.Schema(
   {
     action: {
@@ -35,4 +32,5 @@ const auditLogSchema = new mongoose.Schema(
 // Retencao: 180 dias.
 auditLogSchema.index({ createdAt: -1 }, { expireAfterSeconds: 60 * 60 * 24 * 180 });
 
-module.exports = mongoose.model('AuditLog', auditLogSchema);
+module.exports = auditLogSchema;
+

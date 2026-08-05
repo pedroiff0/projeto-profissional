@@ -16,4 +16,4 @@ const catalogItemSchema = new mongoose.Schema(
 catalogItemSchema.index({ category: 1, active: 1 });
 catalogItemSchema.index({ name: 'text', sku: 'text', category: 'text' });
 
-module.exports = mongoose.model('CatalogItem', catalogItemSchema);
+module.exports = catalogItemSchema;

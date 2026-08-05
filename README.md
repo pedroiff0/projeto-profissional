@@ -43,33 +43,39 @@ Com Docker:
 JWT_SECRET=$(openssl rand -base64 48) docker compose up --build
 ```
 
-## Dois bancos: teste e produção
+## Três bancos: produção, teste e demo
 
-O template sobe **sempre dois bancos isolados**, nunca compartilhando dados:
+O template é **uma única aplicação** com **três bancos físicos** (databases)
+na mesma instância Mongo, acessados por prefixo de rota. Cada banco tem sua
+própria connection (via `connection.useDb`) e os models são registrados por
+connection num registry (`app/src/models/registry.js`). Um único cookie `token`
+carrega o `mode` (banco) no payload do JWT, e o `auth` recusa token de modo
+diferente — um token de demo **não** abre a produção.
 
-| | Produção (`docker-compose.yml`) | Teste/Carga (`docker-compose.test.yml`, `-p pp-test`) |
-|---|---|---|
-| Banco | `app_db` (volume persistente) | `app_test_db` (`tmpfs`, descartável) |
-| População | **Só o admin** `admin@admin.com` | admin + **usuários demo** (Ana, Bruno, Carla, Diego) |
-| Acesso a dados | você insere pela interface | reconfigurável a qualquer momento |
-| Rate limit | ativo | desativado (`RATE_LIMIT_DISABLED`) |
-| `NODE_ENV` | `production` | `staging` |
+| | Produção | Teste | Demo |
+|---|---|---|---|
+| Prefixo | `/app` | `/test` | `/demo` |
+| Banco | `app_db` (volume persistente) | `app_test_db` (`tmpfs`) | `app_demo_db` (`tmpfs`, descartável) |
+| Compose | `docker-compose.yml` (`:4447`) | `docker-compose.test.yml` `-p pp-test` (`:4446`) | `docker-compose.demo.yml` `-p pp-demo` (`:4448`) |
+| População | **só o admin** `admin@admin.com` | admin + usuários demo | banco completo + autologa |
+| `NODE_ENV` | `production` | `staging` | `demo` |
+| Rate limit | ativo | desativado | desativado |
 
-A produção **nunca** recebe dados de demonstração — ela parte vazia (só o admin)
-e você popula via interface. O banco de teste já nasce populado para inspeção
-visual e testes de carga. Para subir os dois juntos:
+A **landing** (`/`) é pública e tem três botões: Produção (login), Teste
+(login) e **Demo** (autologa num usuário já criado em `/demo/start`). A
+produção nunca recebe dados de demonstração.
 
 ```bash
-docker compose up -d --build                       # producao :4447
-docker compose -f docker-compose.test.yml -p pp-test up -d --build   # teste :4446
+docker compose up -d --build                                  # producao :4447
+docker compose -f docker-compose.test.yml -p pp-test up -d     # teste   :4446
+docker compose -f docker-compose.demo.yml  -p pp-demo up -d     # demo    :4448
 ```
 
 ## Seed de dados
 
-- `app/src/seeds/admin.seed.js` — `seedAdminIfEmpty({ populaDemo })`:
-  cria `admin@admin.com` se não houver admin; com `populaDemo` (tudo que não é
-  `production`) insere usuários sintéticos. `NODE_ENV=production` nunca popula
-  demo.
+- `app/src/seeds/admin.seed.js` — `seedAdminIfEmpty({ populaDemo }, models)`:
+  cria `admin@admin.com` se não houver admin no banco do modo; com `populaDemo`
+  insere usuários sintéticos. `NODE_ENV=production` nunca popula demo.
 - A senha do admin vem de `SEED_PASSWORD_FILE` (default
   `~/Documentos/comum/senhas-projetos.md`); o arquivo é lido por
   `resolverSenhaAdmin()` e **não é versionado**.
@@ -78,10 +84,10 @@ docker compose -f docker-compose.test.yml -p pp-test up -d --build   # teste :44
 
 ## Dados de demonstração (botão "Carregar demo")
 
-No dashboard (`/app`), fora de produção, há um botão **Carregar dados de
-demonstração** que popula o banco com um conjunto completo para explorar todas
-as telas: dezenas de usuários, projetos e itens de catálogo. O backend bloqueia
-esse endpoint (`POST /api/demo/load`) em `NODE_ENV=production`.
+No dashboard (`/app`, `/test`, `/demo`), fora de produção, há um botão
+**Carregar dados de demonstração** que popula o banco com um conjunto completo
+para explorar todas as telas: dezenas de usuários, projetos e itens de catálogo.
+O backend bloqueia esse endpoint (`POST /api/<modo>/demo/load`) em produção.
 
 O que é carregado (via `demoService.carregarDemo`):
 
@@ -117,6 +123,10 @@ mora no service; o controller só traduz HTTP.
 
 ## Endpoints
 
+As rotas de API são montadas sob `/api/app`, `/api/test` e `/api/demo`
+(um por banco); há também um alias `/api` que aponta para a produção.
+Abaixo listamos o sufixo de rota (prefixe com `/api/<modo>` ou `/api`):
+
 | Método | Rota                                  | Acesso  |
 |--------|---------------------------------------|---------|
 | POST   | `/api/auth/login`                     | público (rate-limited) |
@@ -131,9 +141,11 @@ mora no service; o controller só traduz HTTP.
 | PATCH  | `/api/admin/users/:id`                | admin   |
 | POST   | `/api/admin/users/:id/reset-password` | admin   |
 | GET    | `/api/health/{live,ready}`            | público |
+| POST   | `/api/<modo>/demo/load`               | admin (bloqueado em produção) |
 
-Páginas: `/`, `/login`, `/forgot-password`, `/reset-password`,
-`/primeiro-acesso`, `/app`, `/perfil`, `/admin` e `/status`.
+Páginas: `/` (landing), `/login`, `/forgot-password`, `/reset-password`,
+`/primeiro-acesso`, `/app`, `/test`, `/demo`, `/demo/start` (autologa),
+`/perfil`, `/admin` e `/status`.
 
 ### Mapeamento de respostas HTTP (`/status`)
 
