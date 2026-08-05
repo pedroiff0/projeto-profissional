@@ -1,0 +1,24 @@
+<%- include('partials/header', { title: 'Projetos' }) %>
+<section class="card">
+  <div class="lp-brand-row" style="margin-bottom:.5rem">
+    <h1>Projetos</h1>
+    <a class="btn-primary" href="/catalogo" style="margin-left:auto">Ver catálogo</a>
+  </div>
+  <form class="field status-search" method="get" action="/projetos">
+    <div class="row">
+      <select name="status" aria-label="Filtrar por status">
+        <option value="">Todos os status</option>
+        <option value="planejado">Planejado</option>
+        <option value="em_andamento">Em andamento</option>
+        <option value="concluido">Concluído</option>
+        <option value="pausado">Pausado</option>
+      </select>
+      <input type="text" name="tag" placeholder="tag (ex.: urgente)" aria-label="Filtrar por tag" />
+      <button class="btn-primary" type="submit">Filtrar</button>
+    </div>
+  </form>
+  <p id="proj-count" class="muted small"></p>
+  <ul id="proj-list" class="demo-list"></ul>
+  <div id="proj-pager" class="row"></div>
+</section>
+<%- include('partials/footer') %>

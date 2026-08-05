@@ -11,7 +11,12 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
   API `GET /api/status/:code` (JSON estruturado, 404 se não mapeado) e página
   de erro rericada (código grande, título amigável, ação de recuperação, botão
   Voltar e detalhes de validação). Catálogo centralizado em `HTTP_CATALOG`/
-  `ERROR_CATALOG`; suíte sobe de 20 para 44 testes.
+  `ERROR_CATALOG`; suíte sobe de 44 para 50 testes.
+- Botão "Carregar dados de demonstração" no dashboard (fora de produção):
+  popula ~30 usuários, ~40 projetos e ~120 itens de catálogo via
+  `POST /api/demo/load` (bloqueado em `NODE_ENV=production`). Novos domínios
+  `Project`/`CatalogItem` com CRUD validado (Zod), escopo por usuário e views
+  `/projetos` + `/catalogo`. Suíte sobe de 50 para 60 testes.
 - Dois bancos sempre isolados (teste `app_test_db` / produção `app_db`): o de
   teste nasce populado com `admin@admin.com` + usuários demo; a produção sobe só
   com o admin e é preenchida via interface. Senha do admin lida de

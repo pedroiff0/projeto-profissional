@@ -2,6 +2,28 @@
 <section class="card">
   <h1>Olá, <%= user.name %></h1>
   <p class="muted">Papel: <%= user.role %></p>
-  <p>Este é o ponto de partida da sua aplicação. Adicione aqui as telas do domínio.</p>
+  <p>Este é o ponto de partida da sua aplicação. Use os cartões abaixo para explorar
+     os recursos do template com dados de demonstração.</p>
+
+  <div class="row" style="margin-top:1rem">
+    <a class="btn-primary" href="/projetos">Projetos</a>
+    <a class="btn-outline" href="/catalogo">Catálogo</a>
+    <% if (user.role === 'admin') { %><a class="btn-outline" href="/admin">Usuários</a><% } %>
+  </div>
 </section>
+
+<%# Botao de demonstracao: so fora de producao (o backend tambem bloqueia). %>
+<% if (process.env.NODE_ENV !== 'production') { %>
+<section class="card">
+  <h2>Carregar dados de demonstração</h2>
+  <p class="muted">Popula o banco com dezenas de usuários, projetos e itens de
+     catálogo para você explorar todas as telas. Seguro: só existe fora de produção.</p>
+  <div class="row">
+    <button id="btn-demo" class="btn-primary" type="button">Carregar dados de demonstração</button>
+    <button id="btn-demo-force" class="btn-outline" type="button">Recarregar do zero</button>
+  </div>
+  <p id="demo-status" class="muted small" aria-live="polite"></p>
+</section>
+<% } %>
+
 <%- include('partials/footer') %>
