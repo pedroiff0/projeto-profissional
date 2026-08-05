@@ -59,6 +59,16 @@ input, select {
 }
 input:disabled { opacity: 0.6; }
 
+/* Campo de senha com botao de mostrar/ocultar. */
+.input-affix { position: relative; display: flex; align-items: center; }
+.input-affix input { padding-right: 2.75rem; }
+.btn-affix {
+  position: absolute; right: 0.4rem; display: inline-flex; align-items: center;
+  justify-content: center; width: 2rem; height: 2rem; padding: 0;
+  background: none; border: 0; color: var(--muted); cursor: pointer; border-radius: 6px;
+}
+.btn-affix:hover { color: var(--text); background: var(--border); }
+
 .btn-primary {
   background: var(--primary); color: #fff; border: 0;
   padding: 0.6rem 1.1rem; border-radius: 8px; font: inherit; cursor: pointer;
