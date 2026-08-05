@@ -32,6 +32,10 @@ function hashPassword(plain) {
   return bcrypt.hash(plain, SALT_ROUNDS);
 }
 
+function verifyPassword(plain, hash) {
+  return bcrypt.compare(plain, hash);
+}
+
 // ~144 bits de entropia, legivel o bastante para repassar ao usuario.
 function gerarSenhaTemporaria() {
   return crypto.randomBytes(18).toString('base64url');
@@ -151,6 +155,7 @@ module.exports = {
   toPublicUser,
   generateToken,
   hashPassword,
+  verifyPassword,
   gerarSenhaTemporaria,
   login,
   changePassword,

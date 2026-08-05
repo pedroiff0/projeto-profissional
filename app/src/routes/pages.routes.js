@@ -11,7 +11,8 @@ const router = express.Router();
 
 router.get('/login', optionalPageAuth, (req, res) => {
   if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/');
-  res.render('login');
+  const modo = (req.baseUrl || '').replace('/', '') || 'app';
+  res.render('login', { action: `/api/${modo}/auth/login`, modo });
 });
 
 router.get('/forgot-password', (req, res) => res.render('forgot-password'));

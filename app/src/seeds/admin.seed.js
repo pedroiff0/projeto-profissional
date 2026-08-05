@@ -38,8 +38,18 @@ function resolverSenhaAdmin() {
 async function seedAdminIfEmpty({ populaDemo = false } = {}, models) {
   const Models = models || getModels(require('../config/db').getModeConn('production'));
   const User = Models.User;
-  const existing = await User.findOne({ role: 'admin' });
-  if (existing) return { created: false };
+  const existing = await User.findOne({ role: 'admin' }).select('+passwordHash');
+  if (existing) {
+    // Idempotencia da senha: se a origem e conhecida (arquivo ou ADMIN_PASSWORD)
+    // e o hash atual nao bate, re-sincroniza para a senha continuar funcionando
+    // sem precisar dropar o banco (ex.: seed antigo gerou senha aleatoria).
+    const { senha, doArquivo } = resolverSenhaResult();
+    if (senha && !(await authService.verifyPassword(senha, existing.passwordHash))) {
+      existing.passwordHash = await authService.hashPassword(senha);
+      await existing.save();
+    }
+    return { created: false };
+  }
 
   const { senha, doArquivo } = resolverSenhaResult();
   const passwordHash = await authService.hashPassword(senha);
