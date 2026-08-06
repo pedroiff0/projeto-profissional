@@ -5,7 +5,7 @@ const { seedAdminIfEmpty } = require('./seeds/admin.seed');
 const { carregarDemo } = require('./services/demoService');
 const env = require('./config/env');
 
-async function seedBanco(mode, { populaDemo = false, demo = false } = {}) {
+async function seedBanco(mode, { populaDemo = false, demo = false, skipAutoUser = false } = {}) {
   const conn = getModeConn(mode);
   const models = getModels(conn);
   const seed = await seedAdminIfEmpty({ populaDemo: false }, models);
