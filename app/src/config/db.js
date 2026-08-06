@@ -41,6 +41,10 @@ function getModeConn(mode) {
   return modeConns[mode];
 }
 
+function getMainConn() {
+  return mainConn;
+}
+
 function modeFromEnv() {
   if (env.nodeEnv === 'production' || env.nodeEnv === 'development') return 'production';
   if (env.nodeEnv === 'test' || env.nodeEnv === 'staging') return 'test';
@@ -54,4 +58,4 @@ async function disconnectDb() {
   for (const k of Object.keys(modeConns)) delete modeConns[k];
 }
 
-module.exports = { connectDb, disconnectDb, getModeConn, modeFromEnv, MODE_DB };
+module.exports = { connectDb, disconnectDb, getModeConn, getMainConn, modeFromEnv, MODE_DB };
