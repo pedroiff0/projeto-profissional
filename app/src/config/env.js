@@ -7,7 +7,7 @@ function requiredInProd(name, value) {
   return value;
 }
 
-const port = Number(process.env.PORT || 4447);
+const port = Number(process.env.PORT || 4450);
 const jwtSecret = process.env.JWT_SECRET || '';
 
 // Em producao um secret fraco/ausente e falha de boot, nao um default silencioso.

@@ -1,0 +1,28 @@
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const request = require('supertest');
+const { createApp } = require('./src/app');
+const { setupDb, teardownDb } = require('./tests/helpers/db');
+const { getModeConn } = require('./src/config/db');
+const { getModels } = require('./src/models/registry');
+const mode = process.env.NODE_ENV === 'demo' ? 'demo' : (process.env.NODE_ENV === 'test' ? 'test' : 'production');
+const lang = process.env.LANG || '';
+(async () => {
+  process.env.JWT_SECRET = 'test-secret-com-mais-de-32-caracteres-ok!!';
+  const ARQ = path.join(os.tmpdir(), `land-${mode}-${process.pid}.md`);
+  fs.writeFileSync(ARQ, 'Senha:   `AdminComum123!!`\n');
+  process.env.SEED_PASSWORD_FILE = ARQ;
+  await setupDb();
+  const app = createApp();
+  const q = lang ? '?lang=' + lang : '';
+  const res = await request(app).get('/' + q);
+  console.log('STATUS', res.status);
+  const m = res.text.match(/<h1[^>]*>([^<]+)<\/h1>/);
+  console.log('H1:', m && m[1]);
+  const badge = res.text.match(/app_(demo_)?db/);
+  console.log('BADGE:', badge && badge[0]);
+  console.log('HAS demo/start:', res.text.includes('/demo/start'));
+  console.log('HAS login:', res.text.includes('href="/login"'));
+  await teardownDb();
+})().catch((e) => { console.error('ERR', e); process.exit(2); });

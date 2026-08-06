@@ -20,6 +20,7 @@ const { HTTP_CATALOG } = require('../src/routes/status.routes');
 const { catalogFor, ERROR_CATALOG } = require('../src/middleware/errorHandler');
 const { notFoundHandler, errorHandler } = require('../src/middleware/errorHandler');
 const AppError = require('../src/utils/AppError');
+const i18n = require('../src/middleware/i18n');
 
 const app = createApp();
 
@@ -29,6 +30,7 @@ const app = createApp();
 const errApp = express();
 errApp.set('view engine', 'ejs');
 errApp.set('views', path.join(__dirname, '../views'));
+errApp.use(i18n);
 errApp.get('/_forcar_erro_:code', (req, res, next) => {
   next(new AppError('Erro forçado para teste', Number(req.params.code)));
 });

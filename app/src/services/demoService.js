@@ -4,7 +4,7 @@ const { resolverSenhaAdmin } = require('../seeds/admin.seed');
 // Popula o banco de DEMO (ou teste) com um conjunto completo para exploracao.
 // Recebe `models` da connection do modo. Nao duplica: se ja houver projetos ou
 // itens, retorna { carregado:false }. `force` apaga e repopula.
-async function carregarDemo({ usuarios = 30, projetos = 40, itens = 120, force = false } = {}, models) {
+async function carregarDemo({ usuarios = 30, projetos = 40, itens = 120, force = false, skipAutoUser = false } = {}, models) {
   const { User, Project, CatalogItem } = models;
   const { senha, doArquivo } = resolverSenhaAdmin();
   const passwordHash = await authService.hashPassword(senha);
@@ -21,8 +21,12 @@ async function carregarDemo({ usuarios = 30, projetos = 40, itens = 120, force =
   }
 
   // Usuarios demo compartilham a senha do admin (facilita login manual).
+  // O usuario demo1 e o auto-login da demo (/demo/start); so existe no banco
+  // demo. Nos outros bancos (ex.: teste) pulamos o demo1 para manter o
+  // isolamento — o /demo/start nunca loga um usuario de fora do banco demo.
+  const inicio = skipAutoUser ? 2 : 1;
   const perfis = [];
-  for (let i = 1; i <= usuarios; i += 1) {
+  for (let i = inicio; i <= usuarios; i += 1) {
     perfis.push({
       name: `Demo ${i}`,
       email: `demo${i}@example.com`,

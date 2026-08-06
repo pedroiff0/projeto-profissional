@@ -5,7 +5,7 @@
 ```bash
 cp .env.example .env          # gere JWT_SECRET: openssl rand -base64 48
 cd app && npm install && npm test
-npm run dev                   # http://localhost:4447
+npm run dev                   # http://localhost:4450
 ```
 
 ## Fluxo

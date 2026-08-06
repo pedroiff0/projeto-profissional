@@ -13,6 +13,7 @@ const csrfGuard = require('./middleware/csrfGuard');
 const sanitizeInput = require('./middleware/sanitizeInput');
 const { apiLimiter } = require('./middleware/rateLimiters');
 const { selectDb } = require('./middleware/selectDb');
+const i18n = require('./middleware/i18n');
 const env = require('./config/env');
 
 function createApp() {
@@ -52,6 +53,7 @@ function createApp() {
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());
   app.use(sanitizeInput);
+  app.use(i18n);
   app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1h' }));
 
   const extras = (env.corsAllowedOrigins || '').split(',').map((s) => s.trim()).filter(Boolean);
