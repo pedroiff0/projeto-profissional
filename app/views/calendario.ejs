@@ -1,0 +1,23 @@
+<%- include('partials/header', { title: t('nav.calendar') }) %>
+<main class="container">
+  <section class="card">
+    <div class="board-head">
+      <h1><%= t('nav.calendar') %></h1>
+      <div class="row cal-nav">
+        <button id="prev" class="btn-outline" type="button" aria-label="<%= t('task.moveLeft') %>">←</button>
+        <span id="month-label" class="month-label"></span>
+        <button id="next" class="btn-outline" type="button" aria-label="<%= t('task.moveRight') %>">→</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="calendar" id="calendar" data-api-base="<%= apiBase %>" aria-live="polite">
+    <div class="cal-grid cal-weekdays">
+      <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+    </div>
+    <div class="cal-grid" id="cal-body"></div>
+  </section>
+
+  <p id="cal-status" class="muted small" aria-live="polite"></p>
+</main>
+<%- include('partials/footer') %>

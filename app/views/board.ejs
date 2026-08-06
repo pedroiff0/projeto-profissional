@@ -1,0 +1,38 @@
+<%- include('partials/header', { title: t('nav.board') }) %>
+<main class="container">
+  <section class="card">
+    <div class="board-head">
+      <h1><%= t('nav.board') %></h1>
+      <button id="btn-new" class="btn-primary" type="button"><%= t('task.new') %></button>
+    </div>
+
+    <form id="form-task" class="task-form" hidden>
+      <div class="row">
+        <input id="f-title" name="title" type="text" maxlength="140" required
+               placeholder="<%= t('task.title') %>" aria-label="<%= t('task.title') %>" />
+        <input id="f-due" name="dueDate" type="date" aria-label="<%= t('task.dueDate') %>" />
+        <select id="f-status" name="status" aria-label="<%= t('task.status') %>">
+          <option value="todo"><%= t('task.todo') %></option>
+          <option value="doing"><%= t('task.doing') %></option>
+          <option value="done"><%= t('task.done') %></option>
+        </select>
+        <button class="btn-primary" type="submit"><%= t('task.new') %></button>
+        <button id="btn-cancel" class="btn-outline" type="button"><%= t('task.moveLeft') %></button>
+      </div>
+      <textarea id="f-desc" name="description" maxlength="2000" rows="2"
+                placeholder="<%= t('task.description') %>" aria-label="<%= t('task.description') %>"></textarea>
+    </form>
+  </section>
+
+  <section class="board" id="board" data-api-base="<%= apiBase %>" aria-live="polite">
+    <% statusCatalog.forEach(function(col) { %>
+      <div class="board-col" data-status="<%= col.id %>">
+        <h2 class="board-col-title"><%= col.label %></h2>
+        <div class="board-col-body" data-col="<%= col.id %>"></div>
+      </div>
+    <% }); %>
+  </section>
+
+  <p id="board-status" class="muted small" aria-live="polite"></p>
+</main>
+<%- include('partials/footer') %>

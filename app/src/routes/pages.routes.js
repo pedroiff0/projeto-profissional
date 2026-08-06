@@ -37,6 +37,31 @@ router.get('/', pageAuth, requirePasswordChanged, (req, res) => {
   });
 });
 
+router.get('/board', pageAuth, requirePasswordChanged, (req, res) => {
+  const modo = (req.baseUrl || '').replace('/', '') || 'app';
+  res.render('board', {
+    user: req.user,
+    pageScript: 'board',
+    modo,
+    apiBase: `/api/${modo}/tasks`,
+    statusCatalog: [
+      { id: 'todo', label: res.locals.t('task.todo') },
+      { id: 'doing', label: res.locals.t('task.doing') },
+      { id: 'done', label: res.locals.t('task.done') },
+    ],
+  });
+});
+
+router.get('/calendario', pageAuth, requirePasswordChanged, (req, res) => {
+  const modo = (req.baseUrl || '').replace('/', '') || 'app';
+  res.render('calendario', {
+    user: req.user,
+    pageScript: 'calendario',
+    modo,
+    apiBase: `/api/${modo}/tasks`,
+  });
+});
+
 router.get('/perfil', pageAuth, requirePasswordChanged, (req, res) =>
   res.render('perfil', { user: req.user })
 );

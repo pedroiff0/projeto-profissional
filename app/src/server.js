@@ -35,6 +35,15 @@ async function main() {
   seeds.test = await seedBanco('test', { populaDemo: true, skipAutoUser: true });
   seeds.demo = await seedBanco('demo', { demo: true });
 
+  // Tarefas de exemplo: demo (dono demo1) e teste (dono admin). Producao fica limpa.
+  const { seedTasks } = require('./seeds/task.seed');
+  const demoModels = getModels(getModeConn('demo'));
+  const demoUser = await demoModels.User.findOne({ email: 'demo1@example.com' }).lean();
+  if (demoUser) await seedTasks(demoModels, demoUser._id, demoUser.name);
+  const testModels = getModels(getModeConn('test'));
+  const adminUser = await testModels.User.findOne({ email: 'admin@admin.com' }).lean();
+  if (adminUser) await seedTasks(testModels, adminUser._id, adminUser.name);
+
   const criados = Object.values(seeds).filter((s) => s && s.created);
   if (criados.length) {
     console.log('============================================================');

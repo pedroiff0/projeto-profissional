@@ -2,6 +2,7 @@ const userSchema = require('./user.model');
 const auditLogSchema = require('./auditLog.model');
 const projectSchema = require('./project.model');
 const catalogItemSchema = require('./catalogItem.model');
+const taskSchema = require('./task.model');
 
 // Registra os models numa connection específica (por banco/modo). Cacheia por
 // connection para não recriar a cada request. Os nomes dos models são fixos;
@@ -15,9 +16,11 @@ function getModels(conn) {
     AuditLog: conn.model('AuditLog', auditLogSchema),
     Project: conn.model('Project', projectSchema),
     CatalogItem: conn.model('CatalogItem', catalogItemSchema),
+    Task: conn.model('Task', taskSchema),
   };
   cache.set(conn, models);
   return models;
 }
 
 module.exports = { getModels };
+
