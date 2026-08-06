@@ -80,6 +80,9 @@ function errorHandler(err, req, res, _next) {
     action: cat.action,
     details: body.details,
     backUrl,
+    // Garante que a view encontre 't' mesmo se o middleware i18n nao rodou
+    // (ex.: erro antes do i18n num app que nao o registrou).
+    t: res.locals.t || ((k) => (cat && cat[k]) || k),
   });
 }
 

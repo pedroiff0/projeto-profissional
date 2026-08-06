@@ -67,4 +67,56 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // --- Tema (claro/escuro) ------------------------------------------------
+  const themeToggle = document.getElementById('theme-toggle');
+  const sun = themeToggle && themeToggle.querySelector('.icon-sun');
+  const moon = themeToggle && themeToggle.querySelector('.icon-moon');
+  const root = document.documentElement;
+
+  function applyTheme(theme) {
+    if (theme === 'light' || theme === 'dark') {
+      root.setAttribute('data-theme', theme);
+    } else {
+      root.removeAttribute('data-theme');
+    }
+    const isDark = theme === 'dark' ||
+      (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (themeToggle) {
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+      themeToggle.setAttribute('aria-label', isDark
+        ? (window.__tThemeLight || 'Mudar para tema claro')
+        : (window.__tThemeDark || 'Mudar para tema escuro'));
+    }
+    if (sun) sun.style.display = isDark ? 'none' : '';
+    if (moon) moon.style.display = isDark ? '' : 'none';
+  }
+
+  // Estado inicial: cookie 'theme' > preferencia do SO.
+  const savedTheme = (document.cookie.match(/(?:^|;\s*)theme=([^;]+)/) || [])[1] || 'auto';
+  applyTheme(savedTheme);
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      const isDark = current === 'dark' ||
+        (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const next = isDark ? 'light' : 'dark';
+      document.cookie = `theme=${next}; path=/; max-age=${365 * 24 * 60 * 60}`;
+      applyTheme(next);
+    });
+  }
+
+  // --- Idioma (PT/EN/ES/FR) ----------------------------------------------
+  const langSwitcher = document.getElementById('lang-switcher');
+  if (langSwitcher) {
+    const cur = (document.cookie.match(/(?:^|;\s*)lang=([^;]+)/) || [])[1] || 'pt';
+    langSwitcher.value = cur;
+    langSwitcher.addEventListener('change', () => {
+      const params = new URLSearchParams(window.location.search);
+      params.set('lang', langSwitcher.value);
+      window.location.search = params.toString();
+    });
+  }
 });
+

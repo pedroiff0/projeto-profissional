@@ -2,10 +2,10 @@
 <footer class="app-footer">
   <span>
     &copy; <%= new Date().getFullYear() %>
-    <a href="https://phrandrade.com" target="_blank" rel="noopener">Pedro Henrique Rocha de Andrade</a>
-    — feito com café, código e um céu estrelado.
+    <a href="https://phrandrance.com" target="_blank" rel="noopener"><%= t('footer.credit') %></a>
+    — <%= t('footer.tagline') %>
   </span>
-  <a class="app-top-link" href="#topo">Voltar ao topo &uarr;</a>
+  <a class="app-top-link" href="#topo"><%= t('footer.backTop') %> &uarr;</a>
 </footer>
 <script src="/js/common.js"></script>
 <% if (typeof pageScript !== 'undefined' && pageScript) { %>

@@ -44,17 +44,21 @@ stack de teste roda como `NODE_ENV=staging`.
 
 ## Isolamento entre produção e teste
 
-São duas stacks independentes, que podem coexistir na mesma máquina:
+É uma única instância (porta `4450`) com os três bancos rodando simultâneos.
+Para teste de carga, suba com `NODE_ENV=staging` (desativa a limitação de
+taxa) e bata na porta `4450`:
 
-| | Produção | Teste / carga |
-|---|---|---|
-| Arquivo | `docker-compose.yml` | `docker-compose.test.yml` |
-| Projeto | `pp` (padrão) | `pp-test` |
-| Banco | `app_db` em volume nomeado, persistente | `app_test_db` em `tmpfs`, descartável |
-| Serviço do banco | `mongo` | `mongo-test` |
-| Porta no host | `127.0.0.1:4447` | `127.0.0.1:4446` |
-| `NODE_ENV` | `production` | `staging` |
-| Limitação de taxa | Ativa | Desativada |
+| | Instância única |
+|---|---|
+| Arquivo | `docker-compose.yml` |
+| Banco | `app_db`, `app_test_db`, `app_demo_db` (mesma instância Mongo) |
+| Porta no host | `127.0.0.1:4450` |
+| `NODE_ENV` | `production` (ou `staging` para carga, sem rate limit) |
+| Limitação de taxa | Ativa em `production`, desativada em `staging` |
+
+```bash
+NODE_ENV=staging JWT_SECRET=$(openssl rand -base64 48) docker compose up -d --build
+```
 
 Não há caminho de rede entre as duas: cada `docker compose -p` cria a sua
 própria rede. O script de semeadura ainda tem uma trava adicional — recusa-se

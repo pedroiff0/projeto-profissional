@@ -1,13 +1,14 @@
-<%- include('partials/header', { title: 'Bem-vindo' }) %>
+<%- include('partials/header', { title: t('landing.title') }) %>
 <main class="container">
-  <section class="card hero">
-    <h1><%= appName %></h1>
-    <p class="muted">Um único sistema, <strong>três bancos de dados isolados</strong>. Escolha um ambiente para entrar.</p>
+  <section class="hero landing">
+    <span class="eyebrow"><%= t('landing.eyebrow') %></span>
+    <h1><%= t('landing.headline') %></h1>
+    <p class="lede"><%= t('landing.intro') %></p>
   </section>
 
   <section class="card">
-    <h2>Ambientes</h2>
-    <p class="muted">Cada ambiente usa um banco próprio e separado. Um login de um banco <strong>não</strong> funciona nos outros.</p>
+    <h2><%= t('landing.choose') %></h2>
+    <p class="muted"><%= t('landing.isolated') %></p>
     <div class="row env-grid">
       <% bancos.forEach(function(b) { %>
         <article class="env-card <%= b.classe %>">
@@ -22,16 +23,9 @@
     </div>
   </section>
 
-  <section class="card">
-    <h2>Sobre o ambiente Demo</h2>
-    <p>O <strong>Demo</strong> é um banco de demonstração <em>populado automaticamente</em> com dezenas de
-    usuários, projetos e itens de catálogo — um playground para explorar todas as telas sem cadastrar nada.</p>
-    <ul class="muted small">
-      <li>Ao clicar em <strong>Explorar Demo</strong>, você entra <strong>já logado</strong> como um usuário de demonstração.</li>
-      <li>Esse usuário <strong>só existe no banco Demo</strong> — ele <strong>não</strong> existe na Produção nem no Teste.</li>
-      <li>Os dados de Demo são descartáveis: recarregados do zero sempre que o banco sobe.</li>
-    </ul>
-    <a class="btn-primary" href="/demo/start">Explorar Demo &rarr;</a>
+  <section class="card card-note">
+    <h2><%= t('landing.aboutDemo') %></h2>
+    <p><%= t('landing.demoNote') %></p>
   </section>
 </main>
 <%- include('partials/footer') %>

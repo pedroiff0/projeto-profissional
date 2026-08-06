@@ -28,7 +28,7 @@ cp .env.example .env
 
 cd app && npm install
 npm test          # 60 testes
-npm run dev       # http://localhost:4447
+npm run dev       # http://localhost:4450
 ```
 
 No primeiro boot, se não houver nenhum admin no banco, o sistema cria um com
@@ -55,20 +55,21 @@ diferente — um token de demo **não** abre a produção.
 | | Produção | Teste | Demo |
 |---|---|---|---|
 | Prefixo | `/app` | `/test` | `/demo` |
-| Banco | `app_db` (volume persistente) | `app_test_db` (`tmpfs`) | `app_demo_db` (`tmpfs`, descartável) |
-| Compose | `docker-compose.yml` (`:4447`) | `docker-compose.test.yml` `-p pp-test` (`:4446`) | `docker-compose.demo.yml` `-p pp-demo` (`:4448`) |
+| Banco | `app_db` (volume persistente) | `app_test_db` (volume) | `app_demo_db` (volume, descartável) |
+| Compose | `docker-compose.yml` (`:4450`) — instância única, os 3 bancos sobem juntos | | |
 | População | **só o admin** `admin@admin.com` | admin + usuários demo | banco completo + autologa |
-| `NODE_ENV` | `production` | `staging` | `demo` |
+| `NODE_ENV` | `production` | `staging` (testes) | `demo` |
 | Rate limit | ativo | desativado | desativado |
 
 A **landing** (`/`) é pública e tem três botões: Produção (login), Teste
 (login) e **Demo** (autologa num usuário já criado em `/demo/start`). A
-produção nunca recebe dados de demonstração.
+produção nunca recebe dados de demonstração. É **uma única instância** na
+porta `4450` — os três bancos rodam simultâneos e são escolhidos pela landing.
+O `.env` (via `NODE_ENV`) controla se a instância sobe em modo `production` ou
+`staging` (testes); a demo é sempre acessível pela landing, independente.
 
 ```bash
-docker compose up -d --build                                  # producao :4447
-docker compose -f docker-compose.test.yml -p pp-test up -d     # teste   :4446
-docker compose -f docker-compose.demo.yml  -p pp-demo up -d     # demo    :4448
+docker compose up -d --build        # instancia unica :4450 (3 bancos)
 ```
 
 ## Seed de dados
@@ -239,15 +240,20 @@ Metodologia, perfis (`smoke`, `carga`, `estresse`, `pico`, `auth`) e análise:
 
 ## Ambientes
 
-| | Produção | Teste / carga |
-|---|---|---|
-| Arquivo | `docker-compose.yml` | `docker-compose.test.yml` |
-| Projeto | `pp` | `pp-test` |
-| Banco | `app_db`, volume persistente | `app_test_db`, `tmpfs` descartável |
-| Porta | `127.0.0.1:4447` | `127.0.0.1:4446` |
-| Limitação de taxa | Ativa | Desativada |
+É **uma única instância** (porta `4450`) com os três bancos rodando
+simultâneos (`app_db`, `app_test_db`, `app_demo_db`). O `.env` via `NODE_ENV`
+controla se sobe em modo `production` (rate limit ativo) ou `staging` (rate
+limit desativado, para testes de carga). A demo é sempre acessível pela
+landing, independente do modo.
 
-As duas podem rodar ao mesmo tempo, em redes Docker separadas.
+| | Instância única |
+|---|---|
+| Arquivo | `docker-compose.yml` |
+| Banco | `app_db`, `app_test_db`, `app_demo_db` (mesma instância Mongo) |
+| Porta | `127.0.0.1:4450` |
+| Limitação de taxa | Ativa em `production`, desativada em `staging` |
+
+Para teste de carga, suba com `NODE_ENV=staging`.
 
 ### Acesso de outra máquina
 
@@ -257,7 +263,7 @@ Defina `BIND_ADDR` no `.env` com a interface desejada:
 
 ```bash
 BIND_ADDR=100.120.54.126          # IP da VPN/Tailscale
-APP_BASE_URL=http://100.120.54.126:4447
+APP_BASE_URL=http://100.120.54.126:4450
 COOKIE_SECURE=false               # obrigatório em HTTP puro
 ```
 

@@ -26,7 +26,7 @@ docker compose logs -f app          # a senha do admin aparece no 1º boot
 ```
 
 O serviço `mongo` não publica portas: só é acessível pela rede interna do
-compose. O `app` publica em `127.0.0.1:4447` por padrão — coloque um nginx ou
+compose. O `app` publica em `127.0.0.1:4450` por padrão — coloque um nginx ou
 Caddy na frente para expor com TLS.
 
 ## Atrás de proxy reverso
@@ -39,7 +39,7 @@ Exemplo nginx:
 
 ```nginx
 location / {
-  proxy_pass http://127.0.0.1:4447;
+  proxy_pass http://127.0.0.1:4450;
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

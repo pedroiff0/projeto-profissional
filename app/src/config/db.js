@@ -43,7 +43,7 @@ function getModeConn(mode) {
 
 function modeFromEnv() {
   if (env.nodeEnv === 'production' || env.nodeEnv === 'development') return 'production';
-  if (env.nodeEnv === 'test') return 'test';
+  if (env.nodeEnv === 'test' || env.nodeEnv === 'staging') return 'test';
   if (env.nodeEnv === 'demo') return 'demo';
   return 'production';
 }
