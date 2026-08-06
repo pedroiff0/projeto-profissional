@@ -1,15 +1,16 @@
 </main>
-<footer class="app-footer bg-dark text-light py-4 mt-5">
-  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+<footer class="footer">
+  <div class="footer__inner">
     <span>
       &copy; <%= new Date().getFullYear() %>
-      <a href="https://phrandrance.com" target="_blank" rel="noopener" class="link-light"><%= t('footer.credit') %></a>
+      <a href="https://phrandrance.com" target="_blank" rel="noopener" class="footer__top"><%= t('footer.credit') %></a>
       — <%= t('footer.tagline') %>
     </span>
-    <a class="link-light" href="#topo"><%= t('footer.backTop') %> &uarr;</a>
+    <a class="footer__top" href="#topo"><%= t('footer.backTop') %> &uarr;</a>
   </div>
 </footer>
 <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="/js/space-bg.js"></script>
 <script src="/js/common.js"></script>
 <% if (typeof pageScript !== 'undefined' && pageScript) { %>
   <script src="/js/<%= pageScript %>.js"></script>

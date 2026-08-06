@@ -137,26 +137,23 @@ components:
 
 ## Overview
 
-Clareza institucional sem ornamento.
-
-Este é o sistema visual de uma **base técnica**, não de um produto de consumo.
-Quem chega aqui está avaliando se pode confiar a fundação de um projeto ao
-código — então a interface tem uma única tarefa: parecer sólida, previsível e
-honesta. Nada pisca, nada desliza sozinho, nada tenta impressionar.
+Tema "deep space" com glassmorphism — o mesmo padrão visual dos outros sites
+do Pedro (portfólio GitHub Pages e site Quartz oficial). Fundo estelar
+animado, painéis de vidro (blur), gradiente azul/violeta como único acento,
+tipografia display em Sora.
 
 Três decisões guiam tudo:
 
-1. **Sobriedade sobre personalidade.** A paleta é essencialmente azul e cinza
-   sobre branco. Um projeto derivado troca o azul pela cor da sua marca e todo
-   o resto continua funcionando.
-2. **Densidade honesta.** Espaço em branco generoso entre seções, conteúdo
-   compacto dentro dos cartões. O olho descansa entre blocos e trabalha dentro
-   deles.
-3. **Bootstrap 5 empacotado localmente.** O framework CSS vive em
-   `public/vendor/bootstrap` (sem CDN, respeita a CSP `self`). A identidade
-   própria fica em `public/css/main.css`, que sobrepõe as variáveis do
-   Bootstrap via `:root` (cor primária, raio, sombra). A página renderiza
-   offline, sem etapa de build.
+1. **Espaço profundo + vidro.** Fundo `radial-gradient` escuro com canvas de
+   estrelas/galáxias (movimento lento + repulsão do mouse) e `.glass`/`.card-pp`
+   com `backdrop-filter: blur()`. O conteúdo é opaco; só o véu de fundo é
+   desfocado.
+2. **Um único acento.** O gradiente `--grad` (`#6ea8fe → #b692ff`) conduz
+   interação (CTAs, links ativos, ícones). O resto é neutro frio sobre escuro.
+3. **Bootstrap 5 empacotado localmente** como utilitário de layout (grid,
+   form, botões base) em `public/vendor/bootstrap`. O tema próprio vive em
+   `public/css/theme-space.css`, que sobrepõe as variáveis via `:root`.
+   `public/css/main.css` é apenas complemento. Renderiza offline, sem build.
 
 ## Colors
 
@@ -185,26 +182,28 @@ necessidade de sublinhado, seta ou instrução.
 Semânticos (`error`, `success`) vêm do tema da aplicação autenticada e não
 aparecem na landing — erro em página de vitrine é ruído.
 
-### Tema escuro
+### Tema (deep space)
 
-A área autenticada responde a `prefers-color-scheme: dark` com uma paleta
-própria (`--bg: #101215`, `--primary: #5b8dee` — mais claro, para manter
-contraste sobre fundo escuro). A landing é **intencionalmente sempre clara**:
-é material institucional, e consistência de apresentação vale mais que
-preferência de sistema nesse contexto.
+A landing e a área autenticada usam o mesmo tema espacial escuro
+(`--bg: #05060f`, `--panel: rgba(17,21,46,.72)` com `backdrop-filter: blur`).
+O gradiente `--grad` (`#6ea8fe → #b692ff`) é o único acento. Texto em
+`--text: #e7ecff` (claro) sobre o fundo escuro — contraste AA. O `prefers-color-scheme`
+do SO pode ser sobreposto pelo botão de tema (claro/escuro), mas o padrão é
+space dark. O botão de tema claro produz um fundo claro equivalente
+(`--bg: #f6f7f9`, `--text: #16181d`) mantendo o gradiente.
 
 ## Typography
 
-Uma família só: a fonte de sistema (`system-ui`). Sem download, sem
-*flash of unstyled text*, e o texto já parece nativo em cada plataforma.
+Duas famílias: **Sora** (display/títulos, via Google Fonts) e **Inter** (corpo,
+também Google Fonts). O link pré-conecta em `fonts.googleapis.com` (CSP libera
+esse domínio em `fontSrc`). Fallback para `system-ui` se a fonte não carregar.
 Toda a hierarquia vem de **peso e tamanho**, não de variedade tipográfica.
 
-- **Escala agressiva no topo.** `h1` a 3.1rem contra corpo a 1rem — quase
-  3:1. Um título grande carrega a página sem precisar de imagem de fundo.
-- **`letterSpacing` negativo em títulos.** Fontes de sistema abrem demais em
-  tamanho grande; `-0.03em` no `h1` recupera a coesão de logotipo.
-- **Peso 800, nunca 900.** O extremo da escala fica irregular entre
-  plataformas.
+- **Escala agressiva no topo.** `h1` em `clamp(2.4rem, 6vw, 4.6rem)` contra
+  corpo a 1rem — quase 3:1. Um título grande carrega a página.
+- **`letterSpacing` negativo em títulos.** `-1.5px` no `h1` recupera a coesão
+  de logotipo.
+- **Peso 700, nunca 900.** O extremo da escala fica irregular entre plataformas.
 - **`lineHeight` inverso ao tamanho.** 1.06 no `h1`, 1.6 no texto de apoio:
   títulos precisam de bloco compacto, leitura precisa de ar.
 - **`eyebrow`** é o rótulo em maiúsculas antes de cada `h2`. Dá contexto sem
