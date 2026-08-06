@@ -152,9 +152,11 @@ Três decisões guiam tudo:
 2. **Densidade honesta.** Espaço em branco generoso entre seções, conteúdo
    compacto dentro dos cartões. O olho descansa entre blocos e trabalha dentro
    deles.
-3. **Zero dependência visual.** Sem fonte externa, sem ícone de CDN, sem
-   framework de CSS. A folha de estilo inteira tem ~200 linhas e a página
-   renderiza offline, sem etapa de build.
+3. **Bootstrap 5 empacotado localmente.** O framework CSS vive em
+   `public/vendor/bootstrap` (sem CDN, respeita a CSP `self`). A identidade
+   própria fica em `public/css/main.css`, que sobrepõe as variáveis do
+   Bootstrap via `:root` (cor primária, raio, sombra). A página renderiza
+   offline, sem etapa de build.
 
 ## Colors
 

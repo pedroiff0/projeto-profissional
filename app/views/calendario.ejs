@@ -1,15 +1,13 @@
 <%- include('partials/header', { title: t('nav.calendar') }) %>
-<main class="container">
-  <section class="card">
-    <div class="board-head">
-      <h1><%= t('nav.calendar') %></h1>
-      <div class="row cal-nav">
-        <button id="prev" class="btn-outline" type="button" aria-label="<%= t('task.moveLeft') %>">←</button>
-        <span id="month-label" class="month-label"></span>
-        <button id="next" class="btn-outline" type="button" aria-label="<%= t('task.moveRight') %>">→</button>
-      </div>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0"><%= t('nav.calendar') %></h1>
+    <div class="cal-nav">
+      <button id="prev" class="btn btn-outline-secondary btn-sm" type="button" aria-label="<%= t('task.moveLeft') %>">←</button>
+      <span id="month-label" class="month-label"></span>
+      <button id="next" class="btn btn-outline-secondary btn-sm" type="button" aria-label="<%= t('task.moveRight') %>">→</button>
     </div>
-  </section>
+  </div>
 
   <section class="calendar" id="calendar" data-api-base="<%= apiBase %>" aria-live="polite">
     <div class="cal-grid cal-weekdays">
@@ -18,6 +16,6 @@
     <div class="cal-grid" id="cal-body"></div>
   </section>
 
-  <p id="cal-status" class="muted small" aria-live="polite"></p>
-</main>
+  <p id="cal-status" class="text-muted small mt-2" aria-live="polite"></p>
+</div>
 <%- include('partials/footer') %>

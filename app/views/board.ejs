@@ -1,28 +1,24 @@
 <%- include('partials/header', { title: t('nav.board') }) %>
-<main class="container">
-  <section class="card">
-    <div class="board-head">
-      <h1><%= t('nav.board') %></h1>
-      <button id="btn-new" class="btn-primary" type="button"><%= t('task.new') %></button>
-    </div>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0"><%= t('nav.board') %></h1>
+    <button id="btn-new" class="btn btn-primary" type="button"><%= t('task.new') %></button>
+  </div>
 
-    <form id="form-task" class="task-form" hidden>
-      <div class="row">
-        <input id="f-title" name="title" type="text" maxlength="140" required
-               placeholder="<%= t('task.title') %>" aria-label="<%= t('task.title') %>" />
-        <input id="f-due" name="dueDate" type="date" aria-label="<%= t('task.dueDate') %>" />
-        <select id="f-status" name="status" aria-label="<%= t('task.status') %>">
-          <option value="todo"><%= t('task.todo') %></option>
-          <option value="doing"><%= t('task.doing') %></option>
-          <option value="done"><%= t('task.done') %></option>
-        </select>
-        <button class="btn-primary" type="submit"><%= t('task.new') %></button>
-        <button id="btn-cancel" class="btn-outline" type="button"><%= t('task.moveLeft') %></button>
-      </div>
-      <textarea id="f-desc" name="description" maxlength="2000" rows="2"
-                placeholder="<%= t('task.description') %>" aria-label="<%= t('task.description') %>"></textarea>
-    </form>
-  </section>
+  <form id="form-task" class="task-form" hidden>
+    <div class="row g-2">
+      <input id="f-title" name="title" type="text" maxlength="140" required class="form-control" placeholder="<%= t('task.title') %>" aria-label="<%= t('task.title') %>" />
+      <input id="f-due" name="dueDate" type="date" class="form-control" aria-label="<%= t('task.dueDate') %>" />
+      <select id="f-status" name="status" class="form-select" aria-label="<%= t('task.status') %>">
+        <option value="todo"><%= t('task.todo') %></option>
+        <option value="doing"><%= t('task.doing') %></option>
+        <option value="done"><%= t('task.done') %></option>
+      </select>
+      <button class="btn btn-primary" type="submit"><%= t('task.new') %></button>
+      <button id="btn-cancel" class="btn btn-outline-secondary" type="button"><%= t('task.moveLeft') %></button>
+    </div>
+    <textarea id="f-desc" name="description" maxlength="2000" rows="2" class="form-control mt-2" placeholder="<%= t('task.description') %>" aria-label="<%= t('task.description') %>"></textarea>
+  </form>
 
   <section class="board" id="board" data-api-base="<%= apiBase %>" aria-live="polite">
     <% statusCatalog.forEach(function(col) { %>
@@ -33,6 +29,6 @@
     <% }); %>
   </section>
 
-  <p id="board-status" class="muted small" aria-live="polite"></p>
-</main>
+  <p id="board-status" class="text-muted small mt-2" aria-live="polite"></p>
+</div>
 <%- include('partials/footer') %>

@@ -38,8 +38,8 @@ app/src/
    `utils/validation.js`. Nada de ler `req.body` cru.
 3. **Erros com `AppError(msg, status)`** — nunca `throw new Error()`. O
    `errorHandler` é o único lugar que formata resposta de erro.
-4. **EJS + JS vanilla**: sem React, sem webpack, sem Babel, sem etapa de build.
-   Uma página = um `.ejs` + um `.js` em `public/js/`.
+4. **EJS + JS vanilla + Bootstrap 5**: sem React, sem webpack, sem Babel, sem etapa de build. O Bootstrap é empacotado localmente em `public/vendor/bootstrap` (sem CDN, respeita a CSP `self`). Uma página = um `.ejs` + JS em `public/js/`. Componentes usam classes do Bootstrap; o tema próprio fica em `public/css/main.css` (sobrepõe variáveis do Bootstrap via `:root`).
+  Uma página = um `.ejs` + um `.js` em `public/js/`.
 5. **Sem JS inline**: a CSP não permite `unsafe-inline`. Todo script em
    arquivo servido de `/js/`.
 6. **Segredos só em `.env`**, lidos por `config/env.js`. Nunca hardcoded.
