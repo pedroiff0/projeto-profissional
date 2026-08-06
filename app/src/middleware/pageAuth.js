@@ -1,17 +1,42 @@
 const { extractToken, resolveUser, toRequestUser } = require('./auth');
 
 // Paginas: redireciona para /login em vez de responder 401 JSON.
+// No modo demo, usuario anonimo ganha acesso livre como o "demo user"
+// (demo1 do banco demo) — qualquer modificacao fica so no banco demo.
 async function pageAuth(req, res, next) {
   try {
     const token = extractToken(req);
-    if (!token) return res.redirect('/login');
-    const user = await resolveUser(token, req.mode, req.models);
-    if (!user) return res.redirect('/login');
-    req.user = toRequestUser(user);
-    res.locals.user = req.user;
-    res.locals.modo = req.mode;
-    next();
+    if (token) {
+      const user = await resolveUser(token, req.mode, req.models);
+      if (user) {
+        req.user = toRequestUser(user);
+        res.locals.user = req.user;
+        res.locals.modo = req.mode;
+        return next();
+      }
+    }
+    if (req.mode === 'demo') {
+      const demoUser = await req.models.User.findOne({ email: 'demo1@example.com' }).lean();
+      if (demoUser) {
+        req.user = toRequestUser(demoUser);
+        res.locals.user = req.user;
+        res.locals.modo = req.mode;
+        return next();
+      }
+    }
+    return res.redirect('/login');
   } catch {
+    if (req.mode === 'demo') {
+      try {
+        const demoUser = await req.models.User.findOne({ email: 'demo1@example.com' }).lean();
+        if (demoUser) {
+          req.user = toRequestUser(demoUser);
+          res.locals.user = req.user;
+          res.locals.modo = req.mode;
+          return next();
+        }
+      } catch { /* ignora */ }
+    }
     res.redirect('/login');
   }
 }

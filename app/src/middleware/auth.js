@@ -38,15 +38,26 @@ function toRequestUser(user) {
   };
 }
 
-// API: responde 401 em JSON.
+// API: responde 401 em JSON. No modo demo, usuario anonimo e tratado como o
+// "demo user" (demo1 do banco demo) — acesso livre, escopado ao banco demo.
 async function auth(req, res, next) {
   try {
     const token = extractToken(req);
-    if (!token) throw new AppError('Autenticacao necessaria', 401);
-    const user = await auth._resolve(token, req.mode, req.models);
-    if (!user) throw new AppError('Autenticacao necessaria', 401);
-    req.user = toRequestUser(user);
-    next();
+    if (token) {
+      const user = await auth._resolve(token, req.mode, req.models);
+      if (user) {
+        req.user = toRequestUser(user);
+        return next();
+      }
+    }
+    if (req.mode === 'demo') {
+      const demoUser = await req.models.User.findOne({ email: 'demo1@example.com' }).lean();
+      if (demoUser) {
+        req.user = toRequestUser(demoUser);
+        return next();
+      }
+    }
+    throw new AppError('Autenticacao necessaria', 401);
   } catch (err) {
     if (err instanceof AppError) return next(err);
     next(new AppError('Token invalido ou expirado', 401));
