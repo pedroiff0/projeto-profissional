@@ -1,11 +1,11 @@
 <%- include('partials/header', { title: t('nav.calendar') }) %>
-<div class="container py-4">
+<div class="page-wrap">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <h1 class="h3 mb-0"><%= t('nav.calendar') %></h1>
-    <div class="cal-nav">
-      <button id="prev" class="btn btn-outline-secondary btn-sm" type="button" aria-label="<%= t('task.moveLeft') %>">←</button>
+    <div class="cal-nav d-flex gap-2 align-items-center">
+      <button id="prev" class="btn-pp btn-pp--ghost" type="button" aria-label="<%= t('task.moveLeft') %>">←</button>
       <span id="month-label" class="month-label"></span>
-      <button id="next" class="btn btn-outline-secondary btn-sm" type="button" aria-label="<%= t('task.moveRight') %>">→</button>
+      <button id="next" class="btn-pp btn-pp--ghost" type="button" aria-label="<%= t('task.moveRight') %>">→</button>
     </div>
   </div>
 
