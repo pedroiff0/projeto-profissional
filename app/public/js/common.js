@@ -57,16 +57,25 @@ const clearBoxes = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btn-logout');
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      try {
-        await apiRequest('/api/auth/logout', { method: 'POST' });
-      } finally {
-        window.location.href = '/login';
-      }
-    });
+  // Efeito "scrolled" na navbar glass.
+  const nav = document.getElementById('ppNav');
+  if (nav) {
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 30);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
+
+  // --- Idioma (PT/EN/ES/FR) via bandeiras ---------------------------------
+  const currentLang = (document.cookie.match(/(?:^|;\s*)lang=([^;]+)/) || [])[1] || 'pt';
+  document.querySelectorAll('.lang-btn').forEach((btn) => {
+    const isActive = btn.dataset.lang === currentLang;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', String(isActive));
+    btn.addEventListener('click', () => {
+      document.cookie = `lang=${btn.dataset.lang}; path=/; max-age=${365 * 24 * 60 * 60}`;
+      window.location.reload();
+    });
+  });
 
   // --- Tema (claro/escuro) ------------------------------------------------
   const themeToggle = document.getElementById('theme-toggle');
@@ -92,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (moon) moon.style.display = isDark ? '' : 'none';
   }
 
-  // Estado inicial: cookie 'theme' > preferencia do SO.
   const savedTheme = (document.cookie.match(/(?:^|;\s*)theme=([^;]+)/) || [])[1] || 'auto';
   applyTheme(savedTheme);
 
@@ -106,17 +114,4 @@ document.addEventListener('DOMContentLoaded', () => {
       applyTheme(next);
     });
   }
-
-  // --- Idioma (PT/EN/ES/FR) ----------------------------------------------
-  const langSwitcher = document.getElementById('lang-switcher');
-  if (langSwitcher) {
-    const cur = (document.cookie.match(/(?:^|;\s*)lang=([^;]+)/) || [])[1] || 'pt';
-    langSwitcher.value = cur;
-    langSwitcher.addEventListener('change', () => {
-      const params = new URLSearchParams(window.location.search);
-      params.set('lang', langSwitcher.value);
-      window.location.search = params.toString();
-    });
-  }
 });
-
