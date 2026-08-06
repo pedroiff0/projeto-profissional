@@ -11,10 +11,11 @@
   <a class="brand" href="/">Projeto Profissional</a>
   <nav>
     <% if (typeof user !== 'undefined' && user) { %>
-      <a href="/board"><%= t('nav.board') %></a>
-      <a href="/calendario"><%= t('nav.calendar') %></a>
-      <% if (user.role === 'admin') { %><a href="/admin"><%= t('nav.users') %></a><% } %>
-      <a href="/perfil"><%= t('nav.profile') %></a>
+      <% var mp = (typeof modo !== 'undefined' && modo && modo !== 'production') ? '/' + modo : ''; %>
+      <a href="<%= mp %>/board"><%= t('nav.board') %></a>
+      <a href="<%= mp %>/calendario"><%= t('nav.calendar') %></a>
+      <% if (user.role === 'admin') { %><a href="<%= mp %>/admin"><%= t('nav.users') %></a><% } %>
+      <a href="<%= mp %>/perfil"><%= t('nav.profile') %></a>
       <button id="btn-logout" type="button" class="btn-link"><%= t('nav.logout') %></button>
     <% } else { %>
       <a href="/login"><%= t('nav.enter') %></a>

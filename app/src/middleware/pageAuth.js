@@ -9,6 +9,7 @@ async function pageAuth(req, res, next) {
     if (!user) return res.redirect('/login');
     req.user = toRequestUser(user);
     res.locals.user = req.user;
+    res.locals.modo = req.mode;
     next();
   } catch {
     res.redirect('/login');
