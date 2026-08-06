@@ -1,0 +1,17 @@
+const express = require('express');
+const taskController = require('../controllers/task.controller');
+const { auth } = require('../middleware/auth');
+const { validate } = require('../utils/validation');
+const { taskCreate, taskUpdate } = require('../schemas/task.schemas');
+
+const router = express.Router();
+
+router.use(auth);
+
+router.get('/', taskController.listar);
+router.get('/:id', taskController.obter);
+router.post('/', validate(taskCreate), taskController.criar);
+router.patch('/:id', validate(taskUpdate), taskController.atualizar);
+router.delete('/:id', taskController.remover);
+
+module.exports = router;

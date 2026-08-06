@@ -11,7 +11,8 @@
   <a class="brand" href="/">Projeto Profissional</a>
   <nav>
     <% if (typeof user !== 'undefined' && user) { %>
-      <a href="/app"><%= t('nav.panel') %></a>
+      <a href="/board"><%= t('nav.board') %></a>
+      <a href="/calendario"><%= t('nav.calendar') %></a>
       <% if (user.role === 'admin') { %><a href="/admin"><%= t('nav.users') %></a><% } %>
       <a href="/perfil"><%= t('nav.profile') %></a>
       <button id="btn-logout" type="button" class="btn-link"><%= t('nav.logout') %></button>
@@ -23,10 +24,10 @@
       <label class="lang-select" title="<%= t('lang.label') %>">
         <span class="visually-hidden"><%= t('lang.label') %></span>
         <select id="lang-switcher" aria-label="<%= t('lang.label') %>">
-          <option value="pt" data-flag="🇧🇷">PT</option>
-          <option value="en" data-flag="🇺🇸">EN</option>
-          <option value="es" data-flag="🇪🇸">ES</option>
-          <option value="fr" data-flag="🇫🇷">FR</option>
+          <option value="pt">PT</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
         </select>
       </label>
       <button id="theme-toggle" type="button" class="btn-affix" aria-label="<%= t('theme.toDark') %>" aria-pressed="false">
