@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const { getMainConn } = require('../config/db');
 
 const router = express.Router();
 
@@ -7,8 +7,11 @@ const router = express.Router();
 router.get('/live', (req, res) => res.json({ status: 'ok' }));
 
 // Readiness: da para servir trafego (banco conectado)?
+// Usamos a connection principal (mainConn), criada via createConnection em
+// db.js — a connection padrao do mongoose nunca e conectada neste app.
 router.get('/ready', (req, res) => {
-  const dbUp = mongoose.connection.readyState === 1;
+  const conn = getMainConn();
+  const dbUp = Boolean(conn && conn.readyState === 1);
   res.status(dbUp ? 200 : 503).json({ status: dbUp ? 'ok' : 'degraded', db: dbUp ? 'up' : 'down' });
 });
 
