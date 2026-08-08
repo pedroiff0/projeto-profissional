@@ -7,6 +7,12 @@ versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 
+- **Task — produtividade:** `dificuldade` (sequência Fibonacci 1,2,3,5,8,13,21),
+  `minutosFoco` (acumulado por Pomodoro) e `entregueEm` (data/hora automática ao
+  marcar `done`). `POST /api/tasks/:id/foco` registra minutos de foco na tarefa.
+  `dificuldade` validada por Zod (422 fora da sequência). (commit `dc333d2`)
+- Suíte Jest para as novas features de Task (`tests/taskFeatures.test.js`, 3
+  testes). (PR #29, fecha #26)
 - Mapeamento de respostas HTTP: página `/status` (tabela filtrável por `?q=`),
   API `GET /api/status/:code` (JSON estruturado, 404 se não mapeado) e página
   de erro rericada (código grande, título amigável, ação de recuperação, botão
