@@ -32,10 +32,12 @@ async function criar(data, userId, userName, models) {
 async function atualizar(id, data, userId, role, models) {
   const Task = models.Task;
   const t = await obter(id, userId, role, models);
-  const campos = ['title', 'description', 'status', 'dueDate'];
+  const campos = ['title', 'description', 'status', 'dueDate', 'dificuldade'];
   for (const c of campos) {
     if (data[c] !== undefined) t[c] = data[c];
   }
+  if (data.status === 'done') { if (!t.entregueEm) t.entregueEm = new Date(); }
+  else if (data.status !== undefined) t.entregueEm = null;
   if (data.assigneeId !== undefined) {
     if (data.assigneeId) {
       const u = await models.User.findById(data.assigneeId).lean();
@@ -57,4 +59,15 @@ async function remover(id, userId, role, models) {
   return true;
 }
 
-module.exports = { listar, obter, criar, atualizar, remover };
+// Registra minutos de foco (Pomodoro) vinculados a esta tarefa especifica.
+async function registrarFoco(id, minutos, userId, role, models) {
+  const Task = models.Task;
+  const m = Number(minutos);
+  if (!Number.isFinite(m) || m <= 0) throw new AppError('Minutos de foco invalidos', 400);
+  const t = await obter(id, userId, role, models);
+  t.minutosFoco = (t.minutosFoco || 0) + m;
+  await t.save();
+  return t;
+}
+
+module.exports = { listar, obter, criar, atualizar, remover, registrarFoco };

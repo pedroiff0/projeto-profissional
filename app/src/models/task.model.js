@@ -16,6 +16,12 @@ const taskSchema = new mongoose.Schema(
     ownerName: { type: String, default: '' },
     assigneeId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     assigneeName: { type: String, default: '' },
+    // Dificuldade estimada na sequencia Fibonacci (pontos de esforco).
+    dificuldade: { type: Number, enum: [1, 2, 3, 5, 8, 13, 21], default: null },
+    // Minutos de foco (Pomodoro) registrados nesta tarefa especifica.
+    minutosFoco: { type: Number, default: 0, min: 0 },
+    // Data/hora em que a tarefa foi marcada como concluida (done).
+    entregueEm: { type: Date, default: null },
   },
   { timestamps: true }
 );

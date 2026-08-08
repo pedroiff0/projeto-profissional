@@ -10,6 +10,7 @@ router.use(auth);
 
 router.get('/', taskController.listar);
 router.get('/:id', taskController.obter);
+router.post('/:id/foco', taskController.registrarFoco);
 router.post('/', validate(taskCreate), taskController.criar);
 router.patch('/:id', validate(taskUpdate), taskController.atualizar);
 router.delete('/:id', taskController.remover);

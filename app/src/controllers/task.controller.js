@@ -32,4 +32,10 @@ const remover = asyncHandler(async (req, res) => {
   res.status(204).end();
 });
 
-module.exports = { listar, obter, criar, atualizar, remover };
+const registrarFoco = asyncHandler(async (req, res) => {
+  const { minutos } = req.body;
+  const t = await taskService.registrarFoco(req.params.id, minutos, req.user.id, req.user.role, req.models);
+  res.json({ task: t });
+});
+
+module.exports = { listar, obter, criar, atualizar, remover, registrarFoco };
