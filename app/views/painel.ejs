@@ -1,0 +1,99 @@
+<%- include('partials/header', { title: t('painel.title') }) %>
+<section class="painel-head">
+  <h1><%= t('painel.title') %></h1>
+  <p class="muted"><%= t('painel.sub') %></p>
+</section>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <span class="stat-num" id="stat-total"><%= stats.total %></span>
+    <span class="stat-label"><%= t('painel.total') %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num" id="stat-concluidas"><%= stats.concluidas %></span>
+    <span class="stat-label"><%= t('painel.concluidas') %></span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num"><%= Math.round(meta.focoMinutos) %></span>
+    <span class="stat-label"><%= t('painel.focus') %> (min)</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-num"><%= meta.pomodoros %></span>
+    <span class="stat-label"><%= t('painel.pomodoros') %></span>
+  </div>
+  <div class="stat-card stat-accent">
+    <span class="stat-num" id="stat-taxa"><%= stats.total ? Math.round(stats.concluidas / stats.total * 100) : 0 %>%</span>
+    <span class="stat-label"><%= t('painel.rate') %></span>
+  </div>
+</div>
+
+<div class="painel-grid">
+  <section class="card">
+    <h2><%= t('painel.goal') %></h2>
+    <form id="goal-form" class="cad-form" autocomplete="off">
+      <div class="row">
+        <input type="number" name="metaSemana" min="0" value="<%= meta.metaSemana %>" />
+        <span class="muted"><%= t('painel.goalPh') %></span>
+        <button class="btn-primary" type="submit"><%= t('painel.goalSave') %></button>
+      </div>
+      <span id="goal-status" class="muted small" aria-live="polite"></span>
+    </form>
+    <div class="progress">
+      <div class="progress-bar" id="goal-bar" style="width:<%= Math.min(100, stats.concluidas / Math.max(1, meta.metaSemana) * 100) %>%>"></div>
+    </div>
+    <p class="muted small"><%= t('painel.goalProgress') %>: <span id="goal-done"><%= stats.concluidas %></span> / <%= meta.metaSemana %></p>
+  </section>
+
+  <section class="card pomo">
+    <h2><%= t('painel.pomo') %></h2>
+    <div class="pomo-clock" id="pomo-clock">25:00</div>
+    <div class="row">
+      <button class="btn-primary" id="pomo-start" type="button"><%= t('painel.pomoStart') %></button>
+      <button class="btn-outline" id="pomo-stop" type="button"><%= t('painel.pomoStop') %></button>
+    </div>
+    <p class="muted small" id="pomo-msg" aria-live="polite"></p>
+  </section>
+</div>
+
+<div class="painel-grid">
+  <section class="card">
+    <h2><%= t('painel.byStatus') %></h2>
+    <div id="bars-status" class="bars bars-h"></div>
+    <p class="muted small" id="bars-status-legend"></p>
+  </section>
+
+  <section class="card">
+    <h2><%= t('painel.weekFocus') %></h2>
+    <div id="week-chart" class="week-chart"></div>
+    <p class="muted small"><%= t('painel.weekFocusHint') %></p>
+  </section>
+</div>
+
+<div class="painel-grid">
+  <section class="card">
+    <h2><%= t('painel.byProject') %> — <%= t('painel.hours') %></h2>
+    <div id="bars-project" class="bars bars-h"></div>
+    <p class="muted small" id="bars-project-legend"></p>
+  </section>
+
+  <section class="card">
+    <h2><%= t('painel.byDiff') %></h2>
+    <div id="donut-diff" class="donut"></div>
+    <p class="muted small" id="donut-diff-legend"></p>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t('painel.hoursReport') %></h2>
+  <p class="muted small"><%= t('painel.hoursReportHint') %></p>
+  <div class="table-wrap">
+    <table class="dom-table" id="hours-table">
+      <thead>
+        <tr><th><%= t('painel.colProject') %></th><th><%= t('painel.colTasks') %></th><th><%= t('painel.colFocusMin') %></th><th><%= t('painel.colHours') %></th></tr>
+      </thead>
+      <tbody id="hours-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
