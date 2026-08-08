@@ -1,0 +1,277 @@
+<%- include('partials/header', { title: 'Quadro' }) %>
+<% function ymd(d) { return d ? new Date(d).toISOString().slice(0, 10) : ''; } %>
+<section class="board-head">
+  <div>
+    <h1><%= t('board.label') %></h1>
+    <p class="muted"><%= t('board.intro') %></p>
+  </div>
+  <div class="board-head-actions">
+    <button id="btn-imprimir" class="btn-outline" type="button">Imprimir</button>
+    <button id="btn-nova" class="btn-primary" type="button"><%= t('board.new') %></button>
+  </div>
+</section>
+
+<!-- Barra de filtros do quadro (recolhivel via <details> nativo) -->
+<details class="board-filters card">
+  <summary class="bf-toggle"><%= t('board.filters') %></summary>
+  <div class="bf-body">
+  <div class="bfield">
+    <label for="f-pessoa"><%= t('board.filterPessoa') %></label>
+    <select id="f-pessoa">
+      <option value=""><%= t('board.all') %></option>
+      <% profissionais.forEach(function(pr) { %><option value="<%= pr._id %>"><%= pr.nome %></option><% }); %>
+    </select>
+  </div>
+  <div class="bfield">
+    <label for="f-projeto"><%= t('board.filterProj') %></label>
+    <select id="f-projeto">
+      <option value=""><%= t('board.all') %></option>
+      <% projetos.forEach(function(p) { %><option value="<%= p._id %>"><%= p.name %></option><% }); %>
+    </select>
+  </div>
+  <div class="bfield">
+    <label for="f-tags"><%= t('board.filterTags') %></label>
+    <input id="f-tags" type="text" placeholder="urgente, cliente" />
+  </div>
+  <div class="bfield">
+    <label for="f-inicio-de"><%= t('task.start') %> — <%= t('from') %></label>
+    <input id="f-inicio-de" type="date" />
+  </div>
+  <div class="bfield">
+    <label for="f-inicio-ate"><%= t('task.start') %> — <%= t('to') %></label>
+    <input id="f-inicio-ate" type="date" />
+  </div>
+  <div class="bfield">
+    <label for="f-prazo-de"><%= t('task.due') %> — <%= t('from') %></label>
+    <input id="f-prazo-de" type="date" />
+  </div>
+  <div class="bfield">
+    <label for="f-prazo-ate"><%= t('task.due') %> — <%= t('to') %></label>
+    <input id="f-prazo-ate" type="date" />
+  </div>
+  <button id="f-clear" class="btn-outline" type="button"><%= t('board.clear') %></button>
+  <span id="f-summary" class="muted small" aria-live="polite"></span>
+  </div>
+</details>
+
+<!-- Painel de cadastro (estilo Asana/Trello/Todoist) -->
+<section id="cadastro" class="card cadastro" hidden>
+  <h2><%= t('board.newTask') %></h2>
+  <form id="task-form" class="cad-form" autocomplete="off">
+    <div class="field">
+      <span><%= t('board.title') %></span>
+      <input type="text" name="titulo" maxlength="160" required />
+    </div>
+    <div class="field">
+      <span><%= t('board.desc') %></span>
+      <textarea name="descricao" maxlength="4000"></textarea>
+      <span class="field-hint"><%= t('board.descHint') %></span>
+    </div>
+    <div class="row" style="align-items:flex-end;">
+      <div class="field" style="flex:1;">
+        <span><%= t('board.project') %></span>
+        <select name="projetoId">
+          <option value=""><%= t('board.noProject') %></option>
+          <% projetos.forEach(function(p) { %><option value="<%= p._id %>"><%= p.name %></option><% }); %>
+        </select>
+      </div>
+      <div class="field" style="flex:1;">
+        <span><%= t('board.assignee') %></span>
+        <select name="profissionalId">
+          <option value=""><%= t('board.noOne') %></option>
+          <% profissionais.forEach(function(pr) { %><option value="<%= pr._id %>"><%= pr.nome %></option><% }); %>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <span><%= t('board.tags') %></span>
+      <input type="text" name="tags" placeholder="<%= t('board.tagsPh') %>" />
+    </div>
+    <div class="field">
+      <span><%= t('board.difficulty') %></span>
+      <select name="dificuldade">
+        <option value=""><%= t('board.noDifficulty') %></option>
+        <option value="1">1 — <%= t('board.easy') %></option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="8">8</option>
+        <option value="13">13</option>
+        <option value="21">21 — <%= t('board.hard') %></option>
+      </select>
+    </div>
+    <div class="row">
+      <button class="btn-primary" type="submit"><%= t('board.save') %></button>
+      <button id="btn-cancel" class="btn-outline" type="button"><%= t('board.cancel') %></button>
+      <span id="task-status" class="muted small" aria-live="polite"></span>
+    </div>
+  </form>
+</section>
+
+<section class="board" id="board" aria-label="<%= t('board.label') %>" data-api-base="<%= apiBase %>">
+  <% colunas.forEach(function(col) { %>
+    <div class="board-col" data-status="<%= col.key %>">
+      <div class="board-col-head">
+        <h2><%= col.label %></h2>
+        <span class="board-count"><%= col.items.length %></span>
+      </div>
+      <div class="board-cards" data-status="<%= col.key %>">
+        <% col.items.forEach(function(task) { %>
+          <article class="tcard" data-id="<%= task._id %>" data-status="<%= task.status %>"
+            data-projeto="<%= task.projetoId || '' %>" data-profissional="<%= task.profissionalId || '' %>"
+            data-tags="<%= (task.tags || []).join(',') %>" data-inicio="<%= ymd(task.dataInicio) %>" data-prazo="<%= ymd(task.prazo) %>">
+            <div class="tcard-top">
+              <h3><%= task.titulo %></h3>
+              <button class="tcard-edit" data-id="<%= task._id %>" type="button" aria-label="<%= t('task.edit') %>">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </button>
+              <button class="tcard-del" data-id="<%= task._id %>" type="button" aria-label="<%= t('board.remove') %>">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
+            </div>
+            <% if (task.descricao) { %><p class="tcard-desc"><%= task.descricao %></p><% } %>
+            <div class="tcard-meta">
+              <% var pr = projetos.find(function(x){ return String(x._id) === String(task.projetoId); }); %>
+              <% var pf = profissionais.find(function(x){ return String(x._id) === String(task.profissionalId); }); %>
+              <% if (pr) { %><span class="tcard-tag tcard-proj" data-id="<%= pr._id %>"><%= pr.name %></span><% } %>
+              <% if (pf) { %><span class="tcard-tag tcard-who" data-id="<%= pf._id %>"><%= pf.nome %></span><% } %>
+            </div>
+            <% if (task.tags && task.tags.length) { %><div class="tcard-tags"><% task.tags.forEach(function(tag) { %><span class="tag">#<%= tag %></span><% }); %></div><% } %>
+            <div class="tcard-foot">
+              <select class="tcard-move" data-id="<%= task._id %>" aria-label="<%= t('board.move') %>">
+                <option value="planejado" <%= task.status === 'planejado' ? 'selected' : '' %>>A fazer</option>
+                <option value="em_andamento" <%= task.status === 'em_andamento' ? 'selected' : '' %>>Em andamento</option>
+                <option value="pausado" <%= task.status === 'pausado' ? 'selected' : '' %>>Pausado</option>
+                <option value="concluido" <%= task.status === 'concluido' ? 'selected' : '' %>>Concluído</option>
+              </select>
+            </div>
+          </article>
+        <% }); %>
+        <% if (!col.items.length) { %><p class="board-empty muted"><%= t('board.empty') %></p><% } %>
+      </div>
+    </div>
+  <% }); %>
+</section>
+
+<!-- Modal de detalhe da tarefa: visualiza e edita com Markdown + LaTeX + campos ricos. -->
+<div id="task-modal" class="modal" hidden>
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tm-title">
+    <header class="modal-head">
+      <input id="tm-title" class="tm-title" maxlength="160" aria-label="<%= t('board.title') %>" />
+      <button class="modal-x" type="button" data-close="1" aria-label="<%= t('board.cancel') %>">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <div id="tm-status-badge" class="tm-status-badge" data-status="planejado"></div>
+    <div class="modal-meta">
+      <div>
+        <label for="tm-status"><%= t('board.move') %></label>
+        <select id="tm-status" aria-label="<%= t('board.move') %>">
+          <option value="planejado">A fazer</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="pausado">Pausado</option>
+          <option value="concluido">Concluído</option>
+        </select>
+      </div>
+      <div>
+        <label for="tm-project"><%= t('board.project') %></label>
+        <select id="tm-project" aria-label="<%= t('board.project') %>">
+          <option value=""><%= t('board.noProject') %></option>
+          <% projetos.forEach(function(p) { %><option value="<%= p._id %>"><%= p.name %></option><% }); %>
+        </select>
+      </div>
+      <div>
+        <label for="tm-assignee"><%= t('board.assignee') %></label>
+        <select id="tm-assignee" aria-label="<%= t('board.assignee') %>">
+          <option value=""><%= t('board.noOne') %></option>
+          <% profissionais.forEach(function(pr) { %><option value="<%= pr._id %>"><%= pr.nome %></option><% }); %>
+        </select>
+      </div>
+    </div>
+    <div class="modal-grid">
+      <div class="field">
+        <label for="tm-datainicio"><%= t('task.start') %></label>
+        <input id="tm-datainicio" type="date" />
+      </div>
+      <div class="field">
+        <label for="tm-prazo"><%= t('task.due') %></label>
+        <input id="tm-prazo" type="date" />
+      </div>
+      <div class="field">
+        <label for="tm-horario"><%= t('task.time') %></label>
+        <input id="tm-horario" type="time" />
+      </div>
+      <div class="field">
+        <label for="tm-tags"><%= t('board.tags') %></label>
+        <input id="tm-tags" type="text" placeholder="<%= t('board.tagsPh') %>" />
+      </div>
+      <div class="field">
+        <label for="tm-diff"><%= t('board.difficulty') %></label>
+        <select id="tm-diff">
+          <option value=""><%= t('board.noDifficulty') %></option>
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="5">5</option><option value="8">8</option><option value="13">13</option>
+          <option value="21">21</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="tm-view" class="md"></div>
+      <textarea id="tm-edit" class="tm-edit" hidden maxlength="4000" aria-label="<%= t('board.desc') %>"></textarea>
+      <span class="field-hint"><%= t('board.descHint') %></span>
+    </div>
+    <div class="modal-section">
+      <h4 class="modal-section-title"><%= t('task.files') %></h4>
+      <ul id="tm-files" class="file-list"></ul>
+    </div>
+    <div class="modal-section">
+      <h4 class="modal-section-title"><%= t('task.links') %></h4>
+      <ul id="tm-links" class="link-list"></ul>
+    </div>
+    <div class="modal-section">
+      <h4 class="modal-section-title"><%= t('task.comments') %></h4>
+      <ul id="tm-comments" class="comment-list"></ul>
+      <div class="comment-form">
+        <input id="tm-comment" type="text" maxlength="2000" placeholder="<%= t('task.commentPh') %>" />
+        <button id="tm-comment-btn" class="btn-primary" type="button"><%= t('task.commentSend') %></button>
+      </div>
+    </div>
+    <div class="modal-section task-pomodoro">
+      <h4 class="modal-section-title"><%= t('task.pomodoro') %></h4>
+      <p class="muted small"><%= t('task.pomodoroHint') %></p>
+      <div class="pomo-inline">
+        <span id="tm-focus-min" class="pomo-min">0</span>
+        <span class="muted"><%= t('task.focusMinutes') %></span>
+        <button id="tm-pomo-start" class="btn-outline" type="button"><%= t('task.pomodoroStart') %></button>
+        <button id="tm-pomo-stop" class="btn-outline" type="button" hidden><%= t('task.pomodoroStop') %></button>
+      </div>
+      <span id="tm-pomo-status" class="muted small" aria-live="polite"></span>
+    </div>
+    <footer class="modal-foot">
+      <button id="tm-edit-btn" class="btn-outline" type="button"><%= t('task.edit') %></button>
+      <button id="tm-save" class="btn-primary" type="button" hidden><%= t('board.save') %></button>
+      <button id="tm-cancel" class="btn-outline" type="button" hidden><%= t('board.cancel') %></button>
+      <span id="tm-status-msg" class="muted small" aria-live="polite"></span>
+    </footer>
+  </div>
+</div>
+
+<% if (false && mostraDemo) { %>
+<section class="card demo-reload">
+  <h2><%= t('board.reloadTitle') %></h2>
+  <p class="muted"><%= t('board.reloadDesc') %></p>
+  <div class="row">
+    <button id="btn-demo" class="btn-outline" type="button" data-demo-api="<%= demoApi %>"><%= t('board.reload') %></button>
+    <span id="demo-status" class="muted small" aria-live="polite"></span>
+  </div>
+</section>
+<% } %>
+
+<link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+<script src="/vendor/marked.umd.js"></script>
+<script src="/vendor/purify.min.js"></script>
+<script src="/vendor/katex/katex.min.js"></script>
+<script src="/vendor/katex/auto-render.min.js"></script>
+
+<%- include('partials/footer') %>

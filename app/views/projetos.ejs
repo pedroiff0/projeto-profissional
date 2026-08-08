@@ -1,24 +1,83 @@
 <%- include('partials/header', { title: 'Projetos' }) %>
-<section class="card">
+<section class="card" data-api-base="<%= apiBase %>">
   <div class="lp-brand-row" style="margin-bottom:.5rem">
     <h1>Projetos</h1>
-    <a class="btn-primary" href="/catalogo" style="margin-left:auto">Ver catálogo</a>
   </div>
-  <form class="field status-search" method="get" action="/projetos">
+  <form id="proj-form" class="cad-form" autocomplete="off">
+    <div class="field">
+      <span><%= t('proj.name') %></span>
+      <input type="text" name="name" maxlength="120" required />
+    </div>
+    <div class="field">
+      <span><%= t('proj.desc') %></span>
+      <textarea name="description" maxlength="1000"></textarea>
+    </div>
+    <div class="row" style="align-items:flex-end;">
+      <div class="field" style="flex:1;">
+        <span>Responsável</span>
+        <input type="text" id="resp-input" name="responsavelId" list="resp-list" placeholder="Digite ou selecione o responsável…" autocomplete="off" required style="margin-top:.4rem" />
+        <datalist id="resp-list">
+          <% usuarios.forEach(function(u) { %><option value="<%= u.name %>|<%= u._id %>"><%= u.name %></option><% }); %>
+        </datalist>
+      </div>
+      <div class="field" style="flex:1;">
+        <span><%= t('proj.tags') %></span>
+        <input type="text" name="tags" placeholder="<%= t('proj.tagsPh') %>" />
+      </div>
+    </div>
     <div class="row">
-      <select name="status" aria-label="Filtrar por status">
-        <option value="">Todos os status</option>
-        <option value="planejado">Planejado</option>
-        <option value="em_andamento">Em andamento</option>
-        <option value="concluido">Concluído</option>
-        <option value="pausado">Pausado</option>
-      </select>
-      <input type="text" name="tag" placeholder="tag (ex.: urgente)" aria-label="Filtrar por tag" />
-      <button class="btn-primary" type="submit">Filtrar</button>
+      <button class="btn-primary" type="submit"><%= t('proj.add') %></button>
+      <span id="proj-status" class="muted small" aria-live="polite"></span>
     </div>
   </form>
-  <p id="proj-count" class="muted small"></p>
-  <ul id="proj-list" class="demo-list"></ul>
-  <div id="proj-pager" class="row"></div>
 </section>
+<section class="card">
+  <h2><%= t('proj.list') %></h2>
+  <table class="dom-table" id="proj-table">
+    <thead>
+      <tr>
+        <th style="width:30%">Nome</th>
+        <th>Descrição</th>
+        <th style="width:16%">Responsável</th>
+        <th style="width:16%">Tags</th>
+        <th style="width:96px; text-align:right">Ações</th>
+      </tr>
+    </thead>
+    <tbody id="proj-rows"></tbody>
+  </table>
+  <p id="proj-empty" class="dom-empty" hidden>Nenhum projeto ainda.</p>
+</section>
+
+<div id="proj-modal" class="modal" hidden>
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="proj-modal-title">
+    <header class="modal-head">
+      <h2 id="proj-modal-title" style="margin:0;font-size:1.15rem"><%= t('proj.name') %></h2>
+      <button class="modal-x" type="button" data-close="1" aria-label="Fechar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <form id="proj-edit-form" class="cad-form" autocomplete="off" style="padding:1.2rem 1.3rem;">
+      <div class="field"><span><%= t('proj.name') %></span><input type="text" name="name" maxlength="120" required /></div>
+      <div class="field"><span><%= t('proj.desc') %></span><textarea name="description" maxlength="1000"></textarea></div>
+      <div class="field"><span>Responsável</span>
+        <input type="text" id="resp-input-edit" name="responsavelId" list="resp-list-edit" placeholder="Digite ou selecione o responsável…" autocomplete="off" required style="margin-top:.4rem" />
+        <datalist id="resp-list-edit">
+          <% usuarios.forEach(function(u) { %><option value="<%= u.name %>|<%= u._id %>"><%= u.name %></option><% }); %>
+        </datalist>
+      </div>
+      <div class="field"><span><%= t('proj.tags') %></span><input type="text" name="tags" placeholder="<%= t('proj.tagsPh') %>" /></div>
+      <div class="row">
+        <button class="btn-primary" type="submit"><%= t('board.save') %></button>
+        <button class="btn-outline" type="button" data-close="1"><%= t('board.cancel') %></button>
+        <span id="proj-edit-status" class="muted small" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
 <%- include('partials/footer') %>
+<script src="/vendor/marked.umd.js"></script>
+<script src="/vendor/purify.min.js"></script>
+<script src="/vendor/katex/katex.min.js"></script>
+<script src="/vendor/katex/auto-render.min.js"></script>
