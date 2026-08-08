@@ -14,6 +14,16 @@
         <option value="doing"><%= t('task.doing') %></option>
         <option value="done"><%= t('task.done') %></option>
       </select>
+      <select id="f-dificuldade" name="dificuldade" class="input-pp form-control" aria-label="Dificuldade">
+        <option value="">Dificuldade (opcional)</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="8">8</option>
+        <option value="13">13</option>
+        <option value="21">21</option>
+      </select>
       <button class="btn-pp btn-pp--primary" type="submit"><%= t('task.new') %></button>
       <button id="btn-cancel" class="btn-pp btn-pp--ghost" type="button"><%= t('task.moveLeft') %></button>
     </div>

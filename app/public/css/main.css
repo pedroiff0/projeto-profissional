@@ -10,3 +10,14 @@
 
 /* Espaçamento superior das páginas internas (navbar fixa glass). */
 .page-top { padding-top: 96px; }
+
+/* Board - badges de dificuldade/foco/entregue em e Pomodoro por tarefa */
+.tcard-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.35rem 0; }
+.tcard-tag { font-size: 0.72rem; padding: 0.12rem 0.45rem; border-radius: 999px; font-weight: 600; }
+.tcard-diff { background: rgba(245,158,11,0.16); color: #b45309; }
+.tcard-focus { background: rgba(37,99,235,0.14); color: #2563eb; }
+.tcard-done { background: rgba(16,185,129,0.18); color: #0f9d6b; }
+.task-card { background: var(--card, #fff); border: 1px solid rgba(148,163,184,0.25); border-radius: 12px; padding: 0.75rem; margin-bottom: 0.6rem; box-shadow: 0 1px 3px rgba(2,6,23,0.12); }
+.task-actions { display: flex; gap: 0.4rem; margin-top: 0.5rem; align-items: center; }
+.btn-pomo { font-size: 0.8rem; margin-top: 0.4rem; }
+.task-due { font-size: 0.75rem; color: var(--muted, #64748b); margin: 0.25rem 0; }

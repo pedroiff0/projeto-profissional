@@ -4,17 +4,15 @@
   if (!board) return;
   var apiBase = board.getAttribute('data-api-base') || '/api/tasks';
   var STATUS_ORDER = ['todo', 'doing', 'done'];
+  var POMO_MIN = 25;
 
   function fmtDate(d) {
     if (!d) return '';
     var dt = new Date(d);
     if (isNaN(dt)) return '';
-    return dt.toLocaleDateString();
+    return dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-
-  function esc(s) {
-    return String(s == null ? '' : s);
-  }
+  function esc(s) { return String(s == null ? '' : s); }
 
   async function api(method, path, body) {
     var opts = { method: method, credentials: 'same-origin', headers: {} };
@@ -31,20 +29,22 @@
 
   function statusIndex(s) { return STATUS_ORDER.indexOf(s); }
 
+  function badge(text, cls) {
+    var b = document.createElement('span');
+    b.className = 'tcard-tag ' + cls;
+    b.textContent = text;
+    return b;
+  }
+
   function moveBtns(task) {
     var i = statusIndex(task.status);
     var left = document.createElement('button');
-    left.type = 'button';
-    left.className = 'btn-ghost';
-    left.textContent = '←';
+    left.type = 'button'; left.className = 'btn-ghost'; left.textContent = '←';
     left.title = window.t ? window.t('task.moveLeft') : 'Voltar';
     left.disabled = i <= 0;
     left.addEventListener('click', function () { setStatus(task._id, STATUS_ORDER[i - 1]); });
-
     var right = document.createElement('button');
-    right.type = 'button';
-    right.className = 'btn-ghost';
-    right.textContent = '→';
+    right.type = 'button'; right.className = 'btn-ghost'; right.textContent = '→';
     right.title = window.t ? window.t('task.moveRight') : 'Avançar';
     right.disabled = i >= STATUS_ORDER.length - 1;
     right.addEventListener('click', function () { setStatus(task._id, STATUS_ORDER[i + 1]); });
@@ -67,6 +67,15 @@
       p.textContent = task.description;
       card.appendChild(p);
     }
+
+    // Badges: dificuldade (Fibonacci), foco acumulado, entregue em.
+    var tags = document.createElement('div');
+    tags.className = 'tcard-tags';
+    if (task.dificuldade) tags.appendChild(badge('◆ ' + task.dificuldade, 'tcard-diff'));
+    if (task.minutosFoco) tags.appendChild(badge(task.minutosFoco + ' min foco', 'tcard-focus'));
+    if (task.entregueEm) tags.appendChild(badge('Entregue em ' + fmtDate(task.entregueEm), 'tcard-done'));
+    if (tags.childNodes.length) card.appendChild(tags);
+
     if (task.dueDate) {
       var due = document.createElement('p');
       due.className = 'task-due';
@@ -74,28 +83,51 @@
       card.appendChild(due);
     }
 
+    // Pomodoro por tarefa.
+    var pomo = document.createElement('button');
+    pomo.type = 'button';
+    pomo.className = 'btn-pp btn-pp--ghost btn-pomo';
+    pomo.textContent = '🍅 Pomodoro';
+    pomo.addEventListener('click', function () { startPomodoro(task._id, pomo); });
+    card.appendChild(pomo);
+
     var actions = document.createElement('div');
     actions.className = 'task-actions';
     moveBtns(task).forEach(function (b) { actions.appendChild(b); });
-
     var del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'btn-ghost danger';
-    del.textContent = '✕';
+    del.type = 'button'; del.className = 'btn-ghost danger'; del.textContent = '✕';
     del.title = window.t ? window.t('task.delete') : 'Excluir';
     del.addEventListener('click', function () { removeTask(task._id); });
     actions.appendChild(del);
-
     card.appendChild(actions);
     return card;
+  }
+
+  // Pomodoro: conta POMO_MIN e registra o foco na tarefa.
+  var pomoRunning = false;
+  async function startPomodoro(id, btn) {
+    if (pomoRunning) return;
+    pomoRunning = true;
+    var restante = POMO_MIN * 60;
+    btn.disabled = true;
+    var original = btn.textContent;
+    var timer = setInterval(function () {
+      restante -= 1;
+      var m = Math.floor(restante / 60), s = restante % 60;
+      btn.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      if (restante <= 0) {
+        clearInterval(timer);
+        btn.textContent = original; btn.disabled = false; pomoRunning = false;
+        api('POST', '/' + id + '/foco', { minutos: POMO_MIN })
+          .then(load).catch(function (e) { setStatusMsg(e.message); });
+      }
+    }, 1000);
   }
 
   function render(tasks) {
     var cols = {};
     STATUS_ORDER.forEach(function (s) { cols[s] = []; });
-    (tasks || []).forEach(function (t) {
-      (cols[t.status] || (cols[t.status] = [])).push(t);
-    });
+    (tasks || []).forEach(function (t) { (cols[t.status] || (cols[t.status] = [])).push(t); });
     STATUS_ORDER.forEach(function (s) {
       var body = board.querySelector('[data-col="' + s + '"]');
       if (!body) return;
@@ -112,26 +144,16 @@
   }
 
   async function load() {
-    try {
-      var data = await api('GET', '/');
-      render(data.tasks);
-    } catch (e) {
-      setStatusMsg(e.message);
-    }
+    try { var data = await api('GET', '/'); render(data.tasks); }
+    catch (e) { setStatusMsg(e.message); }
   }
-
   async function setStatus(id, status) {
-    try {
-      await api('PATCH', '/' + id, { status: status });
-      await load();
-    } catch (e) { setStatusMsg(e.message); }
+    try { await api('PATCH', '/' + id, { status: status }); await load(); }
+    catch (e) { setStatusMsg(e.message); }
   }
-
   async function removeTask(id) {
-    try {
-      await api('DELETE', '/' + id);
-      await load();
-    } catch (e) { setStatusMsg(e.message); }
+    try { await api('DELETE', '/' + id); await load(); }
+    catch (e) { setStatusMsg(e.message); }
   }
 
   var form = document.getElementById('form-task');
@@ -142,18 +164,18 @@
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    var sel = document.getElementById('f-dificuldade');
     var payload = {
       title: document.getElementById('f-title').value.trim(),
       description: document.getElementById('f-desc').value.trim(),
       status: document.getElementById('f-status').value,
       dueDate: document.getElementById('f-due').value || null,
+      dificuldade: sel && sel.value ? Number(sel.value) : null,
     };
     if (!payload.title) return;
     try {
       await api('POST', '/', payload);
-      form.reset();
-      form.hidden = true;
-      await load();
+      form.reset(); form.hidden = true; await load();
     } catch (err) { setStatusMsg(err.message); }
   });
 
