@@ -18,44 +18,44 @@ colors:
   footer-text: "#b6c2d1"
 typography:
   h1:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 3.1rem
     fontWeight: 800
     lineHeight: 1.06
     letterSpacing: "-0.03em"
   h2:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 2.1rem
     fontWeight: 800
     lineHeight: 1.2
     letterSpacing: "-0.02em"
   h3:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 1.15rem
     fontWeight: 700
     lineHeight: 1.3
   lead:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 1.15rem
     fontWeight: 400
     lineHeight: 1.6
   body-md:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 1rem
     fontWeight: 400
     lineHeight: 1.5
   body-sm:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 0.9rem
     fontWeight: 400
     lineHeight: 1.5
   eyebrow:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 0.8rem
     fontWeight: 700
     letterSpacing: "0.08em"
   stat:
-    fontFamily: system-ui
+    fontFamily: 'Inter'
     fontSize: 2.3rem
     fontWeight: 800
     lineHeight: 1.1
@@ -152,9 +152,9 @@ Três decisões guiam tudo:
 2. **Densidade honesta.** Espaço em branco generoso entre seções, conteúdo
    compacto dentro dos cartões. O olho descansa entre blocos e trabalha dentro
    deles.
-3. **Zero dependência visual.** Sem fonte externa, sem ícone de CDN, sem
-   framework de CSS. A folha de estilo inteira tem ~200 linhas e a página
-   renderiza offline, sem etapa de build.
+3. **Zero dependência de runtime externa.** Sem fonte de CDN, sem ícone de
+   CDN, sem framework de CSS. A fonte Inter é *self-hosted* em
+   `app/public/fonts/`; a página renderiza offline, sem etapa de build.
 
 ## Colors
 
@@ -193,8 +193,9 @@ preferência de sistema nesse contexto.
 
 ## Typography
 
-Uma família só: a fonte de sistema (`system-ui`). Sem download, sem
-*flash of unstyled text*, e o texto já parece nativo em cada plataforma.
+Uma família só: **Inter** (self-hosted em `app/public/fonts/`, servida de
+`/fonts/*.woff2`). Sem CDN, sem *flash of unstyled text* em runtime — o
+arquivo vem do próprio servidor, então a página continua renderizando offline.
 Toda a hierarquia vem de **peso e tamanho**, não de variedade tipográfica.
 
 - **Escala agressiva no topo.** `h1` a 3.1rem contra corpo a 1rem — quase
@@ -222,6 +223,27 @@ sugerindo um painel sobre a página em vez de uma faixa cortando a tela.
 Ponto de quebra único em **860px**: tudo colapsa para uma coluna, números
 viram 2×2 e o `h1` cai para 2.3rem. Um único ponto de quebra é uma decisão
 deliberada — cada um adicional é mais um estado para manter e regredir.
+
+### Estrutura da landing (espelhada de financas-app)
+
+A landing (`landing.ejs`) segue o mesmo roteiro do app de finanças, com o
+conteúdo adaptado para os três ambientes deste template:
+
+1. **Topbar** (`header.ejs`, `.topbar`) — marca `PP` (SVG) à esquerda; à
+   direita, seletor de idioma por **bandeiras SVG** (PT/EN/ES/FR) + *Entrar*
+   (ou *Sair*, se logado) + botão de tema (área autenticada).
+2. **Hero** (`.lp-hero`, duas colunas) — `lp-brand-row` (marca + badge),
+   `h1`, `lp-lead` e `lp-hero-actions`; à direita, `lp-hero-visual` com um
+   mock de painel (cartões + gráfico SVG) que inclina no hover.
+3. **Por que existe** (`.lp-section #porque`) — `lp-section-head` + `lp-steps`
+   (3 passos numerados).
+4. **Ambientes** (`.lp-section .lp-alt #recursos`) — `lp-grid` de 3
+   `.lp-feature` (produção/teste/demo), cada um com ícone SVG, descrição,
+   lista de pontos e botão de acesso.
+5. **Segurança** (`.lp-section #seguranca`) — `lp-curso` (texto 1.2fr + card
+   de dados 0.8fr) com os princípios de segurança "ligados por padrão".
+6. **CTA** (`.lp-cta`) — faixa de gradiente azul com `h2`, parágrafo e ações.
+7. **Rodapé empresarial** (`.lp-footer`) — multi-coluna (ver abaixo).
 
 ## Elevation & Depth
 
@@ -261,12 +283,85 @@ painel parece flutuar solto; um painel com raio de botão parece rígido.
 - **`footer`** — o único bloco escuro. Encerra a página com um limite visual
   firme e sustenta a assinatura pessoal do autor.
 
+### Rodapé empresarial (multi-coluna)
+
+O rodapé da landing é o padrão "empresarial" pedido pelo dono: bloco escuro
+(`#0f172a`), com duas áreas:
+
+- **`.lp-footer-top`** — `1.2fr / 2fr`: à esquerda, a marca + tagline; à
+  direita, **três colunas de links** (Produto / Empresa / Idioma), cada uma
+  com `h4` e links em `#94a3b8` que clareiam no hover.
+- **`.lp-footer-bottom`** — barra inferior com copyright (`#b6c2d1`) à
+  esquerda e *Voltar ao topo* (`#topo`, ancora pura, sem JS) à direita.
+
+Em telas ≤860px o topo vira uma coluna; em ≤480px as três colunas de links
+viram uma só.
+
+### Seletor de idioma por bandeiras SVG
+
+O idioma (PT/EN/ES/FR) é escolhido por **quatro botões com bandeira SVG**,
+nunca por um `<select>` com emoji. Regras:
+
+- Cada botão `.lang-btn` contém um `<svg class="flag">` (viewBox `0 0 20 14`),
+  desenhado à mão (Brasil, EUA, Espanha, França). Sem emoji, sem imagem de
+  CDN — `fill` sólido, então renderiza igual em toda plataforma.
+- O botão do idioma ativo recebe `aria-pressed="true"` e um anel
+  `box-shadow: 0 0 0 2px var(--primary)`; os demais ficam a `opacity: 0.55`.
+- O clique persiste o idioma em cookie `lang` e recarrega com `?lang=xx` para
+  o backend (textos de landing por ambiente vivem no servidor) aplicar.
+- Textos da UI vêm de `i18n.js`; textos de storytelling por ambiente vêm de
+  `landingContent.js` (ambos indexados por idioma, com fallback para `pt`).
+
 ### Ícones
 
 **SVG inline, nunca emoji.** Emoji renderiza diferente em cada sistema,
 depende de fonte instalada e degrada para retângulo vazio quando falta. Os
 ícones usam `stroke="currentColor"`, então herdam a cor do tema
 automaticamente — inclusive no escuro.
+
+Biblioteca mínima (todos em `viewBox="0 0 24 24"`, `stroke-width="1.8"`,
+`fill="none"`, `stroke-linecap/linejoin="round"`):
+
+- **Cartão/banco** — ambientes / isolamento de dados.
+- **Escudo** — segurança / JWT.
+- **Usuários** — papéis e controle de acesso.
+- **Sol / Lua** — alternância de tema (área autenticada).
+- **Bandeiras** (BR/US/ES/FR) — seletor de idioma.
+
+Não introduza outro ícone sem adicioná-lo aqui e manter o mesmo grid de 24px.
+
+## Motion
+
+**Quase nenhuma.** As únicas transições são `:hover` de até `0.15s` em cor,
+sombra e `transform` (o mock do hero inclina de volta ao centro no hover), e
+`scroll-behavior: smooth` só para a âncora "voltar ao topo". Não há animação
+que dispare sozinha (sem autoplay, sem parallax, sem canvas de fundo). Tudo
+respeita `prefers-reduced-motion`.
+
+## States
+
+Cada elemento interativo tem três estados coerentes:
+
+- **Repouso** — cor/tokens padrão.
+- **Hover** — primário escurece para `#1d4ed8`; outline ganha borda azul;
+  cartão sobe `-3px` e aprofunda a sombra; mock do hero endireita.
+- **Foco** — anel de foco visível (não remova `outline` sem substituir por
+  `box-shadow` de foco acessível). Botões de idioma usam `box-shadow` de
+  anel no idioma ativo.
+
+Não há estado "loading" na landing (é estática). Páginas internas tratam
+erro/sucesso via `.alert-error` / `.alert-ok` (cores semânticas, nunca na
+landing).
+
+## Accessibility
+
+- Contraste AA em todo texto (azul `#2563eb` 4.76:1 e cinza `#64748b` 4.76:1
+  sobre branco; `#94a3b8` só sobre o rodapé escuro, 6.96:1).
+- Toda imagem/ícone decorativo é `aria-hidden="true"`; toda ação tem rótulo
+  (`aria-label` no seletor de idioma e no botão de tema).
+- "Voltar ao topo" é âncora (`href="#topo"`), não JavaScript — funciona sem
+  JS e não viola a CSP.
+- Nunca introduza um cinza novo em texto sem medir o contraste.
 
 ## Do's and Don'ts
 
@@ -282,8 +377,7 @@ automaticamente — inclusive no escuro.
 
 - **Não use script embutido.** A política de segurança de conteúdo proíbe
   `unsafe-inline`; "voltar ao topo" é âncora pura, e não JavaScript, por isso.
-- **Não publique número inventado.** Uma versão anterior exibia "400+ sessões"
-  e "<30ms" sem medição — foi removida. Métrica não verificada é dívida.
+- **Não publique número inventado.** Métrica não verificada é dívida.
 - **Não introduza emoji na interface.**
 - **Não adicione uma quarta sombra.** Se um elemento parece precisar de
   elevação própria, provavelmente ele pertence a outro nível de hierarquia.
@@ -291,3 +385,37 @@ automaticamente — inclusive no escuro.
   o rodapé escuro é legítimo (6.96:1).
 - **Não anime nada que se mova sozinho.** As únicas transições são resposta a
   `hover`, e a rolagem suave respeita `prefers-reduced-motion`.
+- **Não misture fontes de CDN** — a Inter é self-hosted para renderizar
+  instantâneo e offline.
+
+## Derivando um produto deste template
+
+Um projeto que nasce daqui herda este `DESIGN.md` inteiro. Para rebrandizar:
+
+1. Mude `colors.primary` (e, se quiser, `secondary`/o gradiente do CTA).
+2. Substitua o texto de `landingContent.js` e `i18n.js` — **nunca** os tokens
+   de cor/tipografia para "dar personalidade".
+3. Mantenha a landing sempre clara e o seletor de idioma por bandeiras.
+4. Rode a validação do `DESIGN.md` e um screenshot em 1920×1080 + 390px antes
+   de abrir PR.
+
+## Validação & QA
+
+Antes de qualquer PR que toque visual:
+
+1. `npx -y @google/design.md lint DESIGN.md` — tokens válidos e completos.
+2. `node app/src/config/i18n.js` e `landingContent.js` carregam sem erro;
+   os 4 idiomas renderizam (PT/EN/ES/FR) com textos distintos por ambiente.
+3. Screenshot em **1920×1080** (desktop) e **390px** (mobile): sem overflow
+   horizontal, grids colapsam para 1 coluna ≤860px, rodapé legível.
+4. Verificação manual de contraste nos textos novos.
+
+## Checklist de mudança de visual
+
+- [ ] Token alterado no YAML do `DESIGN.md` (não só no CSS).
+- [ ] `lint` do `DESIGN.md` passa.
+- [ ] Nenhum hex solto sem justificativa; variáveis CSS usadas.
+- [ ] Sem emoji; ícones são SVG inline novos registrados em "Ícones".
+- [ ] Landing continua clara e offline (Inter self-hosted, sem CDN).
+- [ ] Screenshot desktop + mobile revisados.
+- [ ] Sem quarta sombra, sem animação autônoma.

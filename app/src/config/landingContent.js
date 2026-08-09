@@ -6,9 +6,9 @@
 // Estrutura: CONTENT[modo][lang] = { eyebrow, title, lede, cta, points[], demoNote }
 // Fallback para 'pt' quando o idioma nao tem aquele modo traduzido.
 
-const CONTENT = { producao: {}, teste: {}, demo: {} };
+const CONTENT = { production: {}, test: {}, demo: {} };
 
-CONTENT.producao.pt = {
+CONTENT.production.pt = {
   eyebrow: 'Ambiente de producao',
   title: 'Seu sistema, em ambiente real.',
   lede: 'Este e o ambiente definitivo. Aqui voce cadastra usuarios, gerencia projetos e mantem o catalogo com dados reais. Nada de demonstracao: tudo que entrar aqui e dado de verdade.',
@@ -21,7 +21,7 @@ CONTENT.producao.pt = {
   ],
   demoNote: '',
 };
-CONTENT.teste.pt = {
+CONTENT.test.pt = {
   eyebrow: 'Ambiente de teste',
   title: 'Um sandbox para brincar.',
   lede: 'Banco de testes, descartavel. Voce e o assistente podem popular, alterar e resetar a vontade — nenhum dado aqui afeta a producao. Use para validar fluxos antes de levar para o ambiente real.',
@@ -34,7 +34,7 @@ CONTENT.teste.pt = {
   ],
   demoNote: '',
 };
-CONTENT.producao.en = {
+CONTENT.production.en = {
   eyebrow: 'Production environment',
   title: 'Your system, in the real environment.',
   lede: 'This is the definitive environment. Here you register users, manage projects and keep the catalog with real data. No demos: everything that goes in here is real data.',
@@ -47,7 +47,7 @@ CONTENT.producao.en = {
   ],
   demoNote: '',
 };
-CONTENT.teste.en = {
+CONTENT.test.en = {
   eyebrow: 'Test environment',
   title: 'A sandbox to play in.',
   lede: 'Disposable test database. You and the assistant can populate, change and reset freely — nothing here affects production. Use it to validate flows before going to the real environment.',
@@ -60,7 +60,7 @@ CONTENT.teste.en = {
   ],
   demoNote: '',
 };
-CONTENT.producao.es = {
+CONTENT.production.es = {
   eyebrow: 'Ambiente de produccion',
   title: 'Tu sistema, en ambiente real.',
   lede: 'Este es el ambiente definitivo. Aqui registras usuarios, gestionas proyectos y mantienes el catalogo con datos reales. Nada de demostracion: todo lo que entra aqui es dato de verdad.',
@@ -73,7 +73,7 @@ CONTENT.producao.es = {
   ],
   demoNote: '',
 };
-CONTENT.teste.es = {
+CONTENT.test.es = {
   eyebrow: 'Ambiente de prueba',
   title: 'Un sandbox para jugar.',
   lede: 'Base de prueba, descartable. Tu y el asistente pueden poblar, cambiar y resetear a voluntad — nada aqui afecta la produccion. Usala para validar flujos antes de ir al ambiente real.',
@@ -86,7 +86,7 @@ CONTENT.teste.es = {
   ],
   demoNote: '',
 };
-CONTENT.producao.fr = {
+CONTENT.production.fr = {
   eyebrow: 'Environnement de production',
   title: 'Votre systeme, en environnement reel.',
   lede: 'Ceci est l’environnement definitif. Ici vous enregistrez des utilisateurs, gerez des projets et tenez le catalogue avec de vraies donnees. Pas de demo : tout ce qui entre ici est une vraie donnee.',
@@ -99,7 +99,7 @@ CONTENT.producao.fr = {
   ],
   demoNote: '',
 };
-CONTENT.teste.fr = {
+CONTENT.test.fr = {
   eyebrow: 'Environnement de test',
   title: 'Un bac a sable pour jouer.',
   lede: 'Base de test, jetable. Vous et l’assistant pouvez peupler, modifier et reinitialiser a volonte — rien ici n’affecte la production. Servez-vous-en pour valider des flux avant d’aller en environnement reel.',
@@ -125,10 +125,49 @@ CONTENT.demo.fr = {
   ],
   demoNote: 'A l’entree, vous etes authentifie comme utilisateur demo — cree automatiquement dans cette base et qui n’existe pas en production ni en test. C’est un terrain sur : les donnees sont rechargees a neuf a chaque demarrage de l’instance.',
 };
+CONTENT.demo.pt = {
+  eyebrow: 'Ambiente de demonstracao',
+  title: 'Conheca o sistema sem cadastro.',
+  lede: 'Esta e uma demonstracao viva do sistema. Tudo ja vem populado — dezenas de usuarios, projetos e itens de catalogo. Entre em um clique e explore cada tela como se fosse o dono, sem criar conta nem informar senha.',
+  cta: 'Entrar na demo',
+  badge: 'app_demo_db',
+  points: [
+    'Entrada automatica: voce e autenticado como usuario demo.',
+    'Banco populado e descartavel — recarregado a cada inicializacao.',
+    'O usuario demo existe so aqui; nada se cruza com producao ou teste.',
+  ],
+  demoNote: 'Ao entrar na demonstracao, voce e autenticado como um usuario de demonstracao — criado automaticamente neste banco e que nao existe na producao nem no teste. E um playground seguro: os dados sao recarregados do zero sempre que a instancia sobe.',
+};
+CONTENT.demo.en = {
+  eyebrow: 'Demo environment',
+  title: 'Explore the system without signing up.',
+  lede: 'This is a live demo of the system. Everything comes pre-populated — dozens of users, projects and catalog items. Enter in one click and explore every screen as if you owned it, with no account or password.',
+  cta: 'Enter the demo',
+  badge: 'app_demo_db',
+  points: [
+    'Automatic entry: you are authenticated as a demo user.',
+    'Populated, disposable database — reloaded at every startup.',
+    'The demo user exists only here; nothing crosses into prod or test.',
+  ],
+  demoNote: 'On entering the demo, you are authenticated as a demo user — created automatically in this database and that does not exist in production or test. It is a safe playground: data is reloaded from scratch every time the instance starts.',
+};
+CONTENT.demo.es = {
+  eyebrow: 'Ambiente de demostracion',
+  title: 'Conoce el sistema sin registrarte.',
+  lede: 'Esta es una demostracion viva del sistema. Todo ya viene poblado — decenas de usuarios, proyectos e items de catalogo. Entra con un clic y explora cada pantalla como si fueras el dueno, sin crear cuenta ni poner contrasena.',
+  cta: 'Entrar en la demo',
+  badge: 'app_demo_db',
+  points: [
+    'Entrada automatica: eres autenticado como usuario demo.',
+    'Base poblada y descartable — recargada en cada inicio.',
+    'El usuario demo existe solo aqui; nada se cruza con produccion o prueba.',
+  ],
+  demoNote: 'Al entrar en la demostracion, eres autenticado como usuario demo — creado automaticamente en esta base y que no existe en produccion ni prueba. Es un entorno seguro: los datos se recargan desde cero cada vez que la instancia arranca.',
+};
 
 function landingFor(mode, lang) {
-  const byMode = CONTENT[mode] || CONTENT.producao;
-  return byMode[lang] || byMode.pt || CONTENT.producao.pt;
+  const byMode = CONTENT[mode] || CONTENT.production;
+  return byMode[lang] || byMode.pt || CONTENT.production.pt;
 }
 
 module.exports = { landingFor, CONTENT };

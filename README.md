@@ -19,6 +19,17 @@ a adicionar o domínio.
 | Testes    | Jest + Supertest + mongodb-memory-server |
 | Deploy    | Docker Compose (app não-root, read-only) |
 
+## Funcionalidades de domínio (demo)
+
+- **Quadro de tarefas (Kanban)**: colunas por status, scroll próprio por
+  coluna, arrastar-e-soltar entre colunas (altera o status). Tarefas ricas com
+  `dataInicio`, `horario`, `prazo`, `arquivos[]`, `links[]` e `comentarios[]`
+  (thread). Modal de detalhe com Markdown + LaTeX.
+- **Projetos** e **Profissionais**: CRUD validado (Zod), escopo por usuário,
+  listagem em tabela e edição por modal.
+- **Painel de controle**: gráfico de barras por status/projeto/profissional,
+  filtros, meta semanal e timer Pomodoro (foco acumulado).
+
 ## Início rápido
 
 ```bash

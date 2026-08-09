@@ -1,8 +1,6 @@
 // Utilitarios compartilhados. Nenhum inline script: a CSP nao permite
 // 'unsafe-inline' neste template.
 
-// Escapa texto de origem nao confiavel antes de inseri-lo via innerHTML.
-// Inclui aspas para ser seguro tambem dentro de atributos.
 function escapeHtml(text) {
   return String(text ?? '')
     .replace(/&/g, '&amp;')
@@ -12,8 +10,6 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
-// Wrapper de fetch: sempre same-origin com cookie, sempre JSON, e converte
-// resposta de erro numa Error com a mensagem do servidor.
 async function apiRequest(url, options = {}) {
   const res = await fetch(url, {
     credentials: 'same-origin',
@@ -21,11 +17,7 @@ async function apiRequest(url, options = {}) {
     ...options,
   });
   let data = null;
-  try {
-    data = await res.json();
-  } catch {
-    /* resposta sem corpo */
-  }
+  try { data = await res.json(); } catch { /* sem corpo */ }
   if (!res.ok) {
     const err = new Error((data && data.error) || `Erro ${res.status}`);
     err.status = res.status;
@@ -41,7 +33,6 @@ function showBox(id, msg) {
   el.textContent = msg;
   el.hidden = false;
 }
-
 function hideBox(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -51,35 +42,18 @@ function hideBox(id) {
 
 const showError = (msg) => showBox('error', msg);
 const showOk = (msg) => showBox('ok', msg);
-const clearBoxes = () => {
-  hideBox('error');
-  hideBox('ok');
-};
+const clearBoxes = () => { hideBox('error'); hideBox('ok'); };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btn-logout');
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      try {
-        await apiRequest('/api/auth/logout', { method: 'POST' });
-      } finally {
-        window.location.href = '/login';
-      }
-    });
-  }
-
   // --- Tema (claro/escuro) ------------------------------------------------
-  const themeToggle = document.getElementById('theme-toggle');
-  const sun = themeToggle && themeToggle.querySelector('.icon-sun');
-  const moon = themeToggle && themeToggle.querySelector('.icon-moon');
+  const themeToggle = document.getElementById('btn-tema');
   const root = document.documentElement;
+  const sun = themeToggle && themeToggle.querySelector('.ic-sol');
+  const moon = themeToggle && themeToggle.querySelector('.ic-lua');
 
   function applyTheme(theme) {
-    if (theme === 'light' || theme === 'dark') {
-      root.setAttribute('data-theme', theme);
-    } else {
-      root.removeAttribute('data-theme');
-    }
+    if (theme === 'light' || theme === 'dark') root.setAttribute('data-theme', theme);
+    else root.removeAttribute('data-theme');
     const isDark = theme === 'dark' ||
       (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (themeToggle) {
@@ -92,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (moon) moon.style.display = isDark ? '' : 'none';
   }
 
-  // Estado inicial: cookie 'theme' > preferencia do SO.
   const savedTheme = (document.cookie.match(/(?:^|;\s*)theme=([^;]+)/) || [])[1] || 'auto';
   applyTheme(savedTheme);
 
@@ -107,16 +80,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Idioma (PT/EN/ES/FR) ----------------------------------------------
-  const langSwitcher = document.getElementById('lang-switcher');
-  if (langSwitcher) {
-    const cur = (document.cookie.match(/(?:^|;\s*)lang=([^;]+)/) || [])[1] || 'pt';
-    langSwitcher.value = cur;
-    langSwitcher.addEventListener('change', () => {
+  // --- Idioma (PT/EN/ES/FR) por BANDEIRAS SVG ----------------------------
+  const langButtons = Array.from(document.querySelectorAll('.lang-btn'));
+  function setLangPressed(lang) {
+    langButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  }
+  const curLang = (document.cookie.match(/(?:^|;\s*)lang=([^;]+)/) || [])[1] || 'pt';
+  setLangPressed(curLang);
+  langButtons.forEach((b) => {
+    b.addEventListener('click', () => {
+      const next = b.dataset.lang;
+      if (next === curLang) return;
+      document.cookie = `lang=${next}; path=/; max-age=${365 * 24 * 60 * 60}`;
+      setLangPressed(next);
       const params = new URLSearchParams(window.location.search);
-      params.set('lang', langSwitcher.value);
+      params.set('lang', next);
       window.location.search = params.toString();
     });
-  }
+  });
 });
-

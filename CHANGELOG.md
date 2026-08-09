@@ -3,6 +3,41 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.0]
+
+### Adicionado
+
+- **Quadro de tarefas (Kanban)** com colunas por status, colunas com altura
+  fixa e scroll individual, e **arrastar-e-soltar** entre colunas (altera o
+  status via PATCH). Cartões com metadados de projeto/responsável/tags.
+- **Tarefa rica**: campos `dataInicio`, `horario`, `prazo`, `arquivos[]`,
+  `links[]` e `comentarios[]` (thread por autor). Modal de detalhe amplo
+  (880px) e reformulado, com render de Markdown + LaTeX (KaTeX), badge de
+  status colorido e seções de arquivos/links/comentários.
+- **Profissionais** (`Professional`): CRUD validado (Zod), escopo por usuário,
+  tabela de domínio e edição via modal.
+- **Painel de controle**: gráfico de barras SVG colorido por status, filtros
+  por status/dimensão, meta semanal e timer Pomodoro (foco acumulado).
+- Schemas Zod (`taskCreate`/`taskUpdate`) agora aceitam os novos campos
+  (`dataInicio`, `horario`, `arquivos`, `links`, `comentarios`).
+- Documentação: `docs/deploy.md` (deploy em produção) e `TEMPLATE.md`
+  (o que remover para usar só o núcleo de autenticação/segurança).
+- Seed de demonstração **massivo** por padrão (~3000 tarefas, 400 projetos,
+  300 itens, 200 usuários) — ajustável em `server.js`.
+
+### Alterado
+
+- Modal de tarefa/edição redesenhado com tokens de `DESIGN.md`.
+- Colunas do quadro com cor de fundo por status (`color-mix`).
+- `desenvolvedor`-fix no `README.md` e contagem de testes atualizada.
+
+### Segurança
+
+- Mantidas todas as proteções (bcrypt cost 12, lockout, CSP sem `unsafe-inline`,
+  `csrfGuard`, `sanitizeInput`, rate limit, CORS por allowlist,
+  `tokenValidAfter`). Serialização de usuário (`toPublicUser`) continua a nunca
+  expor `passwordHash`, token ou hash.
+
 ## [Não lançado]
 
 ### Adicionado

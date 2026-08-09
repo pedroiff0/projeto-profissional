@@ -4,18 +4,26 @@ const { landingFor } = require('../config/landingContent');
 
 const router = express.Router();
 
-// Landing unica da INSTANCIA. Tres entradas para os tres bancos, cada uma com
-// seu proprio texto (storytelling). A demo autologa direto via /demo/start.
+// Landing unica da INSTANCIA. Fala sobre o que o sistema faz e oferece a demo.
 // O idioma vem de res.locals.lang (middleware i18n).
 router.get('/', optionalPageAuth, (req, res) => {
-  if (req.user) return res.redirect(req.user.role === 'admin' ? '/admin' : '/app');
+  if (req.user) {
+    const modo = (req.baseUrl || '').replace('/', '') || 'app';
+    if (modo === 'demo') return res.redirect('/demo');
+    if (modo === 'test') return res.redirect('/test');
+    return res.redirect(req.user.role === 'admin' ? '/admin' : '/app');
+  }
   const lang = res.locals.lang || 'pt';
-  const bancos = [
-    { id: 'production', titulo: landingFor('production', lang).title, desc: landingFor('production', lang).lede, badge: 'app_db', href: '/app/login', cta: landingFor('production', lang).cta, classe: 'env-prod' },
-    { id: 'test', titulo: landingFor('test', lang).title, desc: landingFor('test', lang).lede, badge: 'app_test_db', href: '/test/login', cta: landingFor('test', lang).cta, classe: 'env-test' },
-    { id: 'demo', titulo: landingFor('demo', lang).title, desc: landingFor('demo', lang).lede, badge: 'app_demo_db', href: '/demo/start', cta: landingFor('demo', lang).cta, classe: 'env-demo' },
-  ];
-  res.render('landing', { bancos, lang });
+  const themeCookie = (req.headers.cookie || '').match(/(?:^|;\s*)theme=([^;]+)/);
+  const theme = themeCookie ? themeCookie[1] : 'auto';
+  const lpDark = theme === 'dark';
+  res.render('landing', {
+    lang,
+    lp: true,
+    lpDark,
+    themeToggle: true,
+    description: landingFor('production', lang).lede,
+  });
 });
 
 module.exports = router;

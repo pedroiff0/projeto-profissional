@@ -1,3 +1,4 @@
+<% if (!(typeof lp !== 'undefined' && lp)) { %>
 </main>
 <footer class="app-footer">
   <span>
@@ -7,6 +8,7 @@
   </span>
   <a class="app-top-link" href="#topo"><%= t('footer.backTop') %> &uarr;</a>
 </footer>
+<% } %>
 <script src="/js/common.js"></script>
 <% if (typeof pageScript !== 'undefined' && pageScript) { %>
   <script src="/js/<%= pageScript %>.js"></script>

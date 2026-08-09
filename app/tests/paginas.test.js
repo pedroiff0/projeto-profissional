@@ -117,7 +117,7 @@ describe('Páginas de domínio (autenticadas)', () => {
   const models = require('./helpers/models');
   let pm;
   beforeAll(async () => { pm = models.prod; });
-  it('login via cookie e render de /projetos e /catalogo', async () => {
+  it('login via cookie e render das páginas de domínio', async () => {
     await seedAdminIfEmpty({ populaDemo: false }, pm);
     // Tira o mustChangePassword para poder acessar areas logadas no teste.
     await pm.User.updateOne(
@@ -130,16 +130,19 @@ describe('Páginas de domínio (autenticadas)', () => {
 
     const projetos = await request(app).get('/projetos').set('Cookie', cookie);
     expect(projetos.status).toBe(200);
-    expect(projetos.text).toMatch(/proj-list/);
+    expect(projetos.text).toMatch(/dom-table/);
 
-    const catalogo = await request(app).get('/catalogo').set('Cookie', cookie);
-    expect(catalogo.status).toBe(200);
-    expect(catalogo.text).toMatch(/cat-body/);
+    const profissionais = await request(app).get('/profissionais').set('Cookie', cookie);
+    expect(profissionais.status).toBe(200);
+    expect(profissionais.text).toMatch(/dom-table/);
 
-    const dash = await request(app).get('/app').set('Cookie', cookie);
-    expect(dash.status).toBe(200);
-    // Botão de demo só aparece fora de produção (NODE_ENV=test aqui).
-    expect(dash.text).toMatch(/btn-demo/);
+    const painel = await request(app).get('/painel').set('Cookie', cookie);
+    expect(painel.status).toBe(200);
+    expect(painel.text).toMatch(/bars|stat-grid/);
+
+    const board = await request(app).get('/').set('Cookie', cookie);
+    expect(board.status).toBe(200);
+    expect(board.text).toMatch(/board-cards|Nova tarefa/);
   });
 
   it('página autenticada redireciona para /login sem cookie', async () => {

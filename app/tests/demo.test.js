@@ -92,7 +92,7 @@ describe('Projetos (API + escopo)', () => {
 describe('Catalogo (API)', () => {
   it('lista itens e filtra por categoria', async () => {
     const token = await login('admin@admin.com');
-    await carregarDemo({ force: true, usuarios: 2, projetos: 0, itens: 30 }, models);
+    await carregarDemo({ force: true, usuarios: 2, projetos: 3, itens: 30 }, models);
     const res = await request(app).get('/api/test/catalog?category=TI&limit=5').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.items.length).toBeGreaterThan(0);

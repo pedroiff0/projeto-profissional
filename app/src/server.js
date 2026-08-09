@@ -10,7 +10,7 @@ async function seedBanco(mode, { populaDemo = false, demo = false, skipAutoUser 
   const models = getModels(conn);
   const seed = await seedAdminIfEmpty({ populaDemo: false }, models);
   if (demo) {
-    await carregarDemo({ usuarios: 30, projetos: 40, itens: 120 }, models);
+    await carregarDemo({ usuarios: 200, projetos: 400, itens: 300, tarefas: 3000, profissionais: 120 }, models);
   } else if (populaDemo) {
     await carregarDemo({ usuarios: 4, projetos: 6, itens: 10, skipAutoUser }, models);
   }

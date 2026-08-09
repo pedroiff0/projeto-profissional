@@ -11,6 +11,7 @@ const projectSchema = new mongoose.Schema(
       default: 'planejado',
     },
     tags: { type: [String], default: [] },
+    responsavelId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     // Snapshot do dono para exibir sem join caro em listagens demo.
     ownerName: { type: String, default: '' },

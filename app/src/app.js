@@ -54,7 +54,9 @@ function createApp() {
   app.use(cookieParser());
   app.use(sanitizeInput);
   app.use(i18n);
-  app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1h' }));
+  // Sem cache agressivo em assets estaticos: o navegador sempre revalida,
+  // evitando CSS/JS obsoletos apos rebuild (maxAge 1h causava "nao reiniciou").
+  app.use(express.static(path.join(__dirname, '../public'), { maxAge: 0, etag: true }));
 
   const extras = (env.corsAllowedOrigins || '').split(',').map((s) => s.trim()).filter(Boolean);
   const allowlist = new Set([env.appBaseUrl, ...extras].filter(Boolean));

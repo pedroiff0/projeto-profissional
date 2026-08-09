@@ -1,31 +1,226 @@
-<%- include('partials/header', { title: t('landing.title') }) %>
-<main class="container">
-  <section class="hero landing">
-    <span class="eyebrow"><%= t('landing.eyebrow') %></span>
-    <h1><%= t('landing.headline') %></h1>
-    <p class="lede"><%= t('landing.intro') %></p>
-  </section>
+<%- include('partials/header', { title: t('landing.title'), lp: true }) %>
 
-  <section class="card">
-    <h2><%= t('landing.choose') %></h2>
-    <p class="muted"><%= t('landing.isolated') %></p>
-    <div class="row env-grid">
-      <% bancos.forEach(function(b) { %>
-        <article class="env-card <%= b.classe %>">
-          <header class="env-head">
-            <h3><%= b.titulo %></h3>
-            <span class="env-badge"><%= b.badge %></span>
-          </header>
-          <p class="muted small"><%= b.desc %></p>
-          <a class="btn-primary btn-block" href="<%= b.href %>"><%= b.cta %></a>
-        </article>
-      <% }); %>
+  <!-- Hero: o problema que todo mundo tem, e a promessa. -->
+  <section class="lp-hero">
+    <div class="lp-hero-inner">
+      <div class="lp-hero-copy">
+        <div class="lp-brand-row">
+          <span class="lp-brand-mark">PP</span>
+          <span class="lp-brand-name">Projeto Profissional</span>
+          <span class="lp-badge">Template de tarefas · Demo ao vivo</span>
+        </div>
+        <h1>Sua lista de tarefas,<br /><strong>finalmente organizada.</strong></h1>
+        <p class="lp-lead">
+          Um quadro calmo para o que você precisa fazer — sozinho, sem
+          complicação. Arraste o pensamento de "a fazer" para " concluído",
+          marque prioridades e anote o contexto. A aplicação de exemplo aqui
+          dentro é um to-do detalhado: a clareza do Trello, o andamento do
+          Asana, a captura rápida do Todoist e as anotações do Notion — num só
+          lugar, fácil de usar.
+        </p>
+        <div class="lp-hero-actions">
+          <a class="btn-primary btn-lg" href="/login"><%= t('landing.cta') %></a>
+          <a class="btn-outline btn-lg" href="/demo/start"><%= t('landing.demoCta') %></a>
+        </div>
+      </div>
+
+      <!-- Painel ilustrativo (visual do produto, sem dados reais). -->
+      <div class="lp-hero-visual" aria-hidden="true">
+        <div class="lp-mock">
+          <div class="lp-mock-head">
+            <span class="lp-mock-dot"></span>
+            <span class="lp-mock-title">Quadro de tarefas</span>
+          </div>
+          <div class="lp-mock-cards">
+            <div class="lp-mock-card"><span>A fazer</span><strong>12</strong></div>
+            <div class="lp-mock-card"><span>Andamento</span><strong>5</strong></div>
+            <div class="lp-mock-card"><span>Concluído</span><strong>28</strong></div>
+          </div>
+          <svg class="lp-mock-chart" viewBox="0 0 320 120" preserveAspectRatio="none" role="img">
+            <defs>
+              <linearGradient id="lpbar" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="var(--lp-accent)" stop-opacity="0.9" />
+                <stop offset="1" stop-color="var(--lp-accent)" stop-opacity="0.25" />
+              </linearGradient>
+            </defs>
+            <g fill="url(#lpbar)">
+              <rect x="8"   y="70" width="26" height="44" rx="4" />
+              <rect x="46"  y="48" width="26" height="66" rx="4" />
+              <rect x="84"  y="84" width="26" height="30" rx="4" />
+              <rect x="122" y="34" width="26" height="80" rx="4" />
+              <rect x="160" y="60" width="26" height="54" rx="4" />
+              <rect x="198" y="26" width="26" height="88" rx="4" />
+              <rect x="236" y="52" width="26" height="62" rx="4" />
+              <rect x="274" y="40" width="26" height="74" rx="4" />
+            </g>
+          </svg>
+          <div class="lp-mock-foot">
+            <span class="lp-mock-pill">Quadro Kanban</span>
+            <span class="lp-mock-pill">Foco Pomodoro</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="card card-note">
-    <h2><%= t('landing.aboutDemo') %></h2>
-    <p><%= t('landing.demoNote') %></p>
+  <!-- Para que serve: o que a aplicacao entrega. -->
+  <section class="lp-section" id="recursos">
+    <div class="lp-section-head">
+      <span class="lp-eyebrow">Para que serve</span>
+      <h2>Um quadro para organizar o que você tem a fazer</h2>
+      <p>
+        A aplicação de exemplo é um to-do detalhado para usar sozinho: a clareza
+        do Trello, o andamento do Asana, a captura rápida do Todoist e as
+        anotações do Notion — num só lugar, fácil de usar.
+      </p>
+    </div>
+    <div class="lp-grid">
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="11" rx="1.5"/></svg>
+        </div>
+        <h3>Tarefas em quadro</h3>
+        <p>Cartões em colunas (a fazer, andamento, pausado, concluído). Crie, mova e conclua com um clique.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>
+        </div>
+        <h3>Projetos</h3>
+        <p>Agrupam as tarefas por iniciativa. Cada tarefa pertence a um projeto para você ver o todo.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        </div>
+        <h3>Profissionais</h3>
+        <p>Cadastre as pessoas e atribua tarefas a cada uma. Não são contas de login — só do seu quadro.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg>
+        </div>
+        <h3>Painel de controle</h3>
+        <p>Veja dados, gráficos de desempenho e estipule metas semanais de conclusão.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+        </div>
+        <h3>Pomodoro por tarefa</h3>
+        <p>Um timer de foco de 25 minutos acoplado ao quadro, que registra seu tempo concentrado.</p>
+      </div>
+    </div>
   </section>
+
+  <!-- Escopos prometidos pelo projeto de tarefas. -->
+  <section class="lp-section lp-alt" id="escopos">
+    <div class="lp-section-head">
+      <span class="lp-eyebrow">O que o projeto entrega</span>
+      <h2>Tudo o que um sistema de tarefas de verdade precisa</h2>
+      <p>
+        Não é só uma lista: é o fluxo completo de planejar, executar e medir —
+        pensado para quem trabalha sozinho e quer clareza sem ferramentas pesadas.
+      </p>
+    </div>
+    <div class="lp-grid">
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+        <h3>Quadro Kanban</h3>
+        <p>Colunas de status, arrastar entre etapas e uma visão imediata do que está parado ou andando.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg></div>
+        <h3>Projetos e áreas</h3>
+        <p>Agrupe tarefas por projeto, cliente ou área. Cada cartão carrega o contexto de onde vive.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M14 20c0-2 2-3.5 4-3.5s3 1 3 3"/></svg></div>
+        <h3>Profissionais e responsáveis</h3>
+        <p>Cadastre pessoas e atribua cada tarefa a um responsável — sem criar contas de login.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg></div>
+        <h3>Painel e gráficos</h3>
+        <p>Métricas de desempenho por status, projeto e profissional, com filtros ao vivo para entender o progresso.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg></div>
+        <h3>Foco com Pomodoro</h3>
+        <p>Timer de 25 minutos acoplado às tarefas; registra o tempo concentrado para você medir o esforço real.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/><circle cx="12" cy="12" r="7"/></svg></div>
+        <h3>Metas semanais</h3>
+        <p>Estipule quantas tarefas quer concluir por semana e acompanhe a barra de progresso no painel.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/></svg></div>
+        <h3>Captura rápida</h3>
+        <p>Adicione uma tarefa em segundos, com título, descrição, tags e projeto — no estilo Todoist.</p>
+      </div>
+      <div class="lp-feature">
+        <div class="lp-feature-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg></div>
+        <h3>Notas e contexto</h3>
+        <p>Cada tarefa aceita descrição livre, como o Notion — anote decisões, links e pendências.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA. -->
+  <section class="lp-cta">
+    <div class="lp-cta-inner">
+      <h2><%= t('landing.ctaTitle') %></h2>
+      <p><%= t('landing.ctaSub') %></p>
+      <div class="lp-hero-actions" style="justify-content:center;">
+        <a class="btn-primary btn-lg" href="/login"><%= t('landing.cta') %></a>
+        <a class="btn-outline btn-lg" href="/demo/start"><%= t('landing.demoCta') %></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé profissional (estilo empresa). -->
+  <footer class="lp-footer">
+    <div class="lp-footer-inner">
+      <div class="lp-footer-top">
+        <div class="lp-footer-brand">
+          <span class="lp-brand-mark">PP</span>
+          <div>
+            <strong>Projeto Profissional</strong>
+            <p class="lp-footer-tag"><%= t('footer.tagline') %></p>
+          </div>
+        </div>
+        <div class="lp-footer-cols">
+          <div class="lp-footer-col">
+            <h4><%= t('footer.product') %></h4>
+            <a href="/login"><%= t('footer.linkApp') %></a>
+            <a href="/demo/start"><%= t('footer.linkDemo') %></a>
+            <a href="/status"><%= t('footer.linkStatus') %></a>
+          </div>
+          <div class="lp-footer-col">
+            <h4><%= t('footer.company') %></h4>
+            <a href="https://phrandrance.com" target="_blank" rel="noopener"><%= t('footer.linkDocs') %></a>
+            <a href="https://github.com/pedroiff0" target="_blank" rel="noopener"><%= t('footer.linkGithub') %></a>
+            <a href="/login"><%= t('footer.linkEnter') %></a>
+          </div>
+          <div class="lp-footer-col">
+            <h4><%= t('footer.language') %></h4>
+            <a href="?lang=pt"><%= t('footer.pt') %></a>
+            <a href="?lang=en"><%= t('footer.en') %></a>
+            <a href="?lang=es"><%= t('footer.es') %></a>
+            <a href="?lang=fr"><%= t('footer.fr') %></a>
+          </div>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>
+          &copy; <%= new Date().getFullYear() %>
+          <a href="https://phrandrance.com" target="_blank" rel="noopener"><%= t('footer.credit') %></a>
+          — <%= t('footer.rights') %>
+        </p>
+        <a class="lp-top-link" href="#topo"><%= t('footer.backTop') %> &uarr;</a>
+      </div>
+    </div>
+  </footer>
 </main>
 <%- include('partials/footer') %>
