@@ -6,6 +6,8 @@ const {
   requirePasswordChanged,
 } = require('../middleware/pageAuth');
 const { HTTP_CATALOG } = require('../routes/status.routes');
+const { getModeConn } = require('../config/db');
+const { getModels } = require('../models/registry');
 
 const router = express.Router();
 
@@ -43,6 +45,36 @@ router.get('/perfil', pageAuth, requirePasswordChanged, (req, res) =>
 
 router.get('/projetos', pageAuth, requirePasswordChanged, (req, res) =>
   res.render('projetos', { user: req.user, pageScript: 'projetos' })
+);
+
+router.get('/board', pageAuth, requirePasswordChanged, async (req, res) => {
+  try {
+    const modo = (req.baseUrl || '').replace('/', '') || 'app';
+    const models = getModels(getModeConn(modo));
+    const [profissionais, projetos, usuarios, tarefas] = await Promise.all([
+      models.Professional.find({}).lean(),
+      models.Project.find({}).lean(),
+      models.User.find({}).lean(),
+      models.Task.find({}).lean(),
+    ]);
+    const ordem = [
+      { key: 'planejado', label: 'A fazer' },
+      { key: 'em_andamento', label: 'Em andamento' },
+      { key: 'pausado', label: 'Pausado' },
+      { key: 'concluido', label: 'Concluído' },
+    ];
+    const colunas = ordem.map((c) => ({
+      ...c,
+      items: tarefas.filter((t) => t.status === c.key),
+    }));
+    res.render('board', { user: req.user, profissionais, projetos, usuarios, colunas, pageScript: 'board', apiBase: `/api/${modo}/tasks` });
+  } catch (err) {
+    res.status(500).render('error', { message: err.message });
+  }
+});
+
+router.get('/painel', pageAuth, requirePasswordChanged, (req, res) =>
+  res.render('painel', { user: req.user, pageScript: 'painel' })
 );
 
 router.get('/catalogo', pageAuth, requirePasswordChanged, (req, res) =>
