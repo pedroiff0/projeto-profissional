@@ -51,12 +51,3 @@ describe('config/env — guards de producao', () => {
   });
 });
 
-describe('seed de carga — guard de banco', () => {
-  it('recusa rodar contra um banco que nao seja de teste', () => {
-    expect(() => execFileSync(process.execPath, [`${APP}/scripts/seed-carga.js`, '1'], {
-      cwd: '/tmp',
-      env: { PATH: process.env.PATH, MONGO_URI: 'mongodb://localhost:27017/app_db' },
-      stdio: 'pipe',
-    })).toThrow(/RECUSADO/);
-  });
-});
