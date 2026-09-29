@@ -26,7 +26,8 @@ async function obter(id, userId, role, models, demoBypass = false) {
 
 async function criar(data, userId, userName, models) {
   const Project = models.Project;
-  return Project.create({ ...data, ownerId: userId, ownerName: userName || '' });
+  const responsavelId = data.responsavelId || userId;
+  return Project.create({ ...data, responsavelId, ownerId: userId, ownerName: userName || '' });
 }
 
 async function atualizar(id, data, userId, role, models, demoBypass = false) {

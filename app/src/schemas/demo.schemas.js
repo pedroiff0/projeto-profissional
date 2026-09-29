@@ -4,7 +4,7 @@ const projectCreate = z.object({
   name: z.string().min(3, 'Nome muito curto').max(120),
   description: z.string().max(1000).optional().default(''),
   status: z.enum(['planejado', 'em_andamento', 'concluido', 'pausado']).optional(),
-  responsavelId: z.string().regex(/^[a-f\d]{24}$/, 'ID de responsável inválido'),
+  responsavelId: z.string().regex(/^[a-f\d]{24}$/, 'ID de responsável inválido').optional().nullable(),
   tags: z.array(z.string().max(30)).max(10).optional(),
 });
 

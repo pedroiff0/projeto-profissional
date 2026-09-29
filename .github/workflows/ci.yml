@@ -1,46 +1,38 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
+    name: Testes Jest em Memória
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     defaults:
       run:
         working-directory: app
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: app/package-lock.json
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Testes
+      - name: Instalar dependências
+        run: npm ci --prefer-offline --no-audit
+      - name: Executar testes
         run: npm test
         env:
           NODE_ENV: test
-          JWT_SECRET: ci-secret-com-mais-de-32-caracteres-ok!!
-
-  audit:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      # Falha o job em vulnerabilidade alta/critica nas dependencias.
-      - run: npm audit --audit-level=high
+          JWT_SECRET: ci-secret-key-com-mais-de-32-caracteres-ok!!

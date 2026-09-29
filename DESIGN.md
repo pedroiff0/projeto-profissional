@@ -133,6 +133,8 @@ components:
     backgroundColor: "{colors.footer-bg}"
     textColor: "{colors.footer-text}"
     padding: 48px
+modified: 2026-08-08T22:14:20-03:00
+
 ---
 
 ## Overview

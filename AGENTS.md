@@ -1,116 +1,89 @@
-# Guia para Agentes
+# Guia para Agentes — Projeto Profissional (Template Mestre Canônico)
 
-Instruções para agentes de código (Claude Code, Codex, Hermes, Copilot) que
-trabalharem neste repositório. Leia antes de escrever qualquer linha.
+Instruções para agentes de código (AGY, Claude Code, Copilot, Hermes) que operam neste repositório.
+Leia atentamente antes de escrever qualquer linha de código.
 
-## Contexto
+---
 
-Template base de aplicação web: autenticação JWT, papéis `admin`/`user`,
-registro controlado por administrador. Minimalista de propósito — a graça é
-ser um ponto de partida limpo e seguro, não um framework.
+## 🏛️ Contexto e Papel do Repositório
 
-## Stack
+Este repositório é o **Template Mestre Canônico ("Golden Starter")** para desenvolvimento de aplicações web do Pedro.
+Qualquer nova aplicação completa será criada a partir de um clone/template deste repositório (`gh repo create <novo-app> --template pedroiff0/projeto-profissional`).
 
-Node 20 + Express · MongoDB/Mongoose · EJS SSR + JS vanilla · Zod · JWT
-(cookie httpOnly ou Bearer) · Jest + Supertest · Docker Compose.
+> [!NOTE]
+> A aplicação atualmente embarcada neste repositório (um TodoList profissional com projetos, tarefas, profissionais e catálogo) serve como **vitrine e prova de conceito arquitetural**. Em momento oportuno, ela será desacoplada para um repositório individual próprio, mantendo este repositório como o starter kit canônico.
 
-## Arquitetura
+---
+
+## 🛠️ Stack Tecnológica
+
+- **Linguagem / Runtime:** Node.js 22 LTS
+- **Servidor Web:** Express 4
+- **Interface / SSR:** EJS + JavaScript Vanilla (sem React, sem Babel, sem webpack, sem etapa de build)
+- **Banco de Dados:** MongoDB 7 com Mongoose 8
+- **Validação de Entrada:** Zod schemas obrigatórios
+- **Segurança:** Helmet, Cookie-Parser (httpOnly), JWT, Rate-Limiting, CSP rigorosa
+- **Testes:** Jest + Supertest + mongodb-memory-server (execução em memória, sem necessidade de banco ativo)
+- **Containerização:** Docker Compose (`compose.dev.yml` e `compose.prod.yml`) + Nginx
+
+---
+
+## 📐 Arquitetura Estrita em 4 Camadas
 
 ```
-app/src/
-  config/      env.js, db.js
-  models/      Mongoose schemas
-  services/    regra de negócio
-  controllers/ req -> service -> res
-  routes/      endpoints
-  middleware/  auth, pageAuth, requireRole, csrfGuard, sanitizeInput,
-               rateLimiters, errorHandler
-  schemas/     Zod
-  seeds/       admin.seed.js
-  utils/       AppError, validation, audit
+app/
+  src/
+    config/       env.js (centralizador obrigatório), db.js
+    models/       Mongoose schemas (User, Task, Project, Professional, etc.)
+    services/     Regra de negócio pura e manipulação de domínio
+    controllers/  Tradução HTTP: req -> service -> res
+    routes/       Definição de endpoints e aplicação de validação Zod
+    middleware/   auth, errorHandler, validation, rateLimiters, pageAuth
+    schemas/      Zod schemas para POST/PUT/PATCH
+    utils/        AppError, secrets, validation
+  views/          partials/{header,footer,sidebar,topnav} + pages/*.ejs
+  public/         css/{main,landing}.css, js/ (um JS por tela), vendor/
+  tests/          Suíte Jest completa em memória
+nginx/            Configurações de proxy reverso
+scripts/          Scripts operacionais (setup-secrets.sh, backup.sh, deploy.sh)
 ```
 
-## Regras arquiteturais
+---
 
-1. **Camadas estritas**: Rota → Controller → Service → Model. Lógica de
-   negócio vive no service; controller só traduz HTTP; model só descreve dado.
-2. **Zod obrigatório** em todo POST/PUT/PATCH, via `validate(schema)` de
-   `utils/validation.js`. Nada de ler `req.body` cru.
-3. **Erros com `AppError(msg, status)`** — nunca `throw new Error()`. O
-   `errorHandler` é o único lugar que formata resposta de erro.
-4. **EJS + JS vanilla**: sem React, sem webpack, sem Babel, sem etapa de build.
-   Uma página = um `.ejs` + um `.js` em `public/js/`.
-5. **Sem JS inline**: a CSP não permite `unsafe-inline`. Todo script em
-   arquivo servido de `/js/`.
-6. **Segredos só em `.env`**, lidos por `config/env.js`. Nunca hardcoded.
-7. **Interface segue o `DESIGN.md`**: cor, tipografia, elevação e espaçamento
-   saem dos tokens de lá, não de valor improvisado no CSS. Mudou o visual,
-   atualize o token e rode `npx -y @google/design.md lint DESIGN.md`.
-8. **Teste junto**: rota nova sem teste em `app/tests/` não está pronta.
+## ⚖️ Regras Arquiteturais Inegociáveis
 
-## O que NUNCA fazer
+1. **Camadas Estritas:**
+   - Rota $\rightarrow$ Controller $\rightarrow$ Service $\rightarrow$ Model.
+   - Nenhuma regra de negócio deve residir em controllers ou rotas.
+2. **Zod Obrigatório:**
+   - Todo endpoint de mutação (`POST`, `PUT`, `PATCH`) deve validar a entrada via middleware `validate(schema)`. Nunca acesse `req.body` bruto.
+3. **Tratamento Centralizado de Erros:**
+   - Use `AppError(mensagem, status)` — nunca dispare `throw new Error()` genérico. O `errorHandler` é o único responsável por formatar saídas de erro.
+4. **CSP sem `unsafe-inline`:**
+   - Zero `<script>` inline, zero tags `<style>`, zero atributos `onclick=`.
+   - Scripts vivem em arquivos servidos de `/js/`.
+5. **Escape de Dados User-Facing:**
+   - Toda saída de texto em templates EJS deve utilizar `<%= %>` ou passar por sanitização antes de renderizar HTML.
+6. **Zero Emojis na Interface:**
+   - Ícones visuais devem ser estritamente SVG inline com `stroke="currentColor"`, `width="16..20"`, `height="16..20"`, mantendo visual executivo e corporativo.
+7. **Separação Código vs. Documentação:**
+   - Código, testes e configs vivem neste repositório.
+   - Documentação conceitual, notas de estudo e planejamento do projeto vivem no cofre Obsidian em `hardcore-life/01-projetos/profissional/projeto-profissional/`.
+8. **Segredos e Variáveis:**
+   - Nunca comite `.env`. Em produção, segredos são montados via Docker secrets ou lidos de `/run/secrets/`.
+9. **Testes Obrigatórios:**
+   - Toda funcionalidade ou endpoint novo deve acompanhar teste correspondente em `app/tests/`. A suíte roda via Jest em memória (`npm test`).
 
-- ❌ Criar endpoint público de cadastro. O registro é controlado pelo admin,
-  por design — é a premissa do template.
-- ❌ Devolver `passwordHash`, token de reset ou hash em qualquer resposta.
-  Use `authService.toPublicUser()` para serializar usuário.
-- ❌ Afrouxar a CSP com `'unsafe-inline'` para "resolver" um script inline.
-  Mova o script para arquivo.
-- ❌ Aceitar token por query string (`?token=...`) — vaza em log e `Referer`.
-- ❌ Interpolar dado do banco em HTML sem `escapeHtml()`, nem usar `<%- %>`
-  do EJS com conteúdo de usuário.
-- ❌ Montar `RegExp` a partir de entrada do usuário sem escapar metacaracteres.
-- ❌ Introduzir emoji na interface (use SVG inline) ou cinza novo em texto
-  sem medir contraste — ver `DESIGN.md`, seção Do's and Don'ts.
-- ❌ Logar senha, token, hash ou PII.
-- ❌ Commitar `.env`, ou pôr valor real em `.env.example`.
-- ❌ Remover `sanitizeInput`, `csrfGuard` ou os rate limiters "porque atrapalha
-  o teste manual". Eles já são desligados sozinhos em `NODE_ENV=test`.
-- ❌ Rebaixar/desativar o último admin ativo — há invariante e teste para isso.
+---
 
-## Fluxos comuns
-
-### Adicionar um recurso de domínio
-
-1. `models/<recurso>.model.js` — schema + índices necessários.
-2. `schemas/<recurso>.schemas.js` — Zod de entrada.
-3. `services/<recurso>Service.js` — regra de negócio, recebendo `userId`
-   explicitamente e escopando toda query por ele.
-4. `controllers/<recurso>.controller.js` — parse, chama service, responde.
-5. `routes/<recurso>.routes.js` — `auth` + `requireRole` + `validate`.
-6. Registrar em `routes/index.js`.
-7. Teste em `tests/<recurso>.test.js`.
-
-### Adicionar uma página
-
-1. Rota em `routes/pages.routes.js` com `pageAuth` + `requirePasswordChanged`
-   (+ `requirePageRole` se restrita).
-2. View em `views/`, incluindo os partials de header/footer.
-3. JS em `public/js/<pagina>.js`, referenciado via `pageScript` no footer.
-
-### Adicionar um papel
-
-`role` é um enum em `models/user.model.js` **e** em
-`schemas/admin.schemas.js`. Os dois precisam mudar juntos, mais os guards de
-rota afetados.
-
-## Comandos
+## 💻 Comandos Padronizados (`Makefile`)
 
 ```bash
-cd app
-npm install
-npm test              # Jest + Mongo em memória
-npm run dev           # watch em http://localhost:4450
-docker compose up --build
-docker compose logs -f app
+make dev           # Sobe stack de desenvolvimento com live-reload (porta 4429)
+make down          # Para containers de desenvolvimento
+make test          # Executa suíte completa de testes Jest em memória
+make lint          # Linter e verificação sintática
+make prod          # Deploy de produção (porta 4430) e demo (porta 4431)
+make health        # Verifica status HTTP de todas as portas
+make clean         # Limpa containers e volumes órfãos
 ```
-
-## Checklist de PR
-
-- [ ] `npm test` verde (inclusive os testes novos).
-- [ ] Schema Zod em toda entrada nova.
-- [ ] `auth` + `requireRole` corretos nas rotas novas.
-- [ ] `escapeHtml()` em toda saída user-facing.
-- [ ] Sem segredo no código; `.env.example` atualizado se surgiu variável nova.
-- [ ] README/SECURITY atualizados se o comportamento de segurança mudou.
-- [ ] Sem log de PII, senha ou token.

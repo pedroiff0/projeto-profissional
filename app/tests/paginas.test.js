@@ -140,7 +140,7 @@ describe('Páginas de domínio (autenticadas)', () => {
     expect(painel.status).toBe(200);
     expect(painel.text).toMatch(/bars|stat-grid/);
 
-    const board = await request(app).get('/').set('Cookie', cookie);
+    const board = await request(app).get('/app').set('Cookie', cookie);
     expect(board.status).toBe(200);
     expect(board.text).toMatch(/board-cards|Nova tarefa/);
   });

@@ -36,7 +36,7 @@ describe('Profissionais — CRUD autenticado', () => {
     const res = await request(app)
       .post('/api/professionals')
       .set('Authorization', `Bearer ${t}`)
-      .send({ nome: 'Ana Souza', funcao: 'Designer', contato: 'ana@ex.com' });
+      .send({ nome: 'Ana Souza', email: 'ana@ex.com', funcao: 'Designer', contato: 'ana@ex.com' });
     expect(res.status).toBe(201);
     expect(res.body.professional.nome).toBe('Ana Souza');
     expect(res.body.professional.ownerId.toString()).toBe(user._id.toString());
@@ -55,7 +55,7 @@ describe('Profissionais — CRUD autenticado', () => {
   it('atualiza e remove profissional', async () => {
     const user = await criarUser();
     const t = authService.generateToken(user);
-    const p = await Professional.create({ nome: 'João', ownerId: user._id, ownerName: 'Fulano' });
+    const p = await Professional.create({ nome: 'João', email: 'joao@ex.com', ownerId: user._id, ownerName: 'Fulano' });
     const upd = await request(app)
       .patch(`/api/professionals/${p._id}`)
       .set('Authorization', `Bearer ${t}`)

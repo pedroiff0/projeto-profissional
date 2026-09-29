@@ -27,18 +27,24 @@ async function carregarDemo({ usuarios = 200, projetos = 400, itens = 300, taref
   // Usuarios demo compartilham a senha do admin (facilita login manual).
   const inicio = skipAutoUser ? 2 : 1;
   const perfis = [];
+  const existingEmails = new Set((await User.find({ email: /@example\.com$/ }).select('email').lean()).map((u) => u.email));
   for (let i = inicio; i <= usuarios; i += 1) {
-    perfis.push({
-      name: `Demo ${i}`,
-      email: `demo${i}@example.com`,
-      role: i % 7 === 0 ? 'admin' : 'user',
-      passwordHash,
-      isActive: true,
-      mustChangePassword: false,
-      tokenValidAfter: new Date(Date.now() - 60_000),
-    });
+    const email = `demo${i}@example.com`;
+    if (!existingEmails.has(email)) {
+      perfis.push({
+        name: `Demo ${i}`,
+        email,
+        role: i % 7 === 0 ? 'admin' : 'user',
+        passwordHash,
+        isActive: true,
+        mustChangePassword: false,
+        tokenValidAfter: new Date(Date.now() - 60_000),
+      });
+    }
   }
-  await User.insertMany(perfis);
+  if (perfis.length > 0) {
+    await User.insertMany(perfis);
+  }
 
   const status = ['planejado', 'em_andamento', 'pausado', 'concluido'];
   const tags = ['urgente', 'cliente', 'interno', 'beta', 'pilotis', 'design', 'backend', 'reuniao', 'docs'];
@@ -206,14 +212,19 @@ async function carregarDemo({ usuarios = 200, projetos = 400, itens = 300, taref
   // Metas de foco semanal por dono (dados de demonstracao para os graficos do painel).
   if (owners.length) {
     const Meta = models.Meta || require('mongoose').model('Meta');
-    const metas = owners.map((o, k) => {
-      const base = 2 + ((k * 3) % 5);
-      const focoPorDia = [0, 1, 2, 3, 4, 5, 6].map((d) => Math.max(0, Math.round(base * 25 + ((k + d) % 4) * 15)));
-      const pomodorosPorDia = focoPorDia.map((m) => Math.round(m / 25));
-      const focoMinutos = focoPorDia.reduce((a, b) => a + b, 0);
-      return { ownerId: o._id, metaSemana: 250 + (k % 5) * 50, focoMinutos, pomodoros: pomodorosPorDia.reduce((a, b) => a + b, 0), focoPorDia, pomodorosPorDia };
-    }).map((m) => m);
-    await Meta.insertMany(metas);
+    const existingMetaOwners = new Set((await Meta.find({}).select('ownerId').lean()).map((m) => String(m.ownerId)));
+    const metas = owners
+      .filter((o) => !existingMetaOwners.has(String(o._id)))
+      .map((o, k) => {
+        const base = 2 + ((k * 3) % 5);
+        const focoPorDia = [0, 1, 2, 3, 4, 5, 6].map((d) => Math.max(0, Math.round(base * 25 + ((k + d) % 4) * 15)));
+        const pomodorosPorDia = focoPorDia.map((m) => Math.round(m / 25));
+        const focoMinutos = focoPorDia.reduce((a, b) => a + b, 0);
+        return { ownerId: o._id, metaSemana: 250 + (k % 5) * 50, focoMinutos, pomodoros: pomodorosPorDia.reduce((a, b) => a + b, 0), focoPorDia, pomodorosPorDia };
+      });
+    if (metas.length) {
+      await Meta.insertMany(metas);
+    }
   }
 
   return { carregado: true, usuarios, projetos, itens, tarefas, profissionais, senha, doArquivo };
