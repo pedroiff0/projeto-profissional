@@ -20,7 +20,7 @@ Este projeto faz parte do [portfólio](https://portfolio.phrandrade.com/#projeto
 - [Suporte](#suporte)
 - [Segurança](#segurança)
 - [Contribuindo](#contribuindo)
-- [Autores](#autores)
+- [Autor](#autor)
 - [Licença](#licença)
 
 ## O que é
@@ -179,7 +179,17 @@ Veja [SECURITY.md](SECURITY.md) para reportar vulnerabilidades de forma confiden
 
 Veja [CONTRIBUTING.md](CONTRIBUTING.md) e [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## Autores
+## Autor
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/pedroiff0"><img src="https://github.com/pedroiff0.png?size=120" width="96" height="96" alt="Pedro Henrique Rocha de Andrade" /><br /><sub><b>Pedro Henrique Rocha de Andrade</b></sub></a><br />Autor e mantenedor</td>
+  </tr>
+</table>
+
+### Contribuidores
+
+[![Contribuidores](https://contrib.rocks/image?repo=pedroiff0/projeto-profissional)](https://github.com/pedroiff0/projeto-profissional/graphs/contributors)
 
 ## Licença
 
