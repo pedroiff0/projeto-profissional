@@ -1,9 +1,6 @@
 # Projeto Profissional
 
-[![CI](https://github.com/pedroiff0/projeto-profissional/actions/workflows/ci.yml/badge.svg)](https://github.com/pedroiff0/projeto-profissional/actions/workflows/ci.yml)
-[![Licença](https://img.shields.io/github/license/pedroiff0/projeto-profissional)](LICENSE)
-[![Estrelas](https://img.shields.io/github/stars/pedroiff0/projeto-profissional?style=flat&logo=github)](https://github.com/pedroiff0/projeto-profissional/stargazers)
-[![Status](https://img.shields.io/badge/status-ativo-informational)](#roadmap)
+[![CI](https://github.com/pedroiff0/projeto-profissional/actions/workflows/ci.yml/badge.svg)](https://github.com/pedroiff0/projeto-profissional/actions/workflows/ci.yml) [![Licença](https://img.shields.io/github/license/pedroiff0/projeto-profissional)](LICENSE) [![Estrelas](https://img.shields.io/github/stars/pedroiff0/projeto-profissional?style=flat&logo=github)](https://github.com/pedroiff0/projeto-profissional/stargazers) [![Status](https://img.shields.io/badge/status-ativo-informational)](#roadmap)
 
 Template base para aplicações web completas: autenticação JWT, papéis `admin` e `user`, validação com Zod, renderização no servidor com EJS, Docker Compose para desenvolvimento e produção e testes Jest em memória.
 
