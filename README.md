@@ -23,6 +23,7 @@ Este projeto faz parte do [portfólio](https://portfolio.phrandrade.com/#projeto
 - [Suporte](#suporte)
 - [Estrelas e atividade](#estrelas-e-atividade)
 - [Autor](#autor)
+- [Contribuidores](#contribuidores)
 - [Licença](#licença)
 
 ## O que é
@@ -202,7 +203,7 @@ Dúvidas e pedidos de ajuda: veja [SUPPORT.md](SUPPORT.md).
   </tr>
 </table>
 
-### Contribuidores
+## Contribuidores
 
 [![Contribuidores](https://contrib.rocks/image?repo=pedroiff0/projeto-profissional)](https://github.com/pedroiff0/projeto-profissional/graphs/contributors)
 
